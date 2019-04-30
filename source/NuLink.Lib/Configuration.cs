@@ -10,6 +10,11 @@ namespace NuLink.Lib
 {
     public class Configuration
     {
+        public Configuration()
+        {
+            Packages = new Dictionary<string, PackageConfiguration>();
+        }
+
         public Configuration(ConfigFile file, IComponentContext container)
         {
             Packages = file.Packages.ToDictionary(

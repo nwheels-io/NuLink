@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Autofac;
 using NuLink.Lib.Abstractions;
 using NuLink.Lib.Commands;
+using NuLink.Lib.MsBuildFormat;
 using NuLink.Lib.NuGetFormat;
 using NuLink.Lib.Workspaces;
 
@@ -50,6 +51,10 @@ namespace NuLink.Lib
                     .SingleInstance();
 
                 builder.RegisterType<JsonConfigPersistor>()
+                    .AsSelf()
+                    .SingleInstance();
+
+                builder.RegisterType<SlnFilePersistor>()
                     .AsSelf()
                     .SingleInstance();
 

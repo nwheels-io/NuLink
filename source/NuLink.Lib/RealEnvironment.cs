@@ -14,7 +14,7 @@ namespace NuLink.Lib
 
         public StreamReader OpenTextFile(string path)
         {
-            throw new System.NotImplementedException();
+            return File.OpenText(path);
         }
 
         public string LoadTextFile(string path)
