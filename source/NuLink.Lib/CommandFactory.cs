@@ -5,6 +5,7 @@ using NuLink.Lib.Abstractions;
 using NuLink.Lib.Commands;
 using NuLink.Lib.MsBuildFormat;
 using NuLink.Lib.NuGetFormat;
+using NuLink.Lib.SourceControls;
 using NuLink.Lib.Workspaces;
 
 namespace NuLink.Lib
@@ -48,6 +49,10 @@ namespace NuLink.Lib
 
                 builder.RegisterType<WorkspaceLoader>()
                     .As<IWorkspaceLoader>()
+                    .SingleInstance();
+
+                builder.RegisterType<AutoDetectingSourceControl>()
+                    .As<ISourceControl>()
                     .SingleInstance();
 
                 builder.RegisterType<JsonConfigPersistor>()

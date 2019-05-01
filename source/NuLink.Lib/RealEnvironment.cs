@@ -1,5 +1,6 @@
 using System.IO;
 using System.Threading.Tasks;
+using System.Xml;
 using System.Xml.Linq;
 using NuLink.Lib.Abstractions;
 
@@ -9,7 +10,7 @@ namespace NuLink.Lib
     {
         public XElement LoadXml(string path)
         {
-            throw new System.NotImplementedException();
+            return XElement.Load(path.Replace("\\", "/"));
         }
 
         public StreamReader OpenTextFile(string path)

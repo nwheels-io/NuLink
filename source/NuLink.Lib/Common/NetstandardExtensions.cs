@@ -37,6 +37,16 @@ namespace NuLink.Lib.Common
                 .MakeRelativeUri(new Uri(absolutePath)).ToString().Replace("/", "" + Path.DirectorySeparatorChar);
             
             return relativePath;
-        }        
+        }
+
+        public static FileInfo WithPathSuffix(this FileInfo fileInfo, string path)
+        {
+            return new FileInfo(Path.Combine(fileInfo.FullName, path));
+        }
+
+        public static FileInfo WithFileExtension(this FileInfo fileInfo, string extension)
+        {
+            return new FileInfo(fileInfo.FullName + "." + extension.TrimStart('.'));
+        }
     }
 }
