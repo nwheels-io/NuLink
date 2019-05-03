@@ -19,6 +19,7 @@ namespace NuLink.Lib.Abstractions
         Low,
         Medium,
         High,
+        Success,
         Warning,
         Error
     }

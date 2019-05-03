@@ -11,6 +11,11 @@ namespace NuLink.Cli
     {
         private static readonly IReadOnlyDictionary<VerbosityLevel, Palette> PaletteByLevel = 
             new Dictionary<VerbosityLevel, Palette> {
+                [VerbosityLevel.Success] = new Palette(
+                    message: ConsoleColor.Green, 
+                    connectingLiteral: ConsoleColor.Green,
+                    argument: ConsoleColor.Cyan,
+                    alternateArgument: ConsoleColor.Cyan),
                 [VerbosityLevel.Error] = new Palette(
                     message: ConsoleColor.Red, 
                     connectingLiteral: ConsoleColor.DarkRed,
@@ -53,9 +58,19 @@ namespace NuLink.Cli
             throw new NotImplementedException();
         }
 
-        public Task<T> TrackAsync<T>(VerbosityLevel level, Expression<Func<string>> message, Func<Task<T>> action)
+        public async Task<T> TrackAsync<T>(VerbosityLevel level, Expression<Func<string>> message, Func<Task<T>> action)
         {
-            throw new NotImplementedException();
+            Report(level, message);
+            
+            try
+            {
+                return await action();
+            }
+            catch (Exception e)
+            {
+                Report(VerbosityLevel.Error, () => $"Failed: {e.Message}");
+                throw;
+            }
         }
 
         public void Report(VerbosityLevel level, Expression<Func<string>> message)
@@ -68,6 +83,7 @@ namespace NuLink.Cli
         {
             Console.WriteLine();
             WriteFormatColors(message, PaletteByLevel[VerbosityLevel.Error]);
+            Console.WriteLine();
             Console.WriteLine();
         }
         

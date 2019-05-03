@@ -1,4 +1,5 @@
 using System.IO;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
@@ -23,9 +24,12 @@ namespace NuLink.Lib
             throw new System.NotImplementedException();
         }
 
-        public Task<string> DownloadUrlAsText(string url)
+        public async Task<string> DownloadUrlAsText(string url)
         {
-            throw new System.NotImplementedException();
+            using (var client = new HttpClient())
+            {
+                return await client.GetStringAsync(url);
+            }
         }
 
         public Stream CreateFile(string path)

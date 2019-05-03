@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuLink.TestCase.ConsumerLib", "NuLink.TestCase.ConsumerLib\NuLink.TestCase.ConsumerLib.csproj", "{B1718C7E-2F47-4E89-A9BA-A05D33B6A9AB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuLink.TestCase.ConsumerLib.Tests", "NuLink.TestCase.ConsumerLib.Tests\NuLink.TestCase.ConsumerLib.Tests.csproj", "{C637E3F2-DD23-4DDF-815E-C813D7FA2521}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B1718C7E-2F47-4E89-A9BA-A05D33B6A9AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1718C7E-2F47-4E89-A9BA-A05D33B6A9AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1718C7E-2F47-4E89-A9BA-A05D33B6A9AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1718C7E-2F47-4E89-A9BA-A05D33B6A9AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C637E3F2-DD23-4DDF-815E-C813D7FA2521}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C637E3F2-DD23-4DDF-815E-C813D7FA2521}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C637E3F2-DD23-4DDF-815E-C813D7FA2521}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C637E3F2-DD23-4DDF-815E-C813D7FA2521}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

@@ -36,7 +36,7 @@ namespace NuLink.Lib.Commands
             var workspace = _loader.Load(options);
 
             var packageReferences = workspace.Solution.Projects
-                .SelectMany(p => p.GetPackageReferences())
+                .SelectMany(p => p.Csproj.GetPackageReferences())
                 .Distinct();
 
             var packageConfigs = packageReferences

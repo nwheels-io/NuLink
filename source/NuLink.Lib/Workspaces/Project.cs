@@ -24,7 +24,7 @@ namespace NuLink.Lib.Workspaces
             this.SlnFilePart = slnFilePart;
             this.FileInfo = solution.Sln.GetProjectFileInfo(slnFilePart);
             this.BackupFileInfo = FileInfo.WithFileExtension(BackupFileSuffix);
-            this.Xml = environment.LoadXml(FileInfo.FullName);
+            this.Csproj = new CsprojFile(FileInfo, environment.LoadXml(FileInfo.FullName));
             this.VersionElement =
                 ProjectSlnFilePart.TryFindProjectVersionElement(Xml) ??
                 ProjectSlnFilePart.AddProjectVersionElement(Xml, "0.1.0-alpha1");
@@ -49,27 +49,15 @@ namespace NuLink.Lib.Workspaces
             }
         }
 
-        public IEnumerable<PackageReference> GetPackageReferences()
-        {
-            var elements = Csproj.Xml.XPathSelectElements("//PackageReference");
-            
-            return elements.Select(e => new PackageReference(
-                id: e.Attribute("Include").Value,
-                version: SemVersion.Parse(e.Attribute("Version").Value)
-            ));
-        }
-
         public Solution Solution { get; }
         public ProjectSlnFilePart SlnFilePart { get; }
         public string Name => SlnFilePart.Name;
+        public XElement Xml => Csproj.Xml;
         public CsprojFile Csproj { get; }
         public SemVersion Version { get; }
         public FileInfo FileInfo { get; }
         public FileInfo BackupFileInfo { get; private set; }
         public ISourceRepository Repo { get; }
-        
-        public XElement Xml { get; }
-        
         public XElement VersionElement { get; }
         public bool HasOwnChanges { get; private set; }
         public bool HasDepenencyChanges { get; private set; }
