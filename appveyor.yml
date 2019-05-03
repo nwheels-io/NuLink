@@ -57,10 +57,10 @@ for:
       only:
         - image: Visual Studio 2017
     build_script:
-      - ps: >-
-          write-host "---- build for Windows! ----"
+      - cmd: >-
+          @echo ---- build for Windows! ----
 
-          write-host(Get-Location)
+          echo %cd%
 
           dotnet --info
 
@@ -75,10 +75,10 @@ for:
           dotnet build -c Debug
 
     test_script:
-      - ps: >-
-          write-host "---- test for Windows! ----"
+      - cmd: >-
+          @echo ---- test for Windows! ----
 
-          write-host(Get-Location)
+          echo %cd%
 
           cd ..\..\NuLink.TestCase.Consumer
 
@@ -88,17 +88,17 @@ for:
 
           rename netstandard2.0 nulink-backup.netstandard2.0
 
-          $linkTargetDir = "$env:APPVEYOR_BUILD_FOLDER\demos\NuLink.TestCase.FirstPackage\NuLink.TestCase.FirstPackage\bin\Debug\netstandard2.0"
+          SET linkTargetDir=%APPVEYOR_BUILD_FOLDER%\demos\NuLink.TestCase.FirstPackage\NuLink.TestCase.FirstPackage\bin\Debug\netstandard2.0
 
-          echo "--- linkTargetDir ---"
+          @echo --- linkTargetDir ---
 
-          echo $linkTargetDir
+          @echo %linkTargetDir%
 
           mklink /d netstandard2.0 $linkTargetDir
 
           dir
 
-          cd $env:APPVEYOR_BUILD_FOLDER\demos\NuLink.TestCase.Consumer
+          cd %APPVEYOR_BUILD_FOLDER%\demos\NuLink.TestCase.Consumer
 
           dotnet build
 
