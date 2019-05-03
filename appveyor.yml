@@ -58,7 +58,7 @@ for:
         - image: Visual Studio 2017
     build_script:
       - cmd: >-
-          @echo ---- build for Windows! ----
+          echo ---- build for Windows! ----
 
           echo %cd%
 
@@ -76,7 +76,7 @@ for:
 
     test_script:
       - cmd: >-
-          @echo ---- test for Windows! ----
+          echo ---- test for Windows! ----
 
           echo %cd%
 
@@ -88,13 +88,13 @@ for:
 
           rename netstandard2.0 nulink-backup.netstandard2.0
 
-          SET linkTargetDir=%APPVEYOR_BUILD_FOLDER%\demos\NuLink.TestCase.FirstPackage\NuLink.TestCase.FirstPackage\bin\Debug\netstandard2.0
+          SET SYMLINK_TARGET_DIR=%APPVEYOR_BUILD_FOLDER%\demos\NuLink.TestCase.FirstPackage\NuLink.TestCase.FirstPackage\bin\Debug\netstandard2.0
 
-          @echo --- linkTargetDir ---
+          echo --- SYMLINK_TARGET_DIR ---
 
-          @echo %linkTargetDir%
+          echo %SYMLINK_TARGET_DIR%
 
-          mklink /d netstandard2.0 $linkTargetDir
+          mklink /d netstandard2.0 %SYMLINK_TARGET_DIR%
 
           dir
 
