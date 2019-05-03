@@ -24,7 +24,7 @@ for:
 
           appveyor PushArtifact bin/Release/NuLink.TestCase.FirstPackage.0.1.0-beta1.nupkg
 
-          git apply ../../../modify-test-case-packages.patch
+          git apply ../../modify-test-case-packages.patch
 
           dotnet build -c Debug
 
@@ -60,7 +60,7 @@ for:
 
           appveyor PushArtifact bin\Release\NuLink.TestCase.FirstPackage.0.1.0-beta1.nupkg
 
-          git apply ..\..\..\modify-test-case-packages.patch
+          git apply ..\..\modify-test-case-packages.patch
 
           dotnet build -c Debug
 
@@ -75,5 +75,3 @@ for:
           dotnet build
 
           dotnet test
-
-
