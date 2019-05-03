@@ -1,0 +1,13 @@
+diff --git a/demos/NuLink.TestCase.FirstPackage/NuLink.TestCase.FirstPackage/FirstClass.cs b/demos/NuLink.TestCase.FirstPackage/NuLink.TestCase.FirstPackage/FirstClass.cs
+index f14893818bde1a464c4c87fab6d004167f3fc62f..e32c20ee80d28bea5753bdeedfdcf21922e8d054 100644
+--- a/demos/NuLink.TestCase.FirstPackage/NuLink.TestCase.FirstPackage/FirstClass.cs
++++ b/demos/NuLink.TestCase.FirstPackage/NuLink.TestCase.FirstPackage/FirstClass.cs
+@@ -6,7 +6,7 @@ namespace NuLink.TestCase.FirstPackage
+     {
+         public string GetString()
+         {
+-            return "FIRST-CLASS-ORIGINAL";
++            return "FIRST-CLASS-SYMLINKED";
+         }
+     }
+ }
