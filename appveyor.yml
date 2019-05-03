@@ -84,6 +84,22 @@ for:
 
           dotnet restore
 
+          cd C:\Users\appveyor\.nuget\packages\nulink.testcase.firstpackage\0.1.0-beta1\lib
+
+          rename netstandard2.0 nulink-backup.netstandard2.0
+
+          $linkTargetDir = $env:APPVEYOR_BUILD_FOLDER\demos\NuLink.TestCase.FirstPackage\NuLink.TestCase.FirstPackage\bin\Debug\netstandard2.0
+
+          echo "--- linkTargetDir ---"
+
+          echo $linkTargetDir
+
+          mklink /d netstandard2.0 $linkTargetDir
+
+          dir
+
+          cd $env:APPVEYOR_BUILD_FOLDER\demos\NuLink.TestCase.Consumer
+
           dotnet build
 
           type NuLink.TestCase.ConsumerLib\obj\NuLink.TestCase.ConsumerLib.csproj.nuget.g.props
