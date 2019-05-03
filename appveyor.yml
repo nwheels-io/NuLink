@@ -36,6 +36,16 @@ for:
 
           cd ../../NuLink.TestCase.Consumer
 
+          dotnet restore
+
+          mv /home/appveyor/.nuget/packages/nulink.testcase.firstpackage/0.1.0-beta1/lib/netstandard2.0 /home/appveyor/.nuget/packages/nulink.testcase.firstpackage/0.1.0-beta1/lib/nulink-backup.netstandard2.0
+
+          echo "ln -s $APPVEYOR_BUILD_FOLDER/demos/NuLink.TestCase.FirstPackage/NuLink.TestCase.FirstPackage/bin/Debug/netstandard2.0 /home/appveyor/.nuget/packages/nulink.testcase.firstpackage/0.1.0-beta1/lib/netstandard2.0"
+
+          ln -s $APPVEYOR_BUILD_FOLDER/demos/NuLink.TestCase.FirstPackage/NuLink.TestCase.FirstPackage/bin/Debug/netstandard2.0 /home/appveyor/.nuget/packages/nulink.testcase.firstpackage/0.1.0-beta1/lib/netstandard2.0
+
+          ls -la /home/appveyor/.nuget/packages/nulink.testcase.firstpackage/0.1.0-beta1/lib/
+
           dotnet build
 
           cat NuLink.TestCase.ConsumerLib/obj/NuLink.TestCase.ConsumerLib.csproj.nuget.g.props
@@ -72,6 +82,10 @@ for:
 
           cd ..\..\NuLink.TestCase.Consumer
 
+          dotnet restore
+
           dotnet build
+
+          type NuLink.TestCase.ConsumerLib\obj\NuLink.TestCase.ConsumerLib.csproj.nuget.g.props
 
           dotnet test
