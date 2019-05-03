@@ -24,6 +24,10 @@ for:
 
           appveyor PushArtifact bin/Release/NuLink.TestCase.FirstPackage.0.1.0-beta1.nupkg
 
+          git apply ../../../modify-test-case-packages.patch
+
+          dotnet build -c Debug
+
     test_script:
       - sh: >-
           echo ---- test for Linux! ----
@@ -33,6 +37,8 @@ for:
           cd ../../NuLink.TestCase.Consumer
 
           dotnet build
+
+          cat NuLink.TestCase.ConsumerLib/obj/NuLink.TestCase.ConsumerLib.csproj.nuget.g.props
 
           dotnet test
 
@@ -54,6 +60,9 @@ for:
 
           appveyor PushArtifact bin\Release\NuLink.TestCase.FirstPackage.0.1.0-beta1.nupkg
 
+          git apply ..\..\..\modify-test-case-packages.patch
+
+          dotnet build -c Debug
 
     test_script:
       - ps: >-
