@@ -11,14 +11,40 @@ for:
       only:
         - image: Ubuntu
     build_script:
-      - sh: echo ---- build for Linux! ----
+      - sh: >-
+          echo ---- build for Linux! ----
+          pwd
+          cd demos/NuLink.TestCase.FirstPackage/NuLink.TestCase.FirstPackage
+          dotnet build -c Release
+          appveyor PushArtifact bin/Release/NuLink.TestCase.FirstPackage.0.1.0-beta1.nupkg
     test_script:
-      - sh: echo ---- test for Linux! ----
+      - sh: >-
+          echo ---- test for Linux! ----
+          pwd
+          cd demos/NuLink.TestCase.Consumer
+          dotnet restore
+          dotnet build
+          cd NuLink.TestCase.ConsumerLib.Tests
+          dotnet test
   -
     matrix:
       only:
         - image: Visual Studio 2017
     build_script:
-      - ps: write-host "---- build for Windows! ----"
+      - ps: >-
+          write-host "---- build for Windows! ----"
+          write-host(Get-Location)
+          cd demos\NuLink.TestCase.FirstPackage\NuLink.TestCase.FirstPackage
+          dotnet build -c Release
+          appveyor PushArtifact bin\Release\NuLink.TestCase.FirstPackage.0.1.0-beta1.nupkg
+
     test_script:
-      - ps: write-host "---- test for Windows! ----"
+      - ps: >-
+          write-host "---- test for Windows! ----"
+          write-host(Get-Location)
+          cd demos\NuLink.TestCase.Consumer
+          dotnet restore
+          dotnet build
+          cd NuLink.TestCase.ConsumerLib.Tests
+          dotnet test
+

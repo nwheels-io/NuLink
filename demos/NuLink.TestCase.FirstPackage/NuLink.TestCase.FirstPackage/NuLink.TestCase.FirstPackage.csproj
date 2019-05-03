@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
-        <Version>0.1.0-alpha1</Version>
+        <Version>0.1.0-beta1</Version>
         <GeneratePackageOnBuild Condition="'$(Configuration)' == 'Release'">true</GeneratePackageOnBuild>
         <RepositoryType>git</RepositoryType>
         <RepositoryUrl>https://github.com/felix-b/NuLink</RepositoryUrl>
