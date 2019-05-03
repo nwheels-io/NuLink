@@ -88,7 +88,7 @@ for:
 
           rename netstandard2.0 nulink-backup.netstandard2.0
 
-          $linkTargetDir = $env:APPVEYOR_BUILD_FOLDER\demos\NuLink.TestCase.FirstPackage\NuLink.TestCase.FirstPackage\bin\Debug\netstandard2.0
+          $linkTargetDir = "$env:APPVEYOR_BUILD_FOLDER\demos\NuLink.TestCase.FirstPackage\NuLink.TestCase.FirstPackage\bin\Debug\netstandard2.0"
 
           echo "--- linkTargetDir ---"
 
