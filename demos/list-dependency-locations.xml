@@ -1,0 +1,31 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <UsingTask 
+        TaskName="ResolvePublishAssemblies" 
+        AssemblyFile="/usr/local/share/dotnet/sdk/2.1.403/Sdks/Microsoft.NET.Sdk/tools/netcoreapp2.0/Microsoft.NET.Build.Tasks.dll" />
+    
+    <ItemGroup>
+        <ProjectFiles Include="/Users/felixb/oss/NuLink/demos/NuLink.TestCase.Consumer/NuLink.TestCase.ConsumerLib/NuLink.TestCase.ConsumerLib.csproj">
+            <TargetFramework>netstandard2.0</TargetFramework>
+            <AssetsJson>/Users/felixb/oss/NuLink/demos/NuLink.TestCase.Consumer/NuLink.TestCase.ConsumerLib/obj/project.assets.json</AssetsJson>
+        </ProjectFiles>
+        <ProjectFiles Include="/Users/felixb/oss/NuLink/demos/NuLink.TestCase.Consumer/NuLink.TestCase.ConsumerLib.Tests/NuLink.TestCase.ConsumerLib.Tests.csproj">
+            <TargetFramework>netcoreapp2.1</TargetFramework>
+            <AssetsJson>/Users/felixb/oss/NuLink/demos/NuLink.TestCase.Consumer/NuLink.TestCase.ConsumerLib.Tests/obj/project.assets.json</AssetsJson>
+        </ProjectFiles>
+    </ItemGroup>
+
+    <Target Name="Build">
+        <ResolvePublishAssemblies
+            ProjectPath="@(ProjectFiles)"
+            AssetsFilePath="%(AssetsJson)"
+            TargetFramework="%(TargetFramework)">
+            <Output
+                TaskParameter="AssembliesToPublish"
+                ItemName="ResolvedAssembliesToPublish"
+            />
+        </ResolvePublishAssemblies>
+        <Message 
+            Text="%(DestinationSubPath)=@(ResolvedAssembliesToPublish->Distinct())"
+            Importance="high" />
+    </Target>
+</Project>

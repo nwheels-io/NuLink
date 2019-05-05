@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
 using System.CommandLine;
+using System.CommandLine.Builder;
 using System.CommandLine.Invocation;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Net.WebSockets;
-using Autofac;
-using NuLink.Lib;
-using NuLink.Lib.Abstractions;
 
 namespace NuLink.Cli
 {
@@ -17,223 +12,138 @@ namespace NuLink.Cli
         static int Main(string[] args)
         {
             Console.WriteLine("NuLink tool");
-            var commandLine = BuildCommandLine();
-            return commandLine.InvokeAsync(args).Result;
+            var rootCommand = BuildCommandLine();
+            return rootCommand.InvokeAsync(args).Result;
         }
-
+        
         private static RootCommand BuildCommandLine()
         {
-            var slnFileOption =  
-                new Option(
-                    new[] { "--sln-file", "-s" }, 
-                    "Path so solution file. Default: .sln file in current directory", 
-                    new Argument<FileInfo>() 
-                {
-                    Arity = ArgumentArity.ZeroOrOne,
-                });
+            var consumerOption = new Option(new[] { "--consumer", "-c" }, HelpText.ProjectOption, new Argument<string>() {
+                Name = "file-path",
+                Arity = ArgumentArity.ZeroOrOne
+            });
+            var packageOption = new Option(new[] { "--package", "-p" }, HelpText.PackageOption, new Argument<string>() {
+                Name = "package-id",
+                Arity = ArgumentArity.ZeroOrOne
+            });
+            var dryRunOption = new Option(new[] { "--dry-run", "-d" }, HelpText.DryRunOption, new Argument<bool>() {
+                Name = "on/off",
+                Arity = ArgumentArity.ZeroOrOne
+            });
 
-            var configFileOption =  
-                new Option(
-                    new[] { "--config-file", "-c" }, 
-                    "Path to NuLink config file. Default: NuLink.config in solution directory", 
-                    new Argument<FileInfo>() 
-                {
-                    Arity = ArgumentArity.ZeroOrOne,
-                });
-
-            Func<IArgumentArity, Option> createPackagesOption = (arity) => 
-                new Option(
-                    new [] { "--package-names", "-p" }, 
-                    "Package name(s) separated by space" + 
-                        (arity.MinimumNumberOfArguments == 0 
-                        ? ". Default: all packages" 
-                        : ""), 
-                    new Argument<string[]>() 
-                {
-                    Arity = arity
-                });
-            
-            return new RootCommand {
-                new Command(
-                    name: "init",
-                    description: "Initialize NuLink configuration for solution",
-                    handler: HandleInit()) 
-                {
-                    slnFileOption,
-                    configFileOption
+            return new RootCommand() {
+                new Command("status", HelpText.StatusCommand, handler: HandleStatus()) {
+                    consumerOption,
+                    packageOption
                 },
-                new Command(
-                    name: "merge",
-                    description: "Merge NuGet packages into solution",
-                    handler: HandleMerge()) 
-                {
-                    slnFileOption,
-                    configFileOption,
-                    createPackagesOption(ArgumentArity.OneOrMore),
+                new Command("link", HelpText.LinkCommand, handler: HandleLink()) {
+                    consumerOption,
+                    packageOption,
+                    dryRunOption
                 },
-                new Command(
-                    name: "unmerge",
-                    description: "Unmerge NuGet packages from solution",
-                    handler: HandleUnmerge()) 
-                {
-                    slnFileOption,
-                    configFileOption,
-                    createPackagesOption(ArgumentArity.ZeroOrMore)
-                },
-                new Command(
-                    name: "release",
-                    description: "Release changes in NuGet packages currently merged into solution",
-                    handler: HandleRelease()) 
-                {
-                    slnFileOption,
-                    configFileOption,
-                    createPackagesOption(ArgumentArity.ZeroOrMore)
-                },
-                new Command(
-                    name: "status",
-                    description: "List NuGet packages currently merged into solution",
-                    handler: HandleStatus()) 
-                {
-                    slnFileOption,
-                    configFileOption
+                new Command("unlink", HelpText.UnlinkCommand, handler: HandleUnlink()) {
+                    consumerOption,
+                    packageOption,
+                    dryRunOption
                 }
             };
-
         }
 
-        private static ICommandHandler HandleInit() => 
-            CommandHandler.Create<FileInfo, FileInfo>((slnFile, configFile) => {
-                return ExecuteCommand(slnFile, configFile, false, null, "init");
-            });
-
-        private static ICommandHandler HandleMerge() => 
-            CommandHandler.Create<FileInfo, FileInfo, object>((slnFile, configFile, packageNames) => {
-                return ExecuteCommand(slnFile, configFile, true, packageNames, "merge");
-            });
-
-        private static ICommandHandler HandleUnmerge() => 
-            CommandHandler.Create<FileInfo, FileInfo, object>((slnFile, configFile, packageNames) => {
-                return ExecuteCommand(slnFile, configFile, true, packageNames, "unmerge");
-            });
-
-        private static ICommandHandler HandleRelease() => 
-            CommandHandler.Create<FileInfo, FileInfo, object>((slnFile, configFile, packageNames) => {
-                return ExecuteCommand(slnFile, configFile, true, packageNames, "release");
-            });
-
         private static ICommandHandler HandleStatus() => 
-            CommandHandler.Create<FileInfo, FileInfo>((slnFile, configFile) => {
-                return ExecuteCommand(slnFile, configFile, true, null, "status");
+            CommandHandler.Create<string, string>((consumer, package) => {
+                return ExecuteCommand(consumer, package, dryRun: false, commandName: "status");
             });
 
+        private static ICommandHandler HandleLink() => 
+            CommandHandler.Create<string, string, bool>((consumer, package, dryRun) => {
+                return ExecuteCommand(consumer, package, dryRun: false, commandName: "link");
+            });
+
+        private static ICommandHandler HandleUnlink() => 
+            CommandHandler.Create<string, string, bool>((consumer, package, dryRun) => {
+                return ExecuteCommand(consumer, package, dryRun: false, commandName: "unlink");
+            });
+        
         private static int ExecuteCommand(
-            FileInfo slnFile, 
-            FileInfo configFile,
-            bool configFileMustExist,
-            object packageList, 
+            string projectPath, 
+            string packageId,
+            bool dryRun,
             string commandName)
         {
-            slnFile = ValidateSolutionFile(slnFile);
-            if (slnFile == null)
+            projectPath = ValidateProjectFile(projectPath);
+            if (projectPath == null)
             {
                 return 1;
             }
-
-            configFile = ValidateConfigFile(slnFile, configFile, configFileMustExist);
-            if (configFile == null)
-            {
-                return 1;
-            }
-
-            var packageNameArray = (packageList as string[]) ?? new string[0];
-            var options = new CommandOptions(
-                solution: slnFile,
-                configuration: configFile,
-                packageNames: packageNameArray,
-                dryRun: false);
+            
+            var options = new NuLinkCommandOptions(projectPath, packageId, dryRun);
             
             try
             {
-                var command = CreateCommand(options, commandName);
+                var command = CreateCommand(commandName, options);
                 command.Execute(options);
                 return 0;
             }
             catch (Exception e)
             {
-                ConsoleUI.FatalError(() => $"Fatal error: {e.Message}\nException: {e}");
+                Console.Error.WriteLine($"Fatal error: {e.Message}\nException: {e}");
                 return 100;
             }
         }
 
-        private static INuLinkCommand CreateCommand(CommandOptions options, string commandName)
+        private static string ValidateProjectFile(string filePath)
         {
-            var factory = new CommandFactory(options, builder => {
-                builder.RegisterType<ConsoleUI>().As<IUserInterface>().SingleInstance();
-            });
-
-            return factory.CreateCommand(commandName);
-        }
-
-        private static FileInfo ValidateSolutionFile(FileInfo file)
-        {
-            if (file != null)
+            if (filePath != null)
             {
-                return ValidateExistingFile(file, "Solution");
-            }
-            
-            var solutionFilePath = Directory
-                .GetFiles(Directory.GetCurrentDirectory(), "*.sln")
-                .FirstOrDefault();
-
-            if (solutionFilePath == null)
-            {
-                Console.Error.WriteLine("No .sln file found in current directory, and --sln-file option was not specified");
+                if (File.Exists(filePath))
+                {
+                    return filePath;
+                }
+                
+                Console.Error.WriteLine($"Error: File does not exist: {filePath}");
                 return null;
             }
             
-            return new FileInfo(solutionFilePath);
-        }
+            filePath = Directory
+                .GetFiles(Directory.GetCurrentDirectory(), "*.*")
+                .FirstOrDefault(path => 
+                    path.EndsWith(".csproj", StringComparison.OrdinalIgnoreCase) || 
+                    path.EndsWith(".sln", StringComparison.OrdinalIgnoreCase));
 
-        private static FileInfo ValidateConfigFile(FileInfo slnFile, FileInfo configFile, bool mustExist)
-        {
-            if (configFile != null)
+            if (filePath == null)
             {
-                return 
-                    mustExist 
-                    ? configFile
-                    : ValidateExistingFile(configFile, "Configuration");
-            }
-
-            var defaultFilePath = Path.Combine(slnFile.Directory.FullName, "NuLink.config");
-
-            if (!mustExist || File.Exists(defaultFilePath))
-            {
-                return new FileInfo(defaultFilePath);
-            }
-            
-            Console.Error.WriteLine("No NuLink.config file found in solution directory, and --config-file option was not specified");
-            return null;
-        }
-
-        private static FileInfo ValidateExistingFile(FileInfo file, string fileType)
-        {
-            if (!File.Exists(file.FullName))
-            {
-                Console.Error.WriteLine($"{fileType} file does not exist: " + file.FullName);
+                Console.Error.WriteLine("Error: No .sln/.csproj file found in current directory, and --consumer was not specified");
                 return null;
             }
 
-            return file;
+            return filePath;
         }
 
-        private static void LogCommandOptions(string commandName, CommandOptions options)
+        private static INuLinkCommand CreateCommand(string name, NuLinkCommandOptions options)
         {
-            Console.WriteLine("--- command options ---");
-            Console.WriteLine($"Command:       {commandName}");
-            Console.WriteLine($"Solution:      {options.Solution.FullName}");
-            Console.WriteLine($"Configuration: {options.Configuration.FullName}");
-            Console.WriteLine($"Packages:      [{string.Join(";", options.PackageNames)}]");
-            Console.WriteLine("--- end of command options ---");
+            switch (name)
+            {
+                case "status":
+                    return new StatusCommand();
+                default:
+                    throw new Exception($"Command not supported: {name}.");
+            }
+        }
+
+        private static class HelpText
+        {
+            public const string StatusCommand = 
+                "Check status of packages in consumer project/solution";
+            public const string LinkCommand = 
+                "Link package to a directory in local file system, machine-wide";
+            public const string UnlinkCommand = 
+                "Unlink package from local file system, machine-wide";
+            public const string ProjectOption = 
+                "Path to consumer .csproj or .sln (default: first .csproj or .sln in current directory)";
+            public const string PackageOption = 
+                "Package id (default: all packages in consumer project/solution)";
+            public const string DryRunOption = 
+                "If specified, list intended actions without executing them";
         }
     }
 }
