@@ -11,34 +11,56 @@ namespace NuLink.Cli
 {
     public class PackageReferenceLoader
     {
-        public IEnumerable<IPackageReferenceInfo> LoadPackageReferences(ProjectAnalyzer project)
+        public HashSet<PackageReferenceInfo> LoadPackageReferences(IEnumerable<ProjectAnalyzer> projects)
         {
-            var packages = GetPackageReferences(project).Distinct().ToList();
-            var packagesRootFolder = GetPackagesRootFolder(project);
+            var results = new HashSet<PackageReferenceInfo>();
 
-            packages.ForEach(CheckPackageStatus);
-
-            return packages;
-                        
-            void CheckPackageStatus(PackageReferenceInfo reference)
+            foreach (var project in projects)
             {
-                reference.PackageFolder = Path.Combine(
-                    packagesRootFolder,
-                    reference.PackageId.ToLower(),
-                    reference.Version.ToLower(),
-                    "lib");
+                Console.WriteLine($"Checking package references: {Path.GetFileName(project.ProjectFile.Path)}");
+
+                var packages = LoadPackageReferences(project);
+                results.UnionWith(packages);
             }
+
+            return results;
         }
-
-        private static IEnumerable<PackageReferenceInfo> GetPackageReferences(ProjectAnalyzer project)
+        
+        public IEnumerable<PackageReferenceInfo> LoadPackageReferences(ProjectAnalyzer project)
         {
-            var csprojXml = XElement.Load(project.ProjectFile.Path);
-            var elements = csprojXml.XPathSelectElements("//PackageReference");
+            var packagesRootFolder = GetPackagesRootFolder(project);
+            var packages = GetPackages();
 
-            return elements.Select(e => new PackageReferenceInfo {
-                PackageId = e.Attribute("Include")?.Value,
-                Version = e.Attribute("Version")?.Value
-            });
+            return packages.Where(p => p != null);
+                        
+            IEnumerable<PackageReferenceInfo> GetPackages()
+            {
+                var csprojXml = XElement.Load(project.ProjectFile.Path);
+                var elements = csprojXml.XPathSelectElements("//PackageReference");
+            
+                return elements.Select(e => {
+                    var packageId = e.Attribute("Include")?.Value;
+                    var version = e.Attribute("Version")?.Value;
+
+                    if (!string.IsNullOrWhiteSpace(packageId) && !string.IsNullOrWhiteSpace(version))
+                    {
+                        var folder = GetPackageFolder(packageId, version);
+                        return new PackageReferenceInfo(packageId, version, folder);
+                    }
+
+                    return null;
+                });
+            }
+
+            string GetPackageFolder(string packageId, string version)
+            {
+                var packageFolderPath = Path.Combine(
+                    packagesRootFolder,
+                    packageId.ToLower(),
+                    version.ToLower());
+
+                return packageFolderPath;
+            }
         }
 
         private static string GetPackagesRootFolder(ProjectAnalyzer project)

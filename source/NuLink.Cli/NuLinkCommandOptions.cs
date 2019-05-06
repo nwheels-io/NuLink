@@ -4,17 +4,23 @@ namespace NuLink.Cli
 {
     public class NuLinkCommandOptions
     {
-        public NuLinkCommandOptions(string projectPath, string packageId, bool dryRun)
+        public NuLinkCommandOptions(
+            string consumerProjectPath, 
+            string packageId = null, 
+            bool dryRun = false, 
+            string localProjectPath = null)
         {
-            ProjectPath = projectPath;
+            ConsumerProjectPath = consumerProjectPath;
             PackageId = packageId;
             DryRun = dryRun;
-            ProjectIsSolution = ProjectPath.EndsWith(".sln", StringComparison.OrdinalIgnoreCase);
+            LocalProjectPath = localProjectPath;
+            ProjectIsSolution = ConsumerProjectPath.EndsWith(".sln", StringComparison.OrdinalIgnoreCase);
         }
 
-        public string ProjectPath { get; }
+        public string ConsumerProjectPath { get; }
         public bool ProjectIsSolution { get; }
         public string PackageId { get; }
+        public string LocalProjectPath { get; }
         public bool DryRun { get; }
     }
 }

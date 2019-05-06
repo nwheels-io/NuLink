@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.CodeAnalysis;
+using Murphy.SymbolicLink;
 
 namespace NuLink.Cli
 {
@@ -9,38 +11,28 @@ namespace NuLink.Cli
     {
         public int Execute(NuLinkCommandOptions options)
         {
-            Console.WriteLine($"Loading solution: {options.ProjectPath}");
-            
-            var projects = new WorkspaceLoader().LoadProjects(options.ProjectPath, options.ProjectIsSolution);
-            //var packages = new PackageReferenceLoader().LoadPackageReferences();
-            
+            Console.WriteLine(
+                $"Checking status of packages in {(options.ProjectIsSolution ? "solution" : "project")}: {options.ConsumerProjectPath}");
+
+            var allProjects = new WorkspaceLoader().LoadProjects(options.ConsumerProjectPath, options.ProjectIsSolution);
             var referenceLoader = new PackageReferenceLoader();
-            
-            foreach (var project in projects)
+            var allPackages = referenceLoader.LoadPackageReferences(allProjects);
+
+            foreach (var package in allPackages)
             {
-                Console.WriteLine($"Checking project: {Path.GetFileName(project.ProjectFile.Path)}");
+                Console.WriteLine();
+                Console.WriteLine($"- {package.PackageId} [{package.Version}] @ {package.LibFolderPath}");
 
-                var packages = referenceLoader.LoadPackageReferences(project);
+                var status = package.CheckStatus();
 
-                foreach (var package in packages)
-                {
-                    Console.WriteLine($"{package.PackageId} -> {package.PackageFolder}");
-                }
-
-                //var env = project.EnvironmentFactory.GetBuildEnvironment(project.ProjectFile.TargetFrameworks.First());
-
-                //Console.WriteLine(env.MsBuildExePath);
-
-//                foreach (var reference in project.MetadataReferences.OfType<PortableExecutableReference>())
-//                {
-//                    var isSystem =
-//                        reference.Display.Contains("system.", StringComparison.OrdinalIgnoreCase) ||
-//                        reference.Display.Contains("microsoft", StringComparison.OrdinalIgnoreCase);
-//                    
-//                    Console.WriteLine($"Found: {reference.Display} -> {reference.FilePath}");
-//                }
+                Console.WriteLine($"  LibFolderExists ....... {status.LibFolderExists}");
+                Console.WriteLine($"  IsLibFolderLinked ..... {status.IsLibFolderLinked}");
+                Console.WriteLine($"  LibFolderLinkTargetPath {(status.IsLibFolderLinked ? $"-> {status.LibFolderLinkTargetPath}" : "N/A")}");
+                Console.WriteLine($"  LibBackupFolderExists.. {status.LibBackupFolderExists}");
             }
-            
+
+            Console.WriteLine();
+
             return 0;
         }
     }
