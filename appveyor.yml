@@ -42,7 +42,7 @@ for:
 
           dotnet restore
 
-          dotnet $APPVEYOR_BUILD_FOLDER/source/NuLink.Cli/bin/Release/netcoreapp2.1/dotnet-nulink.dll -p NuLink.TestCase.FirstPackage -l $APPVEYOR_BUILD_FOLDER/demos/NuLink.TestCase.FirstPackage/NuLink.TestCase.FirstPackage/NuLink.TestCase.FirstPackage.csproj
+          dotnet $APPVEYOR_BUILD_FOLDER/source/NuLink.Cli/bin/Release/netcoreapp2.1/dotnet-nulink.dll link -p NuLink.TestCase.FirstPackage -l $APPVEYOR_BUILD_FOLDER/demos/NuLink.TestCase.FirstPackage/NuLink.TestCase.FirstPackage/NuLink.TestCase.FirstPackage.csproj
 
           dotnet build
 
@@ -86,7 +86,7 @@ for:
 
           dotnet restore
 
-          dotnet %APPVEYOR_BUILD_FOLDER%\source\NuLink.Cli\bin\Release\netcoreapp2.1\dotnet-nulink.dll -p NuLink.TestCase.FirstPackage -l %APPVEYOR_BUILD_FOLDER%\demos\NuLink.TestCase.FirstPackage\NuLink.TestCase.FirstPackage\NuLink.TestCase.FirstPackage.csproj
+          dotnet %APPVEYOR_BUILD_FOLDER%\source\NuLink.Cli\bin\Release\netcoreapp2.1\dotnet-nulink.dll link -p NuLink.TestCase.FirstPackage -l %APPVEYOR_BUILD_FOLDER%\demos\NuLink.TestCase.FirstPackage\NuLink.TestCase.FirstPackage\NuLink.TestCase.FirstPackage.csproj
 
           dotnet build
 
