@@ -28,13 +28,17 @@ for:
 
           dotnet build -c Debug
 
+          cd $APPVEYOR_BUILD_FOLDER/source/NuLink.Cli
+
+          dotnet build -c Release
+
     test_script:
       - sh: >-
           echo ---- test for Linux! ----
 
           pwd
 
-          cd ../../NuLink.TestCase.Consumer
+          cd $APPVEYOR_BUILD_FOLDER/demos/NuLink.TestCase.Consumer
 
           dotnet restore
 
@@ -68,13 +72,17 @@ for:
 
           dotnet build -c Debug
 
+          cd %APPVEYOR_BUILD_FOLDER%\source\NuLink.Cli
+
+          dotnet build -c Release
+
     test_script:
       - cmd: >-
           echo ---- test for Windows! ----
 
           echo %cd%
 
-          cd ..\..\NuLink.TestCase.Consumer
+          cd %APPVEYOR_BUILD_FOLDER%\demos\NuLink.TestCase.Consumer
 
           dotnet restore
 
