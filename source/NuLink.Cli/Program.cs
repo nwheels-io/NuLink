@@ -160,6 +160,8 @@ namespace NuLink.Cli
                     return new StatusCommand();
                 case "link":
                     return new LinkCommand();
+                case "unlink":
+                    return new UnlinkCommand();
                 default:
                     throw new Exception($"Command not supported: {name}.");
             }
