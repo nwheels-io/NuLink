@@ -80,6 +80,8 @@ for:
       - cmd: >-
           echo ---- test for Windows! ----
 
+          echo USER-PROFILE: %UserProfile%
+
           echo %cd%
 
           cd %APPVEYOR_BUILD_FOLDER%\demos\NuLink.TestCase.Consumer
