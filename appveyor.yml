@@ -18,7 +18,13 @@ for:
 
           dotnet --info
 
-          cd demos/NuLink.TestCase.FirstPackage/NuLink.TestCase.FirstPackage
+          cd $APPVEYOR_BUILD_FOLDER/source/NuLink.Cli
+
+          dotnet build -c Release
+
+          appveyor PushArtifact bin/Release/NuLink.0.1.0-alpha1.nupkg
+
+          cd $APPVEYOR_BUILD_FOLDER/demos/NuLink.TestCase.FirstPackage/NuLink.TestCase.FirstPackage
 
           dotnet build -c Release
 
@@ -28,13 +34,11 @@ for:
 
           dotnet build -c Debug
 
-          cd $APPVEYOR_BUILD_FOLDER/source/NuLink.Cli
-
-          dotnet build -c Release
-
     test_script:
       - sh: >-
           echo ---- test for Linux! ----
+
+          dotnet tool install -g NuLink --add-source https://ci.appveyor.com/nuget/nulink-3672eibylf8q 
 
           pwd
 
@@ -42,7 +46,7 @@ for:
 
           dotnet restore
 
-          dotnet $APPVEYOR_BUILD_FOLDER/source/NuLink.Cli/bin/Release/netcoreapp2.1/dotnet-nulink.dll link -p NuLink.TestCase.FirstPackage -l $APPVEYOR_BUILD_FOLDER/demos/NuLink.TestCase.FirstPackage/NuLink.TestCase.FirstPackage/NuLink.TestCase.FirstPackage.csproj
+          nulink link -p NuLink.TestCase.FirstPackage -l $APPVEYOR_BUILD_FOLDER/demos/NuLink.TestCase.FirstPackage/NuLink.TestCase.FirstPackage/NuLink.TestCase.FirstPackage.csproj
 
           dotnet build
 
@@ -62,6 +66,12 @@ for:
 
           dotnet --info
 
+          cd %APPVEYOR_BUILD_FOLDER%\source\NuLink.Cli
+
+          dotnet build -c Release
+
+          appveyor PushArtifact bin\Release\NuLink.0.1.0-alpha1.nupkg
+
           cd demos\NuLink.TestCase.FirstPackage\NuLink.TestCase.FirstPackage
 
           dotnet build -c Release
@@ -72,15 +82,13 @@ for:
 
           dotnet build -c Debug
 
-          cd %APPVEYOR_BUILD_FOLDER%\source\NuLink.Cli
-
-          dotnet build -c Release
-
     test_script:
       - cmd: >-
           echo ---- test for Windows! ----
 
           echo USER-PROFILE: %UserProfile%
+
+          dotnet tool install -g NuLink --add-source https://ci.appveyor.com/nuget/nulink-3672eibylf8q 
 
           echo %cd%
 
@@ -88,7 +96,7 @@ for:
 
           dotnet restore
 
-          dotnet %APPVEYOR_BUILD_FOLDER%\source\NuLink.Cli\bin\Release\netcoreapp2.1\dotnet-nulink.dll link -p NuLink.TestCase.FirstPackage -l %APPVEYOR_BUILD_FOLDER%\demos\NuLink.TestCase.FirstPackage\NuLink.TestCase.FirstPackage\NuLink.TestCase.FirstPackage.csproj
+          nulink link -p NuLink.TestCase.FirstPackage -l %APPVEYOR_BUILD_FOLDER%\demos\NuLink.TestCase.FirstPackage\NuLink.TestCase.FirstPackage\NuLink.TestCase.FirstPackage.csproj
 
           dotnet build
 
