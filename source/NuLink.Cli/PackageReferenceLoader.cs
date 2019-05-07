@@ -76,7 +76,7 @@ namespace NuLink.Cli
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                var userProfilePath = Environment.GetEnvironmentVariable("UserProfile", EnvironmentVariableTarget.User);
+                var userProfilePath = Environment.GetEnvironmentVariable("UserProfile");
                 Console.WriteLine($"Detected Windows: $(UserProfile)=[{userProfilePath}]");
                 result = result.Replace("$(UserProfile)", userProfilePath, StringComparison.InvariantCultureIgnoreCase);
             }
