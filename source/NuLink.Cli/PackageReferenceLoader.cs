@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
@@ -69,9 +70,18 @@ namespace NuLink.Cli
             ns.AddNamespace("msb", "http://schemas.microsoft.com/developer/msbuild/2003");
 
             var nugetPropsXml = XElement.Load(GetNuGetPropsFilePath(project));
-            var result = nugetPropsXml.XPathSelectElement("//msb:NuGetPackageRoot", ns)?.Value;
-                
-            return result ?? throw new Exception("Could not find NuGetPackageRoot property");
+            var result = 
+                nugetPropsXml.XPathSelectElement("//msb:NuGetPackageRoot", ns)?.Value
+                ?? throw new Exception("Could not find NuGetPackageRoot property");
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                var userProfilePath = Environment.GetEnvironmentVariable("UserProfile", EnvironmentVariableTarget.User);
+                Console.WriteLine($"Detected Windows: $(UserProfile)=[{userProfilePath}]");
+                result = result.Replace("$(UserProfile)", userProfilePath, StringComparison.InvariantCultureIgnoreCase);
+            }
+            
+            return result;
         }
 
         private static string GetNuGetPropsFilePath(ProjectAnalyzer project)
