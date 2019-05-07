@@ -72,7 +72,7 @@ for:
 
           appveyor PushArtifact bin\Release\NuLink.0.1.0-alpha1.nupkg
 
-          cd demos\NuLink.TestCase.FirstPackage\NuLink.TestCase.FirstPackage
+          cd %APPVEYOR_BUILD_FOLDER%\demos\NuLink.TestCase.FirstPackage\NuLink.TestCase.FirstPackage
 
           dotnet build -c Release
 
