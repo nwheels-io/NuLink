@@ -38,7 +38,7 @@ for:
       - sh: >-
           echo ---- test for Linux! ----
 
-          dotnet tool install -g NuLink --add-source https://ci.appveyor.com/nuget/nulink-3672eibylf8q 
+          dotnet tool install -g NuLink --version 0.1.0-alpha1 --add-source https://ci.appveyor.com/nuget/nulink-3672eibylf8q 
 
           pwd
 
@@ -88,7 +88,7 @@ for:
 
           echo USER-PROFILE: %UserProfile%
 
-          dotnet tool install -g NuLink --add-source https://ci.appveyor.com/nuget/nulink-3672eibylf8q 
+          dotnet tool install -g NuLink  --version 0.1.0-alpha1 --add-source https://ci.appveyor.com/nuget/nulink-3672eibylf8q 
 
           echo %cd%
 
