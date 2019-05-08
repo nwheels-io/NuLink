@@ -12,16 +12,15 @@ image:
 configuration:
   - Release
 
-dotnet_csproj:
-  patch: true
-  file: 'source\**\*.csproj'
-  version: '{version}'
-
 for:
   -
     matrix:
       only:
         - image: Ubuntu
+    dotnet_csproj:
+      patch: true
+      file: 'source/**/*.csproj'
+      version: '{version}'
     build_script:
       - sh: >-
           cd $APPVEYOR_BUILD_FOLDER/source
@@ -76,6 +75,10 @@ for:
     matrix:
       only:
         - image: Visual Studio 2017
+    dotnet_csproj:
+      patch: true
+      file: 'source\**\*.csproj'
+      version: '{version}'
     before_build:
       - cmd: >-
           cd %APPVEYOR_BUILD_FOLDER%\source
