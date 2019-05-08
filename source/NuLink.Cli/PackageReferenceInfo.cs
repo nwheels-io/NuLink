@@ -1,8 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.CommandLine.Builder;
 using System.IO;
-using Microsoft.CodeAnalysis.VisualBasic;
 using Murphy.SymbolicLink;
 
 namespace NuLink.Cli
