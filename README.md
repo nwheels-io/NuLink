@@ -2,9 +2,9 @@
 
 The missing LINK feature of NuGet. This is a development-time feature, which allows consuming NuGet packages right from their source code on local machine. [Why?](#Why)
 
-[![Build status](https://ci.appveyor.com/api/projects/status/1fn8jkqoyrum4aiq?svg=true)](https://ci.appveyor.com/project/felix-b/nulink)
+[![Build status](https://ci.appveyor.com/api/projects/status/1fn8jkqoyrum4aiq?svg=true)](https://ci.appveyor.com/project/felix-b/nulink) [![Nuget](https://img.shields.io/nuget/vpre/NuLink.svg)](https://www.nuget.org/packages/NuLink//)
 
-See also: [Installation and usage](#installation-and-usage) | [Limitations](#limitations) | [Troubleshooting](#troubleshooting) | [Contributing](#contributing)
+See also: [Installation and usage](#installation-and-usage) | [Limitations & roadmap](#limitations-and-roadmap) | [Troubleshooting](#troubleshooting) | [Contributing](CONTRIBUTING.md)
 
 ## How it works
 
@@ -32,11 +32,11 @@ In the above example, every time My.Package.csproj is compiled, the latest binar
 
 ## Current status
 
-The project is in early alpha. It should work for .NET Core and NETStandard packages and projects. Other combinations (OS/SDK/project system) weren't tested. See [Limitations](#Limitations) for details.
+The project is in early alpha. It should work for .NET Core and NETStandard packages and projects. Other combinations (OS/SDK/project system) weren't yet tested. See [Limitations & roadmap](#limitations-and-roadmap) for details.
 
 Please report bugs and suggestions in the repo [Issues](https://github.com/felix-b/NuLink/issues). If something goes wrong, see recovery steps in [Troubleshooting](#Troubleshooting).
 
-Contributions are welcome :-) Read [Contributing](Contributing).
+Contributions are welcome :-) Read [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Installation and usage
 
@@ -50,14 +50,14 @@ Although the tool itself requires .NET Core, it should support .NET Framework pr
 ### Installation
 
 ```
-$ dotnet tool install -g NuLink --version 0.1.0-alpha1 --add-source https://ci.appveyor.com/nuget/nulink-3672eibylf8q 
+$ dotnet tool install -g NuLink --version 0.1.0-alpha2
 ```
 
 After the installation, the tool can be run from terminal with `nulink` command.
 
 To update to a newer version of the tool, run:
 ```
-$ dotnet tool update -g NuLink --add-source https://ci.appveyor.com/nuget/nulink-3672eibylf8q 
+$ dotnet tool update -g NuLink
 ```
 
 To uninstall the tool:
@@ -113,35 +113,19 @@ In the Node community, this problem is long solved with symbolic links and the [
 
 [Back to top](#NuLink)
 
-## Contributing
+## Limitations and roadmap
 
-All tickets and conversations are managed in the Issues section.
-
-To contribute, please fork and submit a PR.
-
-The CI build is currently on AppVeyor (see badge in the top).
-
-Tests and coverage reports/checks will be added later.
-
-More: TBD
-
-[Back to top](#NuLink)
-
-## Limitations
-
-Supporting the entire variety of NuGet setups and workflows is hardly feasible. (Probably that's why NuGet still lacks the linking feature). We opt for supporting subset of scenarios in favor of never having a tool.
-
-The following limitations apply:
+Supporting the full variety of NuGet setups and workflows is hardly feasible. NuLink will initially support the more straightforward workflows, as listed in the table below. Eventually, support for more scenarios can be added. 
 
 Limitation|Roadmap
 ---|---
-Consumer projects must be .NET Core or NETStandard (.NET Framework projects aren't supported)|Support of .NET Framework projects will be added
-Not tested on .NET Core 3.0|Will be tested
-Consumer projects must be C# (.csproj)|Support of other language projects will be added.
-Symbolic link is always created to `bin/Debug` regardless of existing/desired configuration|Will be enhanced
-Packages must be linked one by one|Linking multiple packages at once will be added
-Package `lib` folder must be result of compiling a single project (e.g. automatic packaging of project on build). Arbitrary contents of `lib` that can be achieved with manually authored `.nuspec` is not supported.|Won't fix
-The effect of symbolic link is machine-wide (not per consuming project/solution)|Won't fix
+Consumer projects (.csproj) must be in .NET Core format. The .NET Framework projects aren't supported|Support projects in .NET Framework format
+Not tested on .NET Core 3.0|Test on .NET Core 3.0
+Consumer projects must be C# (.csproj)|Support projects in more languages
+Symbolic link is always created to `bin/Debug` of the package, regardless of existing/desired build configuration|Add ability to detect and select package configuration
+Packages must be linked one by one|Add ability to link multiple referenced packages at once
+Package `lib` folder must be result of compiling a single project (e.g. automatic packaging of project on build). Packages with arbitrary contents of `lib` achieved with manually authored `.nuspec` are not supported.|Complex to solve. Wait to see if there's enough demand
+The effect of symbolic link is machine-wide. It is not per consuming project/solution|Probably won't fix
 
 
 [Back to top](#NuLink)
