@@ -76,7 +76,7 @@ for:
       only:
         - image: Visual Studio 2017
     before_build:
-      - sh: >-
+      - cmd: >-
           cd %APPVEYOR_BUILD_FOLDER%\source
 
           dotnet restore
