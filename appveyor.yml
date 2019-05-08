@@ -30,7 +30,7 @@ for:
 
           dotnet build -c Release
 
-          appveyor PushArtifact NuLink.Cli/bin/Release/NuLink.Cli.$APPVEYOR_BUILD_VERSION.nupkg
+          appveyor PushArtifact NuLink.Cli/bin/Release/NuLink.$APPVEYOR_BUILD_VERSION.nupkg
 
     before_test:
       - sh: >-
@@ -82,7 +82,7 @@ for:
 
           dotnet build -c Release
 
-          appveyor PushArtifact NuLink.Cli\bin\Release\NuLink.Cli.%APPVEYOR_BUILD_VERSION%.nupkg
+          appveyor PushArtifact NuLink.Cli\bin\Release\NuLink.%APPVEYOR_BUILD_VERSION%.nupkg
 
     before_test:
       - cmd: >-
