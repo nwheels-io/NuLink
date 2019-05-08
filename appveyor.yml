@@ -1,28 +1,34 @@
-version: 0.1.{build}
+version: 0.1.0-0.ci.{build}
+
+skip_commits:
+  files:
+    - Docs/*
+    - '**/*.md'
 
 image:
   - Ubuntu
   - Visual Studio 2017
+
 configuration:
   - Release
+
+build:
+  project: source/NuLink.sln
+  verbosity: minimal
+  publish_nuget: true
+
 for:
   -
     matrix:
       only:
         - image: Ubuntu
-    build_script:
+    before_test:
       - sh: >-
-          echo ---- build for Linux! ----
+          echo ---- before_test for Linux! ----
 
           pwd
 
           dotnet --info
-
-          cd $APPVEYOR_BUILD_FOLDER/source/NuLink.Cli
-
-          dotnet build -c Release
-
-          appveyor PushArtifact bin/Release/NuLink.0.1.0-alpha1.nupkg
 
           cd $APPVEYOR_BUILD_FOLDER/demos/NuLink.TestCase.FirstPackage/NuLink.TestCase.FirstPackage
 
@@ -38,7 +44,7 @@ for:
       - sh: >-
           echo ---- test for Linux! ----
 
-          dotnet tool install -g NuLink --version 0.1.0-alpha1 --add-source https://ci.appveyor.com/nuget/nulink-3672eibylf8q 
+          dotnet tool install -g NuLink --version $APPVEYOR_BUILD_VERSION --add-source https://ci.appveyor.com/nuget/nulink-3672eibylf8q 
 
           pwd
 
@@ -58,19 +64,13 @@ for:
     matrix:
       only:
         - image: Visual Studio 2017
-    build_script:
+    before_test:
       - cmd: >-
-          echo ---- build for Windows! ----
+          echo ---- before_test for Windows! ----
 
           echo %cd%
 
           dotnet --info
-
-          cd %APPVEYOR_BUILD_FOLDER%\source\NuLink.Cli
-
-          dotnet build -c Release
-
-          appveyor PushArtifact bin\Release\NuLink.0.1.0-alpha1.nupkg
 
           cd %APPVEYOR_BUILD_FOLDER%\demos\NuLink.TestCase.FirstPackage\NuLink.TestCase.FirstPackage
 
@@ -88,7 +88,7 @@ for:
 
           echo USER-PROFILE: %UserProfile%
 
-          dotnet tool install -g NuLink  --version 0.1.0-alpha1 --add-source https://ci.appveyor.com/nuget/nulink-3672eibylf8q 
+          dotnet tool install -g NuLink  --version %APPVEYOR_BUILD_VERSION% --add-source https://ci.appveyor.com/nuget/nulink-3672eibylf8q 
 
           echo %cd%
 
