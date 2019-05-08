@@ -14,7 +14,7 @@ configuration:
 
 dotnet_csproj:
   patch: true
-  file: 'source/**/*.csproj'
+  file: 'source\**\*.csproj'
   version: '{version}'
 
 for:
@@ -55,6 +55,8 @@ for:
           echo ---- test for Linux! ----
 
           dotnet tool install -g NuLink --version $APPVEYOR_BUILD_VERSION --add-source https://ci.appveyor.com/nuget/nulink-3672eibylf8q 
+
+          nulink --version
 
           pwd
 
@@ -109,6 +111,8 @@ for:
           echo USER-PROFILE: %UserProfile%
 
           dotnet tool install -g NuLink --version %APPVEYOR_BUILD_VERSION% --add-source https://ci.appveyor.com/nuget/nulink-3672eibylf8q 
+
+          nulink --version
 
           echo %cd%
 
