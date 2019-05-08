@@ -2,7 +2,7 @@ version: 0.1.0-0.ci.{build}
 
 skip_commits:
   files:
-    - Docs/*
+    - docs/*
     - '**/*.md'
 
 image:
@@ -11,6 +11,11 @@ image:
 
 configuration:
   - Release
+
+dotnet_csproj:
+  patch: true
+  file: '**\*.csproj'
+  version: '{version}'
 
 build:
   project: source/NuLink.sln
@@ -22,6 +27,12 @@ for:
     matrix:
       only:
         - image: Ubuntu
+    before_build:
+      - sh: >-
+          cd $APPVEYOR_BUILD_FOLDER/source
+
+          dotnet restore
+
     before_test:
       - sh: >-
           echo ---- before_test for Linux! ----
@@ -64,6 +75,12 @@ for:
     matrix:
       only:
         - image: Visual Studio 2017
+    before_build:
+      - sh: >-
+          cd %APPVEYOR_BUILD_FOLDER%\source
+
+          dotnet restore
+
     before_test:
       - cmd: >-
           echo ---- before_test for Windows! ----
