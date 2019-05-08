@@ -14,24 +14,23 @@ configuration:
 
 dotnet_csproj:
   patch: true
-  file: '**\*.csproj'
+  file: 'source/**/*.csproj'
   version: '{version}'
-
-build:
-  project: source/NuLink.sln
-  verbosity: minimal
-  publish_nuget: true
 
 for:
   -
     matrix:
       only:
         - image: Ubuntu
-    before_build:
+    build_script:
       - sh: >-
           cd $APPVEYOR_BUILD_FOLDER/source
 
           dotnet restore
+
+          dotnet build -c Release
+
+          appveyor PushArtifact NuLink.Cli/bin/Release/NuLink.Cli.$APPVEYOR_BUILD_VERSION.nupkg
 
     before_test:
       - sh: >-
@@ -81,6 +80,10 @@ for:
 
           dotnet restore
 
+          dotnet build -c Release
+
+          appveyor PushArtifact NuLink.Cli\bin\Release\NuLink.Cli.%APPVEYOR_BUILD_VERSION%.nupkg
+
     before_test:
       - cmd: >-
           echo ---- before_test for Windows! ----
@@ -105,7 +108,7 @@ for:
 
           echo USER-PROFILE: %UserProfile%
 
-          dotnet tool install -g NuLink  --version %APPVEYOR_BUILD_VERSION% --add-source https://ci.appveyor.com/nuget/nulink-3672eibylf8q 
+          dotnet tool install -g NuLink --version %APPVEYOR_BUILD_VERSION% --add-source https://ci.appveyor.com/nuget/nulink-3672eibylf8q 
 
           echo %cd%
 
