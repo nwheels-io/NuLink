@@ -1,0 +1,28 @@
+version: 0.1.0-alpha2
+
+branches:
+  only:
+  - master
+
+image: ubuntu
+
+configuration: Release
+
+install:
+- cd source && dotnet restore
+
+build:
+  project: source/NuLink.sln
+  verbosity: minimal
+  publish_nuget: true
+
+dotnet_csproj:
+  patch: true
+  file: '**/*.csproj'
+  version: '{version}'
+
+deploy:
+  provider: NuGet
+  api_key:
+    secure: xfJ9FLt4Rm9JKGbPUgITlkUvMzbLNmufaoYmNfZHo3/LCX71z43sM7LSsoTdXBDC
+  skip_symbols: true
