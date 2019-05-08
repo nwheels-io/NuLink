@@ -79,7 +79,7 @@ for:
       patch: true
       file: 'source\**\*.csproj'
       version: '{version}'
-    before_build:
+    build_script:
       - cmd: >-
           cd %APPVEYOR_BUILD_FOLDER%\source
 
