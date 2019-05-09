@@ -1,61 +1,89 @@
-# Welcome
+# Contribution guidelines
 
-And thanks for considering our project!
+:heart: Welcome, and thanks for considering our project :heart:
+
+These are mostly guidelines, not rules. Use your best judgment, and feel free to propose changes to this document in a pull request.
 
 ## Communication
 
-All communication is currently held using GitHub issues. In the future, we hope to move questions to StackOverflow.com.
+All communication is currently held using [GitHub issues](https://github.com/felix-b/NuLink/issues). Before filing an issue, please first check existing issues, including closed ones.
 
-Before filing an issue, please first check existing issues, including closed ones.
-
-Before reporting a bug, check that you are on the latest version.
+## Code of conduct
 
 Please note we have a [Code of Conduct](#Code-of-conduct), please follow it in all your interactions with the project.
 
-## How To
+## Questions and suggestions
 
-- Ask a question or file a suggestion: please file an issue 
-- Report a bug: please file an issue that contains:
-  - Steps to reproduce
-  - Expected result
-  - Actual result
-  - NuLink command line and output
-  - Output of `dotnet --info` command
+To ask a question or file a suggestion, just open an issue describing it. 
 
-### Contributing code
+In the future, we plan to move questions to StackOverflow.com.
 
-Code changes are always submitted in a pull request.
+## Reporting a bug
 
-#### Dev environment setup
+First verify that you are using the latest version of the tool.
 
-You'll need .NET Core SDK 2.1+ (not tested on 3.0), and a C# IDE of your choice (VSCode, Visual Studio, etc).
+To report a bug, file an issue that contains:
+- Steps to reproduce
+- Expected result
+- Actual result
+- NuLink command line and output
+- Output of `dotnet --info` command
 
-Fork NuLink and clone the fork to your local machine. To build the code:
+## Contributing code
+
+### Setting up environment
+
+You will need:
+
+- .NET Core SDK 2.1+ (not tested on 3.0)
+- C# IDE of your choice (Rider, VSCode, Visual Studio, etc).
+
+To build the cloned repo:
+
 ```
-$ cd NuLink/source
+$ cd source
 $ dotnet restore
 $ dotnet build
 ```
 
-#### Discussing changes
+### Testing
 
-If you want to submit relatively small change that doesn't impact the concept, just submit a PR.
+At the moment, we have acceptance tests which actually install the tool from NuGet and apply it to pre-created projects and packages. Acceptance tests run as part of continuous integration on Linux and Windows VMs (see next section). 
 
-If it's a big and fundamental change or enhancement, please file an issue and discuss it first.
+Unit tests are currently missing (the alpha version is a successful proof of concept). Next step is extracting some abstractions to make it possible to write unit tests. We will use NUnit framework.
 
-#### Coding conventions
+### Continuous integration
 
-We follow standard C#/.NET rules for naming and casing, with emphasis at these points:
+All changes in code and documentation are merged into `master` through pull requests. 
 
-- Tabs: use spaces (important!); use indent size of 4
+This project runs [continuous integration on AppVeyor](https://ci.appveyor.com/project/felix-b/nulink). There are two builds, both scripted using YAML files:
 
-- Control flow statement (`if`, `while`, etc) must always user brackets, even if the body is empty
+- `NuLink`: CI build triggered on every push to a PR branch and every merge into `master`, scripted by [appveyor.yml](appveyor.yml). 
+  - The build does: compile and package the tool; push package to CI feed; install the tool from CI feed; run acceptance tests. 
+  - For cross-platform testing, the build runs on both Linux and Windows VMs.
+  - Commits containing only changes to documentation .md files don't trigger the build
 
-- Object/collection initializers, anonymous delegates: the opening bracket stays on the same line (K&R style).
+- `NuLink-Release`: creates release version of the tool package and pushes it to **nuget.org**. It is scripted by [release.appveyor.yml](release.appveyor.yml). This build is triggered manually by maintainers.
 
-# Code of Conduct
+### Submitting changes
 
-## Contributor Covenant Code of Conduct
+Code and documentation changes should be submitted in a pull request.
+
+If you want to submit a relatively small change that doesn't impact the concept, just submit a PR.
+
+If it's a big and fundamental change or enhancement, please first file an issue and discuss it with us.
+
+### Coding conventions
+
+We follow standard C#/.NET rules for naming and casing, with emphasis on these points:
+
+- Tabs: use spaces and indent size of 4
+
+- Control flow statements (`if`, `while`, etc) must always have brackets, even when their body is a single line
+
+- Object/collection initializers and anonymous delegates: the opening bracket stays on the same line (K&R style).
+
+## Code of Conduct
 
 ### Our Pledge
 
