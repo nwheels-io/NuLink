@@ -1,3 +1,16 @@
+diff --git a/demos/NuLink.TestCase.SecondPackage/NuLink.TestCase.SecondPackage/SecondClass.cs b/demos/NuLink.TestCase.SecondPackage/NuLink.TestCase.SecondPackage/SecondClass.cs
+index 8848bb0265091918aa268bd94c1ef60d13d772ae..b3e93b7f9cad6ac18fe282f3cfe174519d660546 100644
+--- a/demos/NuLink.TestCase.SecondPackage/NuLink.TestCase.SecondPackage/SecondClass.cs
++++ b/demos/NuLink.TestCase.SecondPackage/NuLink.TestCase.SecondPackage/SecondClass.cs
+@@ -7,7 +7,7 @@ namespace NuLink.TestCase.SecondPackage
+         public string GetSecondString()
+         {
+             var first = new FirstClass();
+-            return $"SECOND-CLASS-ORIGINAL({first.GetString()})";
++            return $"SECOND-CLASS-SYMLINKED({first.GetString()})";
+         }
+     }
+ }
 diff --git a/demos/NuLink.TestCase.FirstPackage/NuLink.TestCase.FirstPackage/FirstClass.cs b/demos/NuLink.TestCase.FirstPackage/NuLink.TestCase.FirstPackage/FirstClass.cs
 index f14893818bde1a464c4c87fab6d004167f3fc62f..e32c20ee80d28bea5753bdeedfdcf21922e8d054 100644
 --- a/demos/NuLink.TestCase.FirstPackage/NuLink.TestCase.FirstPackage/FirstClass.cs
