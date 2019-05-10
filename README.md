@@ -2,7 +2,7 @@
 
 NuLink allows consuming NuGet packages from their source code on local machine. This creates seamless environment where packages can be developed and tested as if they were part of the main project. [Why?](#Why-would-you-use-it)
 
-[![Build status](https://ci.appveyor.com/api/projects/status/1fn8jkqoyrum4aiq?svg=true)](https://ci.appveyor.com/project/felix-b/nulink) [![Nuget](https://img.shields.io/nuget/vpre/NuLink.svg)](https://www.nuget.org/packages/NuLink//)
+[![Build status](https://ci.appveyor.com/api/projects/status/1fn8jkqoyrum4aiq/branch/master?svg=true)](https://ci.appveyor.com/project/felix-b/nulink) [![Nuget](https://img.shields.io/nuget/vpre/NuLink.svg)](https://www.nuget.org/packages/NuLink//)
 
 See also: [Usage instructions](#usage-instructions) | [Limitations & roadmap](#limitations-and-roadmap) | [Troubleshooting](#troubleshooting) | [Contributing](CONTRIBUTING.md) | [Acknowledgements](#Acknowledgements)
 

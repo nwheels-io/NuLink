@@ -12,6 +12,9 @@ image:
 configuration:
   - Release
 
+nuget:
+  project_feed: true
+
 for:
   -
     matrix:
