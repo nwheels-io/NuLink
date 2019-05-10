@@ -56,6 +56,12 @@ for:
 
           git apply ../../modify-test-case-packages.patch
 
+          cd $APPVEYOR_BUILD_FOLDER/demos/NuLink.TestCase.FirstPackage/NuLink.TestCase.FirstPackage
+
+          dotnet build -c Debug
+
+          cd $APPVEYOR_BUILD_FOLDER/demos/NuLink.TestCase.SecondPackage/NuLink.TestCase.SecondPackage
+
           dotnet build -c Debug
 
     test_script:
@@ -73,6 +79,8 @@ for:
           dotnet restore
 
           nulink link -p NuLink.TestCase.FirstPackage -l $APPVEYOR_BUILD_FOLDER/demos/NuLink.TestCase.FirstPackage/NuLink.TestCase.FirstPackage/NuLink.TestCase.FirstPackage.csproj
+
+          nulink link -p NuLink.TestCase.SecondPackage -l $APPVEYOR_BUILD_FOLDER/demos/NuLink.TestCase.SecondPackage/NuLink.TestCase.SecondPackage/NuLink.TestCase.SecondPackage.csproj
 
           dotnet build
 
@@ -120,6 +128,12 @@ for:
 
           git apply ..\..\modify-test-case-packages.patch
 
+          cd %APPVEYOR_BUILD_FOLDER%\demos\NuLink.TestCase.FirstPackage\NuLink.TestCase.FirstPackage
+
+          dotnet build -c Debug
+
+          cd %APPVEYOR_BUILD_FOLDER%\demos\NuLink.TestCase.SecondPackage\NuLink.TestCase.SecondPackage
+
           dotnet build -c Debug
 
     test_script:
@@ -139,6 +153,8 @@ for:
           dotnet restore
 
           nulink link -p NuLink.TestCase.FirstPackage -l %APPVEYOR_BUILD_FOLDER%\demos\NuLink.TestCase.FirstPackage\NuLink.TestCase.FirstPackage\NuLink.TestCase.FirstPackage.csproj
+
+          nulink link -p NuLink.TestCase.SecondPackage -l %APPVEYOR_BUILD_FOLDER%\demos\NuLink.TestCase.SecondPackage\NuLink.TestCase.SecondPackage\NuLink.TestCase.SecondPackage.csproj
 
           dotnet build
 
