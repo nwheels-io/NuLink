@@ -10,7 +10,8 @@ namespace NuLink.TestCase.ConsumerLib.Tests
             var consumer = new ConsumerClassOne();
             var stringFromPackage = consumer.ConsumeStringFromFirstPackage();
 
-            Assert.AreEqual("consumed-by-class-one:FIRST-CLASS-SYMLINKED", stringFromPackage);
+            var expectedString = System.Environment.GetEnvironmentVariable("TEST_EXPECTED_STRING_1") ?? "???";
+            Assert.AreEqual($"consumed-by-class-one:{expectedString}", stringFromPackage);
         }
     }
 }

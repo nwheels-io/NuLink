@@ -84,13 +84,53 @@ for:
 
           dotnet restore
 
+          cat NuLink.TestCase.ConsumerLib/obj/NuLink.TestCase.ConsumerLib.csproj.nuget.g.props
+
+          dotnet build
+
+          export TEST_EXPECTED_STRING_1=FIRST-CLASS-ORIGINAL
+
+          export TEST_EXPECTED_STRING_2=SECOND-CLASS-ORIGINAL\(FIRST-CLASS-ORIGINAL\)
+
+          dotnet test
+
           nulink link -p NuLink.TestCase.FirstPackage -l $APPVEYOR_BUILD_FOLDER/demos/NuLink.TestCase.FirstPackage/NuLink.TestCase.FirstPackage/NuLink.TestCase.FirstPackage.csproj
+
+          dotnet build
+
+          export TEST_EXPECTED_STRING_1=FIRST-CLASS-SYMLINKED
+
+          export TEST_EXPECTED_STRING_2=SECOND-CLASS-ORIGINAL\(FIRST-CLASS-SYMLINKED\)
+
+          dotnet test
 
           nulink link -p NuLink.TestCase.SecondPackage -l $APPVEYOR_BUILD_FOLDER/demos/NuLink.TestCase.SecondPackage/NuLink.TestCase.SecondPackage/NuLink.TestCase.SecondPackage.csproj
 
           dotnet build
 
-          cat NuLink.TestCase.ConsumerLib/obj/NuLink.TestCase.ConsumerLib.csproj.nuget.g.props
+          export TEST_EXPECTED_STRING_1=FIRST-CLASS-SYMLINKED
+
+          export TEST_EXPECTED_STRING_2=SECOND-CLASS-SYMLINKED\(FIRST-CLASS-SYMLINKED\)
+
+          dotnet test
+
+          nulink unlink -p NuLink.TestCase.FirstPackage
+
+          dotnet build
+
+          export TEST_EXPECTED_STRING_1=FIRST-CLASS-ORIGINAL
+
+          export TEST_EXPECTED_STRING_2=SECOND-CLASS-SYMLINKED\(FIRST-CLASS-ORIGINAL\)
+
+          dotnet test
+
+          nulink unlink -p NuLink.TestCase.FirstPackage
+
+          dotnet build
+
+          export TEST_EXPECTED_STRING_1=FIRST-CLASS-ORIGINAL
+
+          export TEST_EXPECTED_STRING_2=SECOND-CLASS-ORIGINAL\(FIRST-CLASS-ORIGINAL\)
 
           dotnet test
 
@@ -164,12 +204,52 @@ for:
 
           dotnet restore
 
+          type NuLink.TestCase.ConsumerLib\obj\NuLink.TestCase.ConsumerLib.csproj.nuget.g.props
+
+          dotnet build
+
+          set TEST_EXPECTED_STRING_1=FIRST-CLASS-ORIGINAL
+
+          set TEST_EXPECTED_STRING_2=SECOND-CLASS-ORIGINAL\(FIRST-CLASS-ORIGINAL\)
+
+          dotnet test
+
           nulink link -p NuLink.TestCase.FirstPackage -l %APPVEYOR_BUILD_FOLDER%\demos\NuLink.TestCase.FirstPackage\NuLink.TestCase.FirstPackage\NuLink.TestCase.FirstPackage.csproj
+
+          dotnet build
+
+          set TEST_EXPECTED_STRING_1=FIRST-CLASS-SYMLINKED
+
+          set TEST_EXPECTED_STRING_2=SECOND-CLASS-ORIGINAL\(FIRST-CLASS-SYMLINKED\)
+
+          dotnet test
 
           nulink link -p NuLink.TestCase.SecondPackage -l %APPVEYOR_BUILD_FOLDER%\demos\NuLink.TestCase.SecondPackage\NuLink.TestCase.SecondPackage\NuLink.TestCase.SecondPackage.csproj
 
           dotnet build
 
-          type NuLink.TestCase.ConsumerLib\obj\NuLink.TestCase.ConsumerLib.csproj.nuget.g.props
+          set TEST_EXPECTED_STRING_1=FIRST-CLASS-SYMLINKED
+
+          set TEST_EXPECTED_STRING_2=SECOND-CLASS-SYMLINKED\(FIRST-CLASS-SYMLINKED\)
+
+          dotnet test
+
+          nulink unlink -p NuLink.TestCase.FirstPackage
+
+          dotnet build
+
+          set TEST_EXPECTED_STRING_1=FIRST-CLASS-ORIGINAL
+
+          set TEST_EXPECTED_STRING_2=SECOND-CLASS-SYMLINKED\(FIRST-CLASS-ORIGINAL\)
+
+          dotnet test
+
+          nulink unlink -p NuLink.TestCase.FirstPackage
+
+          dotnet build
+
+          set TEST_EXPECTED_STRING_1=FIRST-CLASS-ORIGINAL
+
+          set TEST_EXPECTED_STRING_2=SECOND-CLASS-ORIGINAL\(FIRST-CLASS-ORIGINAL\)
 
           dotnet test
