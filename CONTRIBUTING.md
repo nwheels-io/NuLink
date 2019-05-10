@@ -6,9 +6,7 @@ These are mostly guidelines, not rules. Use your best judgment, and feel free to
 
 ## Communication
 
-All communication is currently held using [GitHub issues](https://github.com/felix-b/NuLink/issues). Before filing an issue, please first check existing issues, including closed ones.
-
-## Code of conduct
+All communication is currently held in the [GitHub issues](https://github.com/nwheels-io/NuLink/issues). Before filing an issue, please first check existing issues, including closed ones.
 
 Please note we have a [Code of Conduct](#Code-of-conduct), please follow it in all your interactions with the project.
 
