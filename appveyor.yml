@@ -124,7 +124,7 @@ for:
 
           dotnet test
 
-          nulink unlink -p NuLink.TestCase.FirstPackage
+          nulink unlink -p NuLink.TestCase.SecondPackage
 
           dotnet build
 
@@ -210,7 +210,7 @@ for:
 
           set TEST_EXPECTED_STRING_1=FIRST-CLASS-ORIGINAL
 
-          set TEST_EXPECTED_STRING_2=SECOND-CLASS-ORIGINAL\(FIRST-CLASS-ORIGINAL\)
+          set TEST_EXPECTED_STRING_2=SECOND-CLASS-ORIGINAL(FIRST-CLASS-ORIGINAL)
 
           dotnet test
 
@@ -220,7 +220,7 @@ for:
 
           set TEST_EXPECTED_STRING_1=FIRST-CLASS-SYMLINKED
 
-          set TEST_EXPECTED_STRING_2=SECOND-CLASS-ORIGINAL\(FIRST-CLASS-SYMLINKED\)
+          set TEST_EXPECTED_STRING_2=SECOND-CLASS-ORIGINAL(FIRST-CLASS-SYMLINKED)
 
           dotnet test
 
@@ -230,7 +230,7 @@ for:
 
           set TEST_EXPECTED_STRING_1=FIRST-CLASS-SYMLINKED
 
-          set TEST_EXPECTED_STRING_2=SECOND-CLASS-SYMLINKED\(FIRST-CLASS-SYMLINKED\)
+          set TEST_EXPECTED_STRING_2=SECOND-CLASS-SYMLINKED(FIRST-CLASS-SYMLINKED)
 
           dotnet test
 
@@ -240,16 +240,16 @@ for:
 
           set TEST_EXPECTED_STRING_1=FIRST-CLASS-ORIGINAL
 
-          set TEST_EXPECTED_STRING_2=SECOND-CLASS-SYMLINKED\(FIRST-CLASS-ORIGINAL\)
+          set TEST_EXPECTED_STRING_2=SECOND-CLASS-SYMLINKED(FIRST-CLASS-ORIGINAL)
 
           dotnet test
 
-          nulink unlink -p NuLink.TestCase.FirstPackage
+          nulink unlink -p NuLink.TestCase.SecondPackage
 
           dotnet build
 
           set TEST_EXPECTED_STRING_1=FIRST-CLASS-ORIGINAL
 
-          set TEST_EXPECTED_STRING_2=SECOND-CLASS-ORIGINAL\(FIRST-CLASS-ORIGINAL\)
+          set TEST_EXPECTED_STRING_2=SECOND-CLASS-ORIGINAL(FIRST-CLASS-ORIGINAL)
 
           dotnet test
