@@ -54,7 +54,9 @@ for:
 
           appveyor PushArtifact bin/Release/NuLink.TestCase.SecondPackage.0.2.0-beta2.nupkg
 
-          git apply ../../modify-test-case-packages.patch
+          cd $APPVEYOR_BUILD_FOLDER/demos
+          
+          git apply modify-test-case-packages.patch
 
           cd $APPVEYOR_BUILD_FOLDER/demos/NuLink.TestCase.FirstPackage/NuLink.TestCase.FirstPackage
 
@@ -132,7 +134,9 @@ for:
 
           appveyor PushArtifact bin\Release\NuLink.TestCase.SecondPackage.0.2.0-beta2.nupkg
 
-          git apply ..\..\modify-test-case-packages.patch
+          cd %APPVEYOR_BUILD_FOLDER%/demos
+
+          git apply modify-test-case-packages.patch
 
           cd %APPVEYOR_BUILD_FOLDER%\demos\NuLink.TestCase.FirstPackage\NuLink.TestCase.FirstPackage
 
