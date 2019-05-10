@@ -45,6 +45,12 @@ for:
 
           appveyor PushArtifact bin/Release/NuLink.TestCase.FirstPackage.0.1.0-beta1.nupkg
 
+          cd $APPVEYOR_BUILD_FOLDER/demos/NuLink.TestCase.SecondPackage/NuLink.TestCase.SecondPackage
+
+          dotnet build -c Release
+
+          appveyor PushArtifact bin/Release/NuLink.TestCase.SecondPackage.0.2.0-beta2.nupkg
+
           git apply ../../modify-test-case-packages.patch
 
           dotnet build -c Debug
@@ -102,6 +108,12 @@ for:
           dotnet build -c Release
 
           appveyor PushArtifact bin\Release\NuLink.TestCase.FirstPackage.0.1.0-beta1.nupkg
+
+          cd %APPVEYOR_BUILD_FOLDER%\demos\NuLink.TestCase.SecondPackage\NuLink.TestCase.SecondPackage
+
+          dotnet build -c Release
+
+          appveyor PushArtifact bin\Release\NuLink.TestCase.SecondPackage.0.2.0-beta2.nupkg
 
           git apply ..\..\modify-test-case-packages.patch
 
