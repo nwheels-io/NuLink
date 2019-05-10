@@ -88,9 +88,7 @@ for:
 
           nulink link -p NuLink.TestCase.SecondPackage -l $APPVEYOR_BUILD_FOLDER/demos/NuLink.TestCase.SecondPackage/NuLink.TestCase.SecondPackage/NuLink.TestCase.SecondPackage.csproj
 
-          dotnet restore --force
-
-          dotnet build --no-incremental
+          dotnet build
 
           cat NuLink.TestCase.ConsumerLib/obj/NuLink.TestCase.ConsumerLib.csproj.nuget.g.props
 
@@ -170,7 +168,7 @@ for:
 
           nulink link -p NuLink.TestCase.SecondPackage -l %APPVEYOR_BUILD_FOLDER%\demos\NuLink.TestCase.SecondPackage\NuLink.TestCase.SecondPackage\NuLink.TestCase.SecondPackage.csproj
 
-          dotnet build --no-incremental
+          dotnet build
 
           type NuLink.TestCase.ConsumerLib\obj\NuLink.TestCase.ConsumerLib.csproj.nuget.g.props
 
