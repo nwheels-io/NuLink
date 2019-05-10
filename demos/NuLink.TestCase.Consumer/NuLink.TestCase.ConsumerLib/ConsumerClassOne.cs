@@ -9,7 +9,7 @@ namespace NuLink.TestCase.ConsumerLib
         {
             var first = new FirstClass();
             var firstString = first.GetString();
-            return $"consumer-class-one:{firstString}";
+            return $"consumed-by-class-one:{firstString}";
         }
     }
 }
