@@ -58,9 +58,13 @@ for:
 
           cd $APPVEYOR_BUILD_FOLDER/demos/NuLink.TestCase.FirstPackage/NuLink.TestCase.FirstPackage
 
+          cat FirstClass.cs
+
           dotnet build -c Debug
 
           cd $APPVEYOR_BUILD_FOLDER/demos/NuLink.TestCase.SecondPackage/NuLink.TestCase.SecondPackage
+
+          cat SecondClass.cs
 
           dotnet build -c Debug
 
@@ -82,7 +86,9 @@ for:
 
           nulink link -p NuLink.TestCase.SecondPackage -l $APPVEYOR_BUILD_FOLDER/demos/NuLink.TestCase.SecondPackage/NuLink.TestCase.SecondPackage/NuLink.TestCase.SecondPackage.csproj
 
-          dotnet build
+          dotnet restore --force
+
+          dotnet build --no-incremental
 
           cat NuLink.TestCase.ConsumerLib/obj/NuLink.TestCase.ConsumerLib.csproj.nuget.g.props
 
@@ -130,9 +136,13 @@ for:
 
           cd %APPVEYOR_BUILD_FOLDER%\demos\NuLink.TestCase.FirstPackage\NuLink.TestCase.FirstPackage
 
+          type FirstClass.cs
+
           dotnet build -c Debug
 
           cd %APPVEYOR_BUILD_FOLDER%\demos\NuLink.TestCase.SecondPackage\NuLink.TestCase.SecondPackage
+
+          type SecondClass.cs
 
           dotnet build -c Debug
 
@@ -156,7 +166,7 @@ for:
 
           nulink link -p NuLink.TestCase.SecondPackage -l %APPVEYOR_BUILD_FOLDER%\demos\NuLink.TestCase.SecondPackage\NuLink.TestCase.SecondPackage\NuLink.TestCase.SecondPackage.csproj
 
-          dotnet build
+          dotnet build --no-incremental
 
           type NuLink.TestCase.ConsumerLib\obj\NuLink.TestCase.ConsumerLib.csproj.nuget.g.props
 
