@@ -10,7 +10,7 @@ See also: [Usage instructions](#usage-instructions) | [Limitations & roadmap](#l
 
 The project is in early alpha, and it already works for .NET Core and NETStandard packages and projects. Other combinations (OS/SDK/project system) weren't yet tested. See [Limitations & roadmap](#limitations-and-roadmap) for details.
 
-Please report bugs and suggestions in the repo [Issues](https://github.com/felix-b/NuLink/issues). If something goes wrong, see recovery steps in [Troubleshooting](#Troubleshooting).
+Please report bugs and suggestions in the repo [Issues](https://github.com/nwheels-io/NuLink/issues). If something goes wrong, see recovery steps in [Troubleshooting](#Troubleshooting).
 
 Contributions are welcome :-) Read [CONTRIBUTING.md](CONTRIBUTING.md).
 
