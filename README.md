@@ -172,13 +172,13 @@ To check the current situation of symbolic links in your NuGet packages, run one
 
 macOS and Linux:
 ```
-$ cd ~
+$ cd ~/.nuget/packages
 $ find . -type l -ls
 ```
 
 Windows:
 ```
-> cd %UserProfile%
+> cd %UserProfile%\.nuget\packages
 > dir /al /s | findstr "<SYMLINKD>"
 ```
 
