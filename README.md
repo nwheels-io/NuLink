@@ -26,7 +26,7 @@ The tool runs on .NET Core, but it should support .NET Framework projects and pa
 ### Installing
 
 ```
-$ dotnet tool install -g NuLink --version 0.1.0-alpha2
+$ dotnet tool install -g NuLink --version 0.1.0-alpha3
 ```
 
 ### Linking a package to local sources
@@ -66,7 +66,7 @@ Original                      Redirect
                +-X- netstandard2.0/       +-V- netstandard2.0/
 ```
 
-In this example, every time My.Package.csproj is compiled, the latest binaries from its `bin/Debug` are seamlessly used by all consumers. Since these binaries are mapped (through .pdb) to local code of the package, code navigation and debugging on consumer side works seamlessly as well.
+In this example, every time `My.Package.csproj` is compiled, the latest binaries from its `bin/Debug` are automatically used by all consumers. Since the binaries are mapped (through .pdb) to local sources, code navigation and debugging on consumer side work seamlessly with the latest changes in the package.
 
 [Back to top](#NuLink)
 
