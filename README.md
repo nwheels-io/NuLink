@@ -1,6 +1,6 @@
 # NuLink
 
-NuLink allows consuming NuGet packages from their source code on local machine. This creates seamless environment where packages can be developed and tested as if they were part of the main project. [Why?](#Why-would-you-use-it)
+NuLink allows consuming NuGet packages directly from source code on local machine. This creates seamless environment where packages can be developed and tested as if their code was in the main project. [Why?](#Why-would-you-use-it)
 
 [![Build status](https://ci.appveyor.com/api/projects/status/1fn8jkqoyrum4aiq/branch/master?svg=true)](https://ci.appveyor.com/project/felix-b/nulink) [![Nuget](https://img.shields.io/nuget/vpre/NuLink.svg)](https://www.nuget.org/packages/NuLink//)
 
@@ -31,7 +31,11 @@ $ dotnet tool install -g NuLink --version 0.1.0-alpha3
 
 ### Linking a package to local sources
 
-Prior to linking: package source code must reside on local machine, and `dotnet restore` with `dotnet build` must be run on the package project.
+Prior to linking, make sure these conditions are met: 
+
+- package must be first restored from a NuGet feed (this limitation will be removed in upcoming versions)
+- package source project must be located on the local machine
+- either `dotnet restore` or `dotnet build` must be run at least once on the package project
 
 In terminal, go to directory of project/solution that consumes the package, and run:
 ```
@@ -66,7 +70,7 @@ Original                      Redirect
                +-X- netstandard2.0/       +-V- netstandard2.0/
 ```
 
-In this example, every time `My.Package.csproj` is compiled, the latest binaries from its `bin/Debug` are automatically used by all consumers. Since the binaries are mapped (through .pdb) to local sources, code navigation and debugging on consumer side work seamlessly with the latest changes in the package.
+In this example, every time `My.Package.csproj` is compiled, the latest binaries from its `bin/Debug` are automatically used by all consumers. Since the binaries are mapped (through .pdb) to local sources, code navigation and debugging on consumer side work seamlessly with latest changes in package code.
 
 [Back to top](#NuLink)
 
