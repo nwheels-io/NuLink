@@ -9,7 +9,7 @@ NuLink allows consuming NuGet packages from source code on local machine. This c
 - Linux, macOS, or Windows
 - .NET Core SDK 2.1+ (not tested on 3.0)
 
-This version of NuLink supports SDK-style projects that use `<PackageReference>`. Support of .NET Framework-style projects that use `packages.config` is expected in upcoming versions.
+Currently NuLink supports SDK-style projects that consume packages through `PackageReference`. Support of .NET Framework-style projects that use `packages.config` is expected in upcoming versions.
 
 ### Installing
 
