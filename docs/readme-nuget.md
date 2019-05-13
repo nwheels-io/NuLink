@@ -20,10 +20,11 @@ $ dotnet tool install -g NuLink --version 0.1.0-alpha3
 
 ### Linking a package to local sources
 
-Prior to linking: 
+Prior to linking, make sure these conditions are met: 
 
-- package source code must reside on local machine
-- `dotnet restore` with `dotnet build` must be run on the package project
+- package must be first restored from a NuGet feed (this limitation will be removed in upcoming versions)
+- package source project must be located on the local machine
+- either `dotnet restore` or `dotnet build` must be run at least once on the package project
 
 In terminal, go to directory of project/solution that consumes the package, and run:
 
@@ -57,4 +58,4 @@ Original                      Redirect
                +-X- netstandard2.0/       +-V- netstandard2.0/
 ```
 
-In this example, every time `My.Package.csproj` is compiled, the latest binaries from its `bin/Debug` are automatically used by all consumers. Since the binaries are mapped (through .pdb) to local sources, code navigation and debugging on consumer side work seamlessly with the latest changes in the package.
+In this example, every time `My.Package.csproj` is compiled, the latest binaries from its `bin/Debug` are automatically used by all consumers. Since the binaries are mapped (through .pdb) to local sources, code navigation and debugging on consumer side work seamlessly with latest changes in package code.
