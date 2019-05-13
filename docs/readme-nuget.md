@@ -1,7 +1,6 @@
 NuLink allows consuming NuGet packages from source code on local machine. This creates seamless environment where packages can be developed and tested as if their code was part of the main project. [Learn more on GitHub](https://github.com/nwheels-io/NuLink/blob/master/README.md)
 
-[![Build status](https://ci.appveyor.com/api/projects/status/1fn8jkqoyrum4aiq/branch/master?svg=true)](https://ci.appveyor.com/project/felix-b/nulink) 
-[![Similar solutions](https://img.shields.io/badge/inspired%20by-npm%20link-blue.svg)](https://docs.npmjs.com/cli/link)
+[![Build status](https://ci.appveyor.com/api/projects/status/1fn8jkqoyrum4aiq/branch/master?svg=true)](https://ci.appveyor.com/project/felix-b/nulink) [![Similar solutions](https://img.shields.io/badge/inspired%20by-npm%20link-blue.svg)](https://docs.npmjs.com/cli/link)
 
 ## Getting started
 
@@ -10,7 +9,7 @@ NuLink allows consuming NuGet packages from source code on local machine. This c
 - Linux, macOS, or Windows
 - .NET Core SDK 2.1+ (not tested on 3.0)
 
-The tool runs on .NET Core, but it should support .NET Framework projects and packages as well (not yet tested).
+This version of NuLink supports SDK-style projects that use `<PackageReference>`. Support of .NET Framework-style projects that use `packages.config` is expected in upcoming versions.
 
 ### Installing
 
