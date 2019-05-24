@@ -93,7 +93,11 @@ namespace NuLink.Tests.Acceptance
 
             foreach (var package in testCase.Given.Packages)
             {
-                Directory.Delete(PackageNugetFolder(package.Key), recursive: true);
+                var packageFolder = PackageNugetFolder(package.Key);
+                if (Directory.Exists(packageFolder))
+                {
+                    Directory.Delete(packageFolder, recursive: true);
+                }
             }
             
             ExecIn(ConsumerSolutionFolder, "dotnet", "restore");
