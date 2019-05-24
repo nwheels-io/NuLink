@@ -60,6 +60,12 @@ for:
 
           export NULINK_TEST_USE_INSTALLED=YES
 
+    test_script:
+      - sh: >-
+          cd $APPVEYOR_BUILD_FOLDER/source/NuLink.Tests
+
+          nunit3-console bin/Release/netcoreapp2.1/NuLink.Tests.dll --result=test_results.xml;format=AppVeyor
+
   -
     matrix:
       only:
@@ -103,3 +109,9 @@ for:
           nulink --version
 
           set NULINK_TEST_USE_INSTALLED=YES
+
+    test_script:
+      - cmd: >-
+          cd %APPVEYOR_BUILD_FOLDER%\source\NuLink.Tests
+
+          nunit3-console bin\Release\netcoreapp2.1\NuLink.Tests.dll --result=test_results.xml;format=AppVeyor
