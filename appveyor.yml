@@ -18,7 +18,7 @@ nuget:
 test:
   assemblies:
     only:
-      - NuLink.Tests.dll
+      - '**\*.Tests.dll'
 
 for:
   -
@@ -103,7 +103,7 @@ for:
 
           appveyor PushArtifact bin\Release\NuLink.TestCase.SecondPackage.0.2.0-beta2.nupkg
 
-          dotnet tool install -g NuLink --version $APPVEYOR_BUILD_VERSION --add-source https://ci.appveyor.com/nuget/nulink-3672eibylf8q 
+          dotnet tool install -g NuLink --version %APPVEYOR_BUILD_VERSION% --add-source https://ci.appveyor.com/nuget/nulink-3672eibylf8q 
 
           nulink --version
 
