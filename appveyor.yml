@@ -64,7 +64,7 @@ for:
       - sh: >-
           cd $APPVEYOR_BUILD_FOLDER/source/NuLink.Tests
 
-          dotnet test -c Release
+          dotnet test -c Release --logger:Appveyor 
 
   -
     matrix:
@@ -114,5 +114,5 @@ for:
       - cmd: >-
           cd %APPVEYOR_BUILD_FOLDER%\source\NuLink.Tests
 
-          dotnet test -c Release
+          dotnet test -c Release --logger:Appveyor 
 
