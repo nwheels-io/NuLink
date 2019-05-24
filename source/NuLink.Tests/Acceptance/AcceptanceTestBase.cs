@@ -10,7 +10,7 @@ namespace NuLink.Tests.Acceptance
     {
         protected void ExecuteTestCase(AcceptanceTestCase testCase)
         {
-            Cleanup();
+            Cleanup(testCase);
             SetupGiven(testCase);
             testCase.When?.Invoke();
             VerifyThen(testCase);
@@ -55,15 +55,24 @@ namespace NuLink.Tests.Acceptance
             Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
             ".nuget",
             "packages");
-        protected string PackageLibFolder(string packageId, string version) => Path.Combine(
+        protected string PackageNugetFolder(string packageId) => Path.Combine(
             PackagesRootFolder,
-            packageId.ToLower(),
+            packageId.ToLower());
+        protected string PackageNugetLibFolder(string packageId, string version) => Path.Combine(
+            PackageNugetFolder(packageId),
             version,
             "lib");
 
-        private void Cleanup()
+        private void Cleanup(AcceptanceTestCase testCase)
         {
             ExecIn(TestEnvironment.DemoFolder, "git", "clean", "-dfx");
+
+            foreach (var package in testCase.Given.Packages)
+            {
+                Directory.Delete(PackageNugetFolder(package.Key), recursive: true);
+            }
+            
+            ExecIn(ConsumerSolutionFolder, "dotnet", "restore");
         }
         
         private void SetupGiven(AcceptanceTestCase testCase)
@@ -74,7 +83,7 @@ namespace NuLink.Tests.Acceptance
             }
 
             Directory.SetCurrentDirectory(testCase.GivenCurrentDiectory ?? TestEnvironment.DemoFolder);
-
+            
             void SetupGivenPackageState(string packageId, PackageEntry package)
             {
                 if (package.State.HasFlag(PackageStates.Linked))
@@ -87,8 +96,10 @@ namespace NuLink.Tests.Acceptance
 
                 if (package.State.HasFlag(PackageStates.Patched))
                 {
-                    Directory.SetCurrentDirectory(Path.Combine(TestEnvironment.DemoFolder, packageId));
-                    Exec("git", "apply", Path.Combine(TestEnvironment.DemoFolder, "modify-test-case-packages.patch"));
+                    var packageSourceFolder = Path.Combine(TestEnvironment.DemoFolder, packageId);
+                    var patchFilePath = Path.Combine(TestEnvironment.DemoFolder, "modify-test-case-packages.patch");
+                    
+                    ExecIn(packageSourceFolder, "git", "apply", patchFilePath);
                 }
             }
         }
@@ -109,11 +120,14 @@ namespace NuLink.Tests.Acceptance
             
             void VerifyThenPackageState(string packageId, PackageEntry package)
             {
-                var libFolderPath = PackageLibFolder(packageId, package.Version);
+                var packageFolderPath = PackageNugetFolder(packageId);
+                var libFolderPath = PackageNugetLibFolder(packageId, package.Version);
                 var libFolderTargetPath = SymbolicLink.resolve(libFolderPath);
                 var isLinked = (libFolderTargetPath != null && libFolderTargetPath != libFolderPath);
+                var libBackupFolderExists = Directory.Exists(Path.Combine(packageFolderPath, "nulink-backup.lib"));
 
                 isLinked.ShouldBe(package.State.HasFlag(PackageStates.Linked));
+                libBackupFolderExists.ShouldBe(package.State.HasFlag(PackageStates.Linked));
             }
         }
     }
