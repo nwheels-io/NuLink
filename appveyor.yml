@@ -64,7 +64,7 @@ for:
       - sh: >-
           cd $APPVEYOR_BUILD_FOLDER/source/NuLink.Tests
 
-          nunit3-console bin/Release/netcoreapp2.1/NuLink.Tests.dll --result=test_results.xml;format=AppVeyor
+          dotnet test -c Release
 
   -
     matrix:
@@ -114,4 +114,5 @@ for:
       - cmd: >-
           cd %APPVEYOR_BUILD_FOLDER%\source\NuLink.Tests
 
-          nunit3-console bin\Release\netcoreapp2.1\NuLink.Tests.dll --result=test_results.xml;format=AppVeyor
+          dotnet test -c Release
+
