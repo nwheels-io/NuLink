@@ -128,8 +128,8 @@ namespace NuLink.Tests.Acceptance
                     ExecNuLinkIn(
                         ConsumerSolutionFolder,
                         "link", 
-                        "-c", Path.Combine(TestEnvironment.DemoFolder, "NuLink.TestCase.Consumer"),
-                        "-p", packageId);
+                        "-p", packageId,
+                        "-l", PackageProjectFile(packageId));
                 }
             }
         }
