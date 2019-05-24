@@ -15,11 +15,6 @@ configuration:
 nuget:
   project_feed: true
 
-test:
-  assemblies:
-    only:
-      - '**\*.Tests.dll'
-
 for:
   -
     matrix:
