@@ -8,10 +8,12 @@ namespace NuLink.TestCase.ConsumerLib.Tests
         public void ClassTwoShouldUseLocallyLinkedPackage()
         {
             var consumer = new ConsumerClassTwo();
-            var stringFromPackage = consumer.ConsumeStringFromSecondPackage();
+            var actualString = consumer.ConsumeStringFromSecondPackage();
+            var expectedString = 
+                System.Environment.GetEnvironmentVariable($"TEST_{nameof(ClassTwoShouldUseLocallyLinkedPackage)}") 
+                ?? "???";
 
-            var expectedString = System.Environment.GetEnvironmentVariable("TEST_EXPECTED_STRING_2") ?? "???";
-            Assert.AreEqual($"consumed-by-class-two:{expectedString}", stringFromPackage);
+            Assert.AreEqual($"consumed-by-class-two:{expectedString}", actualString);
         }
     }
 }
