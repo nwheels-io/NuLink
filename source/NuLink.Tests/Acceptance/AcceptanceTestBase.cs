@@ -1,5 +1,7 @@
 using System;
 using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
 using Murphy.SymbolicLink;
 using NUnit.Framework;
 using Shouldly;
@@ -43,6 +45,27 @@ namespace NuLink.Tests.Acceptance
             }
         }
 
+        protected void ExecNuLinkIn(string directory, params string[] args)
+        {
+//            var exePath = Environment.GetEnvironmentVariable("NULINK_TEST_USE_INSTALLED");
+//
+//        public static string NuLinkProgramPath =>
+//            Environment.GetEnvironmentVariable("NULINK_TEST_PROGRAM_PATH")
+//            ?? CompiledNuLinkBinaryPath;
+
+            if (TestEnvironment.ShouldUseInstalledNuLinkBinary)
+            {
+                ExecIn(directory, TestEnvironment.InstalledNuLinkBinaryPath, args);
+            }
+            else
+            {
+                ExecIn(
+                    directory, 
+                    "dotnet",
+                    new[] { TestEnvironment.CompiledNuLinkBinaryPath }.Concat(args).ToArray());
+            }
+        }
+        
         protected string ConsumerSolutionFolder => Path.Combine(TestEnvironment.DemoFolder, "NuLink.TestCase.Consumer");
         protected string ConsumerSolutionFile => Path.Combine(ConsumerSolutionFolder, "NuLink.TestCase.Consumer.sln");
         protected string PackageProjectFolder(string packageId) => Path.Combine(
@@ -66,6 +89,7 @@ namespace NuLink.Tests.Acceptance
         private void Cleanup(AcceptanceTestCase testCase)
         {
             ExecIn(TestEnvironment.DemoFolder, "git", "clean", "-dfx");
+            ExecIn(TestEnvironment.DemoFolder, "git", "checkout", ".");
 
             foreach (var package in testCase.Given.Packages)
             {
@@ -86,20 +110,26 @@ namespace NuLink.Tests.Acceptance
             
             void SetupGivenPackageState(string packageId, PackageEntry package)
             {
-                if (package.State.HasFlag(PackageStates.Linked))
-                {
-                    Exec(
-                        "nulink", "link", 
-                        "-c", Path.Combine(TestEnvironment.DemoFolder, "NuLink.TestCase.Consumer"),
-                        "-p", packageId);
-                }
+                var packageSourceFolder = Path.Combine(TestEnvironment.DemoFolder, packageId);
+                var patchFilePath = Path.Combine(TestEnvironment.DemoFolder, "modify-test-case-packages.patch");
 
                 if (package.State.HasFlag(PackageStates.Patched))
                 {
-                    var packageSourceFolder = Path.Combine(TestEnvironment.DemoFolder, packageId);
-                    var patchFilePath = Path.Combine(TestEnvironment.DemoFolder, "modify-test-case-packages.patch");
-                    
                     ExecIn(packageSourceFolder, "git", "apply", patchFilePath);
+                }
+
+                if (package.State.HasFlag(PackageStates.Built))
+                {
+                    ExecIn(packageSourceFolder, "dotnet", "build", "-c", "Debug");
+                }
+
+                if (package.State.HasFlag(PackageStates.Linked))
+                {
+                    ExecNuLinkIn(
+                        ConsumerSolutionFolder,
+                        "link", 
+                        "-c", Path.Combine(TestEnvironment.DemoFolder, "NuLink.TestCase.Consumer"),
+                        "-p", packageId);
                 }
             }
         }
@@ -124,7 +154,7 @@ namespace NuLink.Tests.Acceptance
                 var libFolderPath = PackageNugetLibFolder(packageId, package.Version);
                 var libFolderTargetPath = SymbolicLink.resolve(libFolderPath);
                 var isLinked = (libFolderTargetPath != null && libFolderTargetPath != libFolderPath);
-                var libBackupFolderExists = Directory.Exists(Path.Combine(packageFolderPath, "nulink-backup.lib"));
+                var libBackupFolderExists = Directory.Exists(Path.Combine(packageFolderPath, package.Version, "nulink-backup.lib"));
 
                 isLinked.ShouldBe(package.State.HasFlag(PackageStates.Linked));
                 libBackupFolderExists.ShouldBe(package.State.HasFlag(PackageStates.Linked));

@@ -35,8 +35,12 @@ namespace NuLink.Tests.Acceptance
     public enum PackageStates
     {
         Original = 0,
-        Linked = 0x01,
-        Patched = 0x02,
-        LinkedAndPatched = Linked | Patched
+        Patched = 0x01,
+        Built = 0x02,
+        Linked = 0x04,
+        PatchedAndBuilt = Patched | Built,
+        PatchedAndLinked = Patched | Linked,
+        BuiltAndLinked = Built | Linked,
+        PatchedBuiltAndLinked = Patched | Built | Linked
     }
 }

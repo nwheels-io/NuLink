@@ -56,7 +56,8 @@ namespace NuLink.Tests
                 FileName = nameOrFilePath,
                 Arguments = (args != null ? string.Join(" ", args) : string.Empty),
                 WorkingDirectory = workingDirectory,
-                RedirectStandardOutput = shouldInterceptOutput
+                RedirectStandardOutput = shouldInterceptOutput,
+                RedirectStandardError = shouldInterceptOutput
             };
 
             var process = Process.Start(info);
@@ -67,6 +68,10 @@ namespace NuLink.Tests
                 outputLines = new List<string>(capacity: 100);
                 string line;
                 while ((line = process.StandardOutput.ReadLine()) != null)
+                {
+                    outputLines.Add(line);
+                }
+                while ((line = process.StandardError.ReadLine()) != null)
                 {
                     outputLines.Add(line);
                 }
