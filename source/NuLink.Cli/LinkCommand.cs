@@ -8,6 +8,13 @@ namespace NuLink.Cli
 {
     public class LinkCommand : INuLinkCommand
     {
+        private readonly IUserInterface _ui;
+
+        public LinkCommand(IUserInterface ui)
+        {
+            _ui = ui;
+        }
+
         public int Execute(NuLinkCommandOptions options)
         {
             Console.WriteLine(
@@ -26,7 +33,7 @@ namespace NuLink.Cli
             PackageReferenceInfo GetPackageInfo()
             {
                 var allProjects = new WorkspaceLoader().LoadProjects(options.ConsumerProjectPath, options.ProjectIsSolution);
-                var referenceLoader = new PackageReferenceLoader();
+                var referenceLoader = new PackageReferenceLoader(_ui);
                 var allPackages = referenceLoader.LoadPackageReferences(allProjects);
                 var package = allPackages.FirstOrDefault(p => p.PackageId == options.PackageId);
                 return package ?? throw new Exception($"Error: Package not referenced: {options.PackageId}");

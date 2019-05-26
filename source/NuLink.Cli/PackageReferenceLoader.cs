@@ -12,13 +12,20 @@ namespace NuLink.Cli
 {
     public class PackageReferenceLoader
     {
+        private readonly IUserInterface _ui;
+
+        public PackageReferenceLoader(IUserInterface ui)
+        {
+            _ui = ui;
+        }
+
         public HashSet<PackageReferenceInfo> LoadPackageReferences(IEnumerable<ProjectAnalyzer> projects)
         {
             var results = new HashSet<PackageReferenceInfo>();
 
             foreach (var project in projects)
             {
-                Console.WriteLine($"Checking package references: {Path.GetFileName(project.ProjectFile.Path)}");
+                _ui.ReportLow(() => $"Checking package references: {Path.GetFileName(project.ProjectFile.Path)}");
 
                 var packages = LoadPackageReferences(project);
                 results.UnionWith(packages);
@@ -64,7 +71,7 @@ namespace NuLink.Cli
             }
         }
 
-        private static string GetPackagesRootFolder(ProjectAnalyzer project)
+        private string GetPackagesRootFolder(ProjectAnalyzer project)
         {
             var ns = new XmlNamespaceManager(new NameTable());
             ns.AddNamespace("msb", "http://schemas.microsoft.com/developer/msbuild/2003");
@@ -77,7 +84,7 @@ namespace NuLink.Cli
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 var userProfilePath = Environment.GetEnvironmentVariable("UserProfile");
-                Console.WriteLine($"Detected Windows: $(UserProfile)=[{userProfilePath}]");
+                _ui.ReportLow(() => $"Detected Windows: $(UserProfile)=[{userProfilePath}]");
                 result = result.Replace("$(UserProfile)", userProfilePath, StringComparison.InvariantCultureIgnoreCase);
             }
             

@@ -10,7 +10,6 @@ namespace NuLink.Cli
     {
         static int Main(string[] args)
         {
-            Console.WriteLine("NuLink tool");
             var rootCommand = BuildCommandLine();
             return rootCommand.InvokeAsync(args).Result;
         }
@@ -33,11 +32,16 @@ namespace NuLink.Cli
                 Name = "on/off",
                 Arity = ArgumentArity.ZeroOrOne
             });
+            var quietOption = new Option(new[] { "--quiet", "-q" }, HelpText.QuietOption, new Argument<bool>() {
+                Name = "on/off",
+                Arity = ArgumentArity.ZeroOrOne
+            });
 
             return new RootCommand() {
                 new Command("status", HelpText.StatusCommand, handler: HandleStatus()) {
                     consumerOption,
-                    packageOption
+                    packageOption,
+                    quietOption
                 },
                 new Command("link", HelpText.LinkCommand, handler: HandleLink()) {
                     consumerOption,
@@ -54,10 +58,11 @@ namespace NuLink.Cli
         }
 
         private static ICommandHandler HandleStatus() => 
-            CommandHandler.Create<string, string>((consumer, package) => {
+            CommandHandler.Create<string, string, bool>((consumer, package, quiet) => {
                 var options = new NuLinkCommandOptions(
                     ValidateConsumerProject(consumer), 
-                    package);
+                    package,
+                    bareUI: quiet);
                 return ExecuteCommand(
                     "status", 
                     options, 
@@ -153,14 +158,16 @@ namespace NuLink.Cli
         
         private static INuLinkCommand CreateCommand(string name, NuLinkCommandOptions options)
         {
+            var ui = (options.BareUI ? new BareUI() : new FullUI() as IUserInterface);
+            
             switch (name)
             {
                 case "status":
-                    return new StatusCommand();
+                    return new StatusCommand(ui);
                 case "link":
-                    return new LinkCommand();
+                    return new LinkCommand(ui);
                 case "unlink":
-                    return new UnlinkCommand();
+                    return new UnlinkCommand(ui);
                 default:
                     throw new Exception($"Command not supported: {name}.");
             }
@@ -182,6 +189,8 @@ namespace NuLink.Cli
                 "Full path to package .csproj in local file system";
             public const string DryRunOption = 
                 "If specified, list intended actions without executing them";
+            public const string QuietOption = 
+                "If specified, suppresses all output except data (useful for scripting)";
         }
     }
 }

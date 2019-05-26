@@ -10,13 +10,13 @@ namespace NuLink.Tests.Acceptance
         public readonly DemoSolutionState Given = new DemoSolutionState();
         public Action When;
         public readonly DemoSolutionState Then = new DemoSolutionState();
-        public readonly Dictionary<string, string> ActualValues = new Dictionary<string, string>();
     }
 
     public class DemoSolutionState
     {
         public readonly Dictionary<string, PackageEntry> Packages = new Dictionary<string, PackageEntry>();     
         public readonly Dictionary<string, string> ExpectedValues = new Dictionary<string, string>();
+        public IReadOnlyList<string> ExpectedNuLinkOutput = null;
     }
 
     public class PackageEntry
