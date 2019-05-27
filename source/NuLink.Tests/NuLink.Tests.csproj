@@ -15,4 +15,8 @@
         <PackageReference Include="Shouldly" Version="4.0.0-beta0001" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\NuLink.Cli\NuLink.Cli.csproj" />
+    </ItemGroup>
+
 </Project>

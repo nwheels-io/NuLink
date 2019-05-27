@@ -8,9 +8,16 @@ namespace NuLink.Cli
 {
     public class LinkCommand : INuLinkCommand
     {
+        private readonly IUserInterface _ui;
+
+        public LinkCommand(IUserInterface ui)
+        {
+            _ui = ui;
+        }
+
         public int Execute(NuLinkCommandOptions options)
         {
-            Console.WriteLine(
+            _ui.ReportMedium(() =>
                 $"Checking package references in {(options.ProjectIsSolution ? "solution" : "project")}: {options.ConsumerProjectPath}");
 
             var requestedPackage = GetPackageInfo();
@@ -20,13 +27,14 @@ namespace NuLink.Cli
             ValidateOperation();
             PerformOperation();
             
-            Console.WriteLine($"Linked {requestedPackage.LibFolderPath} -> {linkTargetPath}");
+            _ui.ReportSuccess(() => $"Linked {requestedPackage.LibFolderPath}");
+            _ui.ReportSuccess(() => $" -> {linkTargetPath}", ConsoleColor.Magenta);
             return 0;
 
             PackageReferenceInfo GetPackageInfo()
             {
                 var allProjects = new WorkspaceLoader().LoadProjects(options.ConsumerProjectPath, options.ProjectIsSolution);
-                var referenceLoader = new PackageReferenceLoader();
+                var referenceLoader = new PackageReferenceLoader(_ui);
                 var allPackages = referenceLoader.LoadPackageReferences(allProjects);
                 var package = allPackages.FirstOrDefault(p => p.PackageId == options.PackageId);
                 return package ?? throw new Exception($"Error: Package not referenced: {options.PackageId}");
@@ -58,7 +66,7 @@ namespace NuLink.Cli
                 }
                 else
                 {
-                    Console.WriteLine($"Warning: backup folder was not expected to exist: {requestedPackage.LibBackupFolderPath}");
+                    _ui.ReportWarning(() => $"Warning: backup folder was not expected to exist: {requestedPackage.LibBackupFolderPath}");
                 }
 
                 try
@@ -76,18 +84,18 @@ namespace NuLink.Cli
             {
                 try
                 {
-                    Console.WriteLine("Failed to create symlink, reverting changes to package folders.");
+                    _ui.ReportError(() => "Failed to create symlink, reverting changes to package folders.");
                     Directory.Move(requestedPackage.LibBackupFolderPath, requestedPackage.LibFolderPath);
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine($"FAILED to revert package changes: {e.Message}");
-                    Console.WriteLine($"You have to recover manually!");
-                    Console.WriteLine("--- MANUAL RECOVERY INSTRUCTIONS ---");
-                    Console.WriteLine($"1. Go to {Path.GetDirectoryName(requestedPackage.LibFolderPath)}");
-                    Console.WriteLine($"2. Rename '{Path.GetFileName(requestedPackage.LibBackupFolderPath)}'" +
+                    _ui.ReportError(() => $"FAILED to revert package changes: {e.Message}");
+                    _ui.ReportError(() => $"You have to recover manually!");
+                    _ui.ReportError(() => "--- MANUAL RECOVERY INSTRUCTIONS ---");
+                    _ui.ReportError(() => $"1. Go to {Path.GetDirectoryName(requestedPackage.LibFolderPath)}");
+                    _ui.ReportError(() => $"2. Rename '{Path.GetFileName(requestedPackage.LibBackupFolderPath)}'" +
                                       $" to '{Path.GetFileName(requestedPackage.LibFolderPath)}'");
-                    Console.WriteLine("--- END OF RECOVERY INSTRUCTIONS ---");
+                    _ui.ReportError(() => "--- END OF RECOVERY INSTRUCTIONS ---");
                 }
             }
         }

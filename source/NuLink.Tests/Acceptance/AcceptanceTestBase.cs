@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -10,20 +11,33 @@ namespace NuLink.Tests.Acceptance
 {
     public class AcceptanceTestBase
     {
+        [ThreadStatic]
+        private static List<string> NuLinkOutput;
+        
         protected void ExecuteTestCase(AcceptanceTestCase testCase)
         {
-            Cleanup(testCase);
-            SetupGiven(testCase);
-            testCase.When?.Invoke();
-            VerifyThen(testCase);
+            try
+            {
+                Cleanup(testCase);
+                SetupGiven(testCase);
+                NuLinkOutput = new List<string>();
+            
+                testCase.When?.Invoke();
+            
+                VerifyThen(testCase);
+            }
+            finally
+            {
+                NuLinkOutput = null;
+            }
         }
         
-        protected void Exec(string program, params string[] args)
+        protected string[] Exec(string program, params string[] args)
         {
-            ExecIn(TestEnvironment.RepoFolder, program, args);
+            return ExecIn(TestEnvironment.RepoFolder, program, args);
         }
 
-        protected void ExecIn(string directory, string program, params string[] args)
+        protected string[] ExecIn(string directory, string program, params string[] args)
         {
             var exitCode = ExternalProgram.Execute(
                 out var output,
@@ -43,27 +57,27 @@ namespace NuLink.Tests.Acceptance
                 Console.WriteLine($"--- END OF PROGRAM OUTPUT ---");
                 throw new Exception($"Program '{program}' failed with code {exitCode}.");
             }
+
+            return output.ToArray();
         }
 
         protected void ExecNuLinkIn(string directory, params string[] args)
         {
-//            var exePath = Environment.GetEnvironmentVariable("NULINK_TEST_USE_INSTALLED");
-//
-//        public static string NuLinkProgramPath =>
-//            Environment.GetEnvironmentVariable("NULINK_TEST_PROGRAM_PATH")
-//            ?? CompiledNuLinkBinaryPath;
-
+            string[] output;
+            
             if (TestEnvironment.ShouldUseInstalledNuLinkBinary)
             {
-                ExecIn(directory, TestEnvironment.InstalledNuLinkBinaryPath, args);
+                output = ExecIn(directory, TestEnvironment.InstalledNuLinkBinaryPath, args);
             }
             else
             {
-                ExecIn(
+                output = ExecIn(
                     directory, 
                     "dotnet",
                     new[] { TestEnvironment.CompiledNuLinkBinaryPath }.Concat(args).ToArray());
             }
+
+            NuLinkOutput.AddRange(output);
         }
         
         protected string ConsumerSolutionFolder => Path.Combine(TestEnvironment.DemoFolder, "NuLink.TestCase.Consumer");
@@ -88,6 +102,8 @@ namespace NuLink.Tests.Acceptance
 
         private void Cleanup(AcceptanceTestCase testCase)
         {
+            NuLinkOutput = new List<string>();
+            
             ExecIn(TestEnvironment.DemoFolder, "git", "clean", "-dfx");
             ExecIn(TestEnvironment.DemoFolder, "git", "checkout", ".");
 
@@ -140,18 +156,39 @@ namespace NuLink.Tests.Acceptance
 
         private void VerifyThen(AcceptanceTestCase testCase)
         {
-            foreach (var package in testCase.Then.Packages)
+            VerifyPackages();
+            VerifyNuLinkOutput();
+            RunConsumerTests();
+            
+            void VerifyPackages()
             {
-                VerifyThenPackageState(package.Key, package.Value);
+                foreach (var package in testCase.Then.Packages)
+                {
+                    VerifyThenPackageState(package.Key, package.Value);
+                }
             }
 
-            foreach (var expected in testCase.Then.ExpectedValues)
+            void VerifyNuLinkOutput()
             {
-                Environment.SetEnvironmentVariable($"TEST_{expected.Key}", expected.Value);
+                if (testCase.Then.ExpectedNuLinkOutput?.Count > 0)
+                {
+                    NuLinkOutput.Where(s => !string.IsNullOrEmpty(s)).ShouldBe(testCase.Then.ExpectedNuLinkOutput);
+                }
             }
-            
-            Exec("dotnet", "test", Path.Combine(ConsumerSolutionFolder, "NuLink.TestCase.ConsumerLib.Tests"));
-            
+
+            void RunConsumerTests()
+            {
+                if (testCase.Then.ExpectedValues?.Count > 0)
+                {
+                    foreach (var expected in testCase.Then.ExpectedValues)
+                    {
+                        Environment.SetEnvironmentVariable($"TEST_{expected.Key}", expected.Value);
+                    }
+
+                    Exec("dotnet", "test", Path.Combine(ConsumerSolutionFolder, "NuLink.TestCase.ConsumerLib.Tests"));
+                }
+            }
+
             void VerifyThenPackageState(string packageId, PackageEntry package)
             {
                 var packageFolderPath = PackageNugetFolder(packageId);

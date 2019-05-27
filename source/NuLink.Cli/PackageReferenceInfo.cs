@@ -95,5 +95,7 @@ namespace NuLink.Cli
         public bool IsLibFolderLinked { get; }
         public string LibFolderLinkTargetPath { get; }
         public bool LibBackupFolderExists { get; }
+        public bool IsLinkable => LibFolderExists;
+        public bool IsCorrupt => LibBackupFolderExists != IsLibFolderLinked;
     }
 }

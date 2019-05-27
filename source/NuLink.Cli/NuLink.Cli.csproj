@@ -6,10 +6,10 @@
         <AssemblyName>nulink</AssemblyName>
         <GeneratePackageOnBuild Condition="'$(Configuration)' == 'Release'">true</GeneratePackageOnBuild>
         <PackageId>NuLink</PackageId>
-        <Version>0.1.0-alpha3</Version>
-        <RepositoryUrl>https://github.com/felix-b/NuLink</RepositoryUrl>
-        <PackageProjectUrl>https://github.com/felix-b/NuLink</PackageProjectUrl>
-        <PackageLicenseUrl>https://github.com/felix-b/NuLink/blob/master/LICENSE</PackageLicenseUrl>
+        <Version>0.1.0-beta1</Version>
+        <RepositoryUrl>https://github.com/nwheels-io/NuLink</RepositoryUrl>
+        <PackageProjectUrl>https://nwheels-io.github.io/NuLink/</PackageProjectUrl>
+        <PackageLicenseUrl>https://github.com/nwheels-io/NuLink/blob/master/LICENSE</PackageLicenseUrl>
         <Description>The missing LINK feature of NuGet: develop &amp; test packages as if they were part of the main project</Description>
         <Authors>Felix Berman</Authors>
         <PackAsTool>true</PackAsTool>

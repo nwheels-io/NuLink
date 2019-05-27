@@ -149,5 +149,35 @@ namespace NuLink.Tests.Acceptance
                 }
             });
         }
+
+        [Test]
+        public void PatchAndLinkAll_DotNetRestore_AllLinksSurvived()
+        {
+            ExecuteTestCase(new AcceptanceTestCase {
+                Given = {
+                    Packages = {
+                        ["NuLink.TestCase.FirstPackage"] = new PackageEntry("0.1.0-beta1", PackageStates.PatchedBuiltAndLinked),
+                        ["NuLink.TestCase.SecondPackage"] = new PackageEntry("0.2.0-beta2", PackageStates.PatchedBuiltAndLinked)
+                    }
+                },
+                When = () => {
+                    ExecIn(
+                        ConsumerSolutionFolder, 
+                        "dotnet", 
+                        "restore",
+                        "--force");
+                },
+                Then = {
+                    Packages = {
+                        ["NuLink.TestCase.FirstPackage"] = new PackageEntry("0.1.0-beta1", PackageStates.Linked),
+                        ["NuLink.TestCase.SecondPackage"] = new PackageEntry("0.2.0-beta2", PackageStates.Linked)
+                    },
+                    ExpectedValues = {
+                        ["ClassOneShouldUseLocallyLinkedPackage"] = "FIRST-CLASS-SYMLINKED",
+                        ["ClassTwoShouldUseLocallyLinkedPackage"] = "SECOND-CLASS-SYMLINKED(FIRST-CLASS-SYMLINKED)"
+                    }
+                }
+            });
+        }
     }
 }

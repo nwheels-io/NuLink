@@ -6,13 +6,20 @@ namespace NuLink.Cli
 {
     public class UnlinkCommand : INuLinkCommand
     {
+        private readonly IUserInterface _ui;
+
+        public UnlinkCommand(IUserInterface ui)
+        {
+            _ui = ui;
+        }
+
         public int Execute(NuLinkCommandOptions options)
         {
-            Console.WriteLine(
+            _ui.ReportMedium(() =>
                 $"Checking package references in {(options.ProjectIsSolution ? "solution" : "project")}: {options.ConsumerProjectPath}");
 
             var allProjects = new WorkspaceLoader().LoadProjects(options.ConsumerProjectPath, options.ProjectIsSolution);
-            var referenceLoader = new PackageReferenceLoader();
+            var referenceLoader = new PackageReferenceLoader(_ui);
             var allPackages = referenceLoader.LoadPackageReferences(allProjects);
 
             var requestedPackage = allPackages.FirstOrDefault(p => p.PackageId == options.PackageId);
@@ -41,8 +48,9 @@ namespace NuLink.Cli
 
             Directory.Delete(requestedPackage.LibFolderPath);
             Directory.Move(requestedPackage.LibBackupFolderPath, requestedPackage.LibFolderPath);
-            
-            Console.WriteLine($"Unlinked {requestedPackage.PackageId} -X- {status.LibFolderLinkTargetPath}");
+
+            _ui.ReportSuccess(() => $"Unlinked {requestedPackage.PackageId}");
+            _ui.ReportSuccess(() => $" {"-X->"} {status.LibFolderLinkTargetPath}", ConsoleColor.Red, ConsoleColor.DarkYellow);
             return 0;
         }
     }
