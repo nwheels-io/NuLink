@@ -22,6 +22,8 @@ namespace NuLink.Cli
             var allPackages = referenceLoader.LoadPackageReferences(allProjects);
             var orderedPackages = allPackages.OrderBy(p => $"{p.PackageId}@{p.Version}");
 
+            _ui.ReportHigh(() => $"{"--- package status ---"}", ConsoleColor.Yellow);
+            
             foreach (var package in orderedPackages)
             {
                 var status = package.CheckStatus();
@@ -31,8 +33,6 @@ namespace NuLink.Cli
                     PrintPackage(package, status);
                 }
             }
-
-            Console.WriteLine();
 
             return 0;
 

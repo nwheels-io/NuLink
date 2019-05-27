@@ -25,7 +25,7 @@ namespace NuLink.Cli
 
             foreach (var project in projects)
             {
-                _ui.ReportLow(() => $"Checking package references: {Path.GetFileName(project.ProjectFile.Path)}");
+                _ui.ReportMedium(() => $"Checking package references: {Path.GetFileName(project.ProjectFile.Path)}");
 
                 var packages = LoadPackageReferences(project);
                 results.UnionWith(packages);

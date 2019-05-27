@@ -112,7 +112,7 @@ namespace NuLink.Cli
             }
             catch (Exception e)
             {
-                Console.Error.WriteLine($"Fatal error: {e.Message}\nException: {e}");
+                FullUI.FatalError(() => $"Fatal error: {e.Message}\nException: {e}");
                 return 100;
             }
         }
@@ -126,7 +126,7 @@ namespace NuLink.Cli
                     return filePath;
                 }
                 
-                Console.Error.WriteLine($"Error: File does not exist: {filePath}");
+                FullUI.FatalError(() => $"Error: File does not exist: {filePath}");
                 return null;
             }
             
@@ -138,7 +138,7 @@ namespace NuLink.Cli
 
             if (filePath == null)
             {
-                Console.Error.WriteLine("Error: No .sln/.csproj file found in current directory, and --consumer was not specified");
+                FullUI.FatalError(() => $"Error: No .sln/.csproj file found in current directory, and {"--consumer"} was not specified");
                 return null;
             }
 
@@ -152,7 +152,7 @@ namespace NuLink.Cli
                 return filePath;
             }
                 
-            Console.Error.WriteLine($"Error: File does not exist: {filePath}");
+            FullUI.FatalError(() => $"Error: File does not exist: {filePath}");
             return null;
         }
         
