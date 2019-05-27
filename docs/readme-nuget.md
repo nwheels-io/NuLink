@@ -14,7 +14,7 @@ Currently NuLink supports SDK-style projects that consume packages through `Pack
 ### Installing
 
 ```
-$ dotnet tool install -g NuLink --version 0.1.0-alpha3
+$ dotnet tool install -g NuLink --version 0.1.0-beta1
 ```
 
 ### Linking a package to local sources

@@ -46,9 +46,11 @@ $ dotnet build
 
 ### Testing
 
-At the moment, we have acceptance tests which actually install the tool from NuGet and apply it to pre-created projects and packages. Acceptance tests run as part of continuous integration on Linux and Windows VMs (see next section). 
+At the moment, we have acceptance tests which actually install the tool from NuGet and apply it to pre-created projects and packages. 
 
-Unit tests are currently missing (the alpha version is a successful proof of concept). Next step is extracting some abstractions to make it possible to write unit tests. We will use NUnit framework.
+We also have some unit tests, though many more of them are still missing.
+
+All tests run as part of continuous integration on Linux and Windows VMs (see next section). 
 
 ### Continuous integration
 

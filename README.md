@@ -8,7 +8,7 @@ See also: [Usage instructions](#usage-instructions) | [Limitations & roadmap](#l
 
 ## Current status
 
-The project is in early alpha, and it already works for .NET Core and NETStandard packages and projects. Other combinations (OS/SDK/project system) weren't yet tested. See [Limitations & roadmap](#limitations-and-roadmap) for details.
+The project is currently in beta. It already works for .NET Core and NETStandard packages and projects. Other combinations (OS/SDK/project system) weren't yet tested. See [Limitations & roadmap](#limitations-and-roadmap) for details.
 
 Please report bugs and suggestions in the repo [Issues](https://github.com/nwheels-io/NuLink/issues). If something goes wrong, see recovery steps in [Troubleshooting](#Troubleshooting).
 
@@ -26,7 +26,7 @@ The tool runs on .NET Core, but it should support .NET Framework projects and pa
 ### Installing
 
 ```
-$ dotnet tool install -g NuLink --version 0.1.0-alpha3
+$ dotnet tool install -g NuLink --version 0.1.0-beta1
 ```
 
 ### Linking a package to local sources
@@ -109,7 +109,7 @@ The effect of symbolic link is machine-wide. It is not per consuming project/sol
 
 Install:
 ```
-$ dotnet tool install -g NuLink --version 0.1.0-alpha2
+$ dotnet tool install -g NuLink --version 0.1.0-beta1
 ```
 
 After the installation, the tool can be run from terminal with `nulink` command.
