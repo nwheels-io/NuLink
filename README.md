@@ -92,15 +92,15 @@ Supporting the full variety of NuGet setups and workflows is hardly feasible. Nu
 
 Limitation|Roadmap
 ---|---
-Consumer projects (.csproj) must be SDK-style (`<PackageReference>`). The .NET Framework projects (`packages.config`) aren't  yet supported|Add support for .NET Framework projects
-Not tested on .NET Core 3.0|Test on .NET Core 3.0
-Consumer projects must be C# (.csproj)|Support projects in more languages
-The `--dry-run` option is not implemented|Implement dry run
-Symbolic link is always created to `bin/Debug` of the package, regardless of existing/desired build configuration|Add ability to detect and select package configuration
-A package that's being developed and wasn't yet pushed to any NuGet feed, cannot be linked. This is because packages root folder (`~/.nuget/packages/`) must contain an entry for the package.|Allow linking unpushed packages by first automatically restoring them from temporary local feed.
-Packages must be linked one by one|Add ability to link multiple referenced packages at once
-Package `lib` folder must be result of compiling a single project (e.g. automatic packaging of project on build). Packages with arbitrary contents of `lib` achieved with manually authored `.nuspec` are not supported.|Complex to solve. Wait to see if there's enough demand
-For SDK-style consumer projects, the effect of symbolic link is machine-wide. It is not per consuming project/solution|Probably won't fix
+Consumer projects (.csproj) must be SDK-style (`<PackageReference>`). The .NET Framework projects (`packages.config`) aren't  yet supported|[#2 Add support for .NET Framework projects](https://github.com/nwheels-io/NuLink/issues/2)
+Not tested on .NET Core 3.0|[#3 Test on .NET Core 3.0](https://github.com/nwheels-io/NuLink/issues/3)
+Consumer projects must be C# (.csproj)|[#4 Support projects in more languages](https://github.com/nwheels-io/NuLink/issues/4)
+The `--dry-run` option is not implemented|[#19 Implement dry run](https://github.com/nwheels-io/NuLink/issues/19)
+Symbolic link is always created to `bin/Debug` of the package, regardless of existing/desired build configuration|[#5 Add ability to detect and select package configuration](https://github.com/nwheels-io/NuLink/issues/5)
+A package that's being developed and wasn't yet pushed to any NuGet feed, cannot be linked. This is because packages root folder (`~/.nuget/packages/`) must contain an entry for the package.|[#12 Allow linking unpushed packages by first automatically restoring them from temporary local feed](https://github.com/nwheels-io/NuLink/issues/12).
+Packages must be linked one by one|[#6 Add ability to link multiple referenced packages at once](https://github.com/nwheels-io/NuLink/issues/6)
+Package `lib` folder must be result of compiling a single project (e.g. automatic packaging of project on build). Packages with arbitrary contents of `lib` achieved with manually authored `.nuspec` are not supported.|Complex to solve ([#7](https://github.com/nwheels-io/NuLink/issues/7)). Wait to see if there's enough demand
+For SDK-style consumer projects, the effect of symbolic link is machine-wide. It is not per consuming project/solution|Probably won't fix ([#8](https://github.com/nwheels-io/NuLink/issues/8))
 
 [Back to top](#NuLink)
 
