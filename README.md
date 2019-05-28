@@ -92,9 +92,10 @@ Supporting the full variety of NuGet setups and workflows is hardly feasible. Nu
 
 Limitation|Roadmap
 ---|---
-Consumer projects (.csproj) must be SDK-style (`<PackageReference>`). The .NET Framework projects (`packages.config`) aren't  supported|Support .NET Framework projects
+Consumer projects (.csproj) must be SDK-style (`<PackageReference>`). The .NET Framework projects (`packages.config`) aren't  yet supported|Add support for .NET Framework projects
 Not tested on .NET Core 3.0|Test on .NET Core 3.0
 Consumer projects must be C# (.csproj)|Support projects in more languages
+The `--dry-run` option is not implemented|Implement dry run
 Symbolic link is always created to `bin/Debug` of the package, regardless of existing/desired build configuration|Add ability to detect and select package configuration
 A package that's being developed and wasn't yet pushed to any NuGet feed, cannot be linked. This is because packages root folder (`~/.nuget/packages/`) must contain an entry for the package.|Allow linking unpushed packages by first automatically restoring them from temporary local feed.
 Packages must be linked one by one|Add ability to link multiple referenced packages at once
