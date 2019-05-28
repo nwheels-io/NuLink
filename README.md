@@ -213,6 +213,7 @@ This tool was inspired by **[npm link](https://docs.npmjs.com/cli/link.html)**.
 
 These awesome libraries were used:
 
+- [System.CommandLine](https://github.com/dotnet/command-line-api) by .NET Foundation ([license and copyright](https://github.com/dotnet/command-line-api/blob/master/LICENSE.md))
 - [Buildalyzer](https://www.nuget.org/packages/Buildalyzer/) by Dave Glick ([license and copyright](https://github.com/daveaglick/Buildalyzer/blob/master/LICENSE))
 - [Murphy.SymbolicLink](https://www.nuget.org/packages/Murphy.SymbolicLink/) by Thomas Chust ([license and copyright](https://bitbucket.org/chust/symboliclink/src/default/LICENSE.txt))
 
