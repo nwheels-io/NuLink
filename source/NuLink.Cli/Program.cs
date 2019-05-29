@@ -106,6 +106,11 @@ namespace NuLink.Cli
             
             try
             {
+                if (options.DryRun)
+                {
+                    throw new Exception("The dry run option is not yet implemented");
+                }
+            
                 var command = CreateCommand(commandName, options);
                 command.Execute(options);
                 return 0;
