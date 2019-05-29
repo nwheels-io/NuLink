@@ -1,8 +1,10 @@
-Allows consuming NuGet packages directly from source code on local machine. This creates seamless environment where packages can be developed and tested as if their code was in the main project. [Why?](#Why-would-you-use-it)
+## Synopsis
+
+Allows consuming NuGet packages directly from source code on local machine. This creates seamless environment where packages can be developed and tested as if their code was in the main project. [Why?](#why-would-you-use-it)
 
 [![Build status](https://ci.appveyor.com/api/projects/status/1fn8jkqoyrum4aiq/branch/master?svg=true)](https://ci.appveyor.com/project/felix-b/nulink) [![Nuget](https://img.shields.io/nuget/vpre/NuLink.svg)](https://www.nuget.org/packages/NuLink//)
 
-See also: [Usage instructions](#usage-instructions) | [Limitations & roadmap](../README.md#limitations-and-roadmap) | [Troubleshooting](#troubleshooting) | [Contributing](../CONTRIBUTING.md) | [Acknowledgements](../README.md#Acknowledgements)
+See also: [Usage instructions](#usage-instructions), [Limitations & roadmap](../README.md#limitations-and-roadmap), [Troubleshooting](#troubleshooting), [Contributing](../CONTRIBUTING.md), [Acknowledgements](../README.md#Acknowledgements)
 
 ## Getting started
 
@@ -34,9 +36,9 @@ $ nulink link -p My.Package -l /path/to/my/package/source/My.Package.csproj
 
 In this example, all consumers of **My.Package** will start using binaries from `/path/to/my/package/source/bin/Debug`.
 
-See [Usage instructions](#Usage-instructions) for more info.
+See [Usage instructions](#usage-instructions) for more info.
 
-[Back to top](#NuLink)
+[Back to top](#synopsis)
 
 ## How it works
 
@@ -62,7 +64,7 @@ Original                      Redirect
 
 In this example, every time `My.Package.csproj` is compiled, the latest binaries from its `bin/Debug` are automatically used by all consumers. Since the binaries are mapped (through .pdb) to local sources, code navigation and debugging on consumer side work seamlessly with latest changes in package code.
 
-[Back to top](#NuLink)
+[Back to top](#synopsis)
 
 ## Why would you use it
 
@@ -74,7 +76,7 @@ There has to be a seamless environment, which lets you develop packages as if th
 
 In Node community this problem is long solved with symlinks using **[npm link](https://docs.npmjs.com/cli/link.html)** command. On top of that tools like **[lerna](https://lerna.js.org/)** support whole development workflows.
 
-[Back to top](#NuLink)
+[Back to top](#synopsis)
 
 
 ## Usage instructions
@@ -140,7 +142,7 @@ To check version of the tool:
 $ nulink --version
 ```
 
-[Back to top](#NuLink)
+[Back to top](#synopsis)
 
 ## Troubleshooting
 
@@ -172,4 +174,4 @@ Example. To manually remove a link for **My.Package** version **1.0.5**, do thes
 - Remove the `lib` directory with `rm` (Linux/macOS) or `del` (Windows). Note that this only removes the symlink, not the actual `bin/Debug` folder.
 - Rename the `nulink-backup.lib` directory back to `lib`.
 
-[Back to top](#NuLink)
+[Back to top](#synopsis)
