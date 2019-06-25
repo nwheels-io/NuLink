@@ -6,7 +6,7 @@ namespace NuLink.TestCase.FirstPackage
     {
         public string GetString()
         {
-            return "FIRST-CLASS-SYMLINKED";
+            return "FIRST-CLASS-ORIGINAL";
         }
     }
 }

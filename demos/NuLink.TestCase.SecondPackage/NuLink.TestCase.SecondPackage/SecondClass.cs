@@ -7,7 +7,7 @@ namespace NuLink.TestCase.SecondPackage
         public string GetSecondString()
         {
             var first = new FirstClass();
-            return $"SECOND-CLASS-SYMLINKED({first.GetString()})";
+            return $"SECOND-CLASS-ORIGINAL({first.GetString()})";
         }
     }
 }
