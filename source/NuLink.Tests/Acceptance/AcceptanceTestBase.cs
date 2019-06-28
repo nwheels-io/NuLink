@@ -135,7 +135,7 @@ namespace NuLink.Tests.Acceptance
 
                 if (package.State.HasFlag(PackageStates.Patched))
                 {
-                    ExecIn(packageSourceFolder, "git", "apply", patchFilePath);
+                    ExecIn(packageSourceFolder, "git", "apply", "--ignore-whitespace", patchFilePath);
                 }
 
                 if (package.State.HasFlag(PackageStates.Built))
