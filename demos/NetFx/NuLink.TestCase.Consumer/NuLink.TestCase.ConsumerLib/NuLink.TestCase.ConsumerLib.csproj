@@ -4,14 +4,14 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{BA7D5290-D6E3-4C41-836E-068BF6A23944}</ProjectGuid>
+    <ProjectGuid>{291F145D-CACC-4263-9760-C866C55E2777}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NuLink.TestCase.SecondPackage</RootNamespace>
-    <AssemblyName>NuLink.TestCase.SecondPackage</AssemblyName>
+    <RootNamespace>NuLink.TestCase.ConsumerLib</RootNamespace>
+    <AssemblyName>NuLink.TestCase.ConsumerLib</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -34,6 +34,9 @@
     <Reference Include="NuLink.TestCase.FirstPackage, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\NuLink.TestCase.FirstPackage.0.1.0\lib\net45\NuLink.TestCase.FirstPackage.dll</HintPath>
     </Reference>
+    <Reference Include="NuLink.TestCase.SecondPackage, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NuLink.TestCase.SecondPackage.0.1.0\lib\net45\NuLink.TestCase.SecondPackage.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -44,7 +47,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SecondClass.cs" />
+    <Compile Include="ConsumerClassOne.cs" />
+    <Compile Include="ConsumerClassTwo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

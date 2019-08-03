@@ -1,15 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>NuLink.TestCase.FirstPackage</id>
-    <version>0.1.0-beta1</version>
+    <version>0.1.0</version>
+    <title></title>
     <authors>NuLink.TestCase.FirstPackage</authors>
     <owners>NuLink.TestCase.FirstPackage</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Package Description</description>
-    <repository type="git" url="https://github.com/felix-b/NuLink" />
-    <dependencies>
-      <group targetFramework=".NETStandard2.0" />
-    </dependencies>
+    <description>Package description</description>
   </metadata>
+  <files>
+    <file src="bin\Debug\NuLink.TestCase.FirstPackage.dll" target="lib\net45\NuLink.TestCase.FirstPackage.dll" />
+    <file src="bin\Debug\NuLink.TestCase.FirstPackage.pdb" target="lib\net45\NuLink.TestCase.FirstPackage.pdb" />
+  </files>
 </package>
