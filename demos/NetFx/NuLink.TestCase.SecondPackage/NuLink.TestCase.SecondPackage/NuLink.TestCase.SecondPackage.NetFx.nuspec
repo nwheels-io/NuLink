@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
-    <id>NuLink.TestCase.SecondPackage</id>
+    <id>NuLink.TestCase.SecondPackage.NetFx</id>
     <version>0.1.0</version>
     <title></title>
     <authors>NuLink.TestCase.SecondPackage</authors>
@@ -10,12 +10,12 @@
     <description>Package description</description>
     <dependencies>
       <group targetFramework=".NETFramework4.5">
-        <dependency id="NuLink.TestCase.FirstPackage" version="0.1.0" />
+        <dependency id="NuLink.TestCase.FirstPackage.NetFx" version="0.1.0" />
       </group>
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\Debug\NuLink.TestCase.SecondPackage.dll" target="lib\net45\NuLink.TestCase.SecondPackage.dll" />
-    <file src="bin\Debug\NuLink.TestCase.SecondPackage.pdb" target="lib\net45\NuLink.TestCase.SecondPackage.pdb" />
+    <file src="bin\Release\NuLink.TestCase.SecondPackage.dll" target="lib\net45\NuLink.TestCase.SecondPackage.dll" />
+    <file src="bin\Release\NuLink.TestCase.SecondPackage.pdb" target="lib\net45\NuLink.TestCase.SecondPackage.pdb" />
   </files>
 </package>

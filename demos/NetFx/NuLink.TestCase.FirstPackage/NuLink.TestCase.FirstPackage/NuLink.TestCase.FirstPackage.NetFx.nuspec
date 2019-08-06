@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
-    <id>NuLink.TestCase.FirstPackage</id>
+    <id>NuLink.TestCase.FirstPackage.NetFx</id>
     <version>0.1.0</version>
     <title></title>
     <authors>NuLink.TestCase.FirstPackage</authors>
@@ -10,7 +10,7 @@
     <description>Package description</description>
   </metadata>
   <files>
-    <file src="bin\Debug\NuLink.TestCase.FirstPackage.dll" target="lib\net45\NuLink.TestCase.FirstPackage.dll" />
-    <file src="bin\Debug\NuLink.TestCase.FirstPackage.pdb" target="lib\net45\NuLink.TestCase.FirstPackage.pdb" />
+    <file src="bin\Release\NuLink.TestCase.FirstPackage.dll" target="lib\net45\NuLink.TestCase.FirstPackage.dll" />
+    <file src="bin\Release\NuLink.TestCase.FirstPackage.pdb" target="lib\net45\NuLink.TestCase.FirstPackage.pdb" />
   </files>
 </package>

@@ -92,18 +92,39 @@ for:
 
           dotnet --info
 
+          
           cd %APPVEYOR_BUILD_FOLDER%\demos\NuLink.TestCase.FirstPackage\NuLink.TestCase.FirstPackage
 
           dotnet build -c Release
 
           appveyor PushArtifact bin\Release\NuLink.TestCase.FirstPackage.0.1.0-beta1.nupkg
 
+          
           cd %APPVEYOR_BUILD_FOLDER%\demos\NuLink.TestCase.SecondPackage\NuLink.TestCase.SecondPackage
 
           dotnet build -c Release
 
           appveyor PushArtifact bin\Release\NuLink.TestCase.SecondPackage.0.2.0-beta2.nupkg
 
+          
+          cd %APPVEYOR_BUILD_FOLDER%\demos\NetFx\NuLink.TestCase.FirstPackage\NuLink.TestCase.FirstPackage
+
+          msbuild ..\NuLink.TestCase.FirstPackage.sln /p:Configuration=Release
+
+          nuget pack NuLink.TestCase.FirstPackage.NetFx.nuspec
+
+          appveyor PushArtifact NuLink.TestCase.FirstPackage.NetFx.0.1.0.nupkg
+          
+          
+          cd %APPVEYOR_BUILD_FOLDER%\demos\NetFx\NuLink.TestCase.SecondPackage\NuLink.TestCase.SecondPackage
+
+          msbuild ..\NuLink.TestCase.SecondPackage.sln /p:Configuration=Release
+
+          nuget pack NuLink.TestCase.SecondPackage.NetFx.nuspec
+
+          appveyor PushArtifact NuLink.TestCase.SecondPackage.NetFx.0.1.0.nupkg
+
+          
           dotnet tool install -g NuLink --version %APPVEYOR_BUILD_VERSION% --add-source https://ci.appveyor.com/nuget/nulink-3672eibylf8q 
 
           nulink --version
