@@ -109,8 +109,6 @@ for:
           
           cd %APPVEYOR_BUILD_FOLDER%\demos\NetFx\NuLink.TestCase.FirstPackage\NuLink.TestCase.FirstPackage
 
-          nuget restore -SolutionDirectory ..
-
           msbuild ..\NuLink.TestCase.FirstPackage.sln /p:Configuration=Release
 
           nuget pack NuLink.TestCase.FirstPackage.NetFx.nuspec
