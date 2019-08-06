@@ -109,7 +109,9 @@ for:
           
           cd %APPVEYOR_BUILD_FOLDER%\demos\NetFx\NuLink.TestCase.FirstPackage\NuLink.TestCase.FirstPackage
 
-          msbuild ..\NuLink.TestCase.FirstPackage.sln /restore /p:Configuration=Release
+          nuget restore -SolutionDirectory ..
+
+          msbuild ..\NuLink.TestCase.FirstPackage.sln /p:Configuration=Release
 
           nuget pack NuLink.TestCase.FirstPackage.NetFx.nuspec
 
@@ -118,7 +120,9 @@ for:
           
           cd %APPVEYOR_BUILD_FOLDER%\demos\NetFx\NuLink.TestCase.SecondPackage\NuLink.TestCase.SecondPackage
 
-          msbuild ..\NuLink.TestCase.SecondPackage.sln /restore /p:Configuration=Release
+          nuget restore -SolutionDirectory ..
+
+          msbuild ..\NuLink.TestCase.SecondPackage.sln /p:Configuration=Release
 
           nuget pack NuLink.TestCase.SecondPackage.NetFx.nuspec
 
