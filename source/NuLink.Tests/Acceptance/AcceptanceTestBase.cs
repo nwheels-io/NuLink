@@ -14,6 +14,12 @@ namespace NuLink.Tests.Acceptance
     {
         [ThreadStatic]
         private static List<string> NuLinkOutput;
+
+        [OneTimeTearDown]
+        public void OneTimeTearDown()
+        {
+            ExternalProgram.ExecIn(TestEnvironment.DemoFolder, "git", "clean", "-dfx");
+        }
         
         protected void ExecuteTestCase(AcceptanceTestCase testCase)
         {
@@ -33,46 +39,17 @@ namespace NuLink.Tests.Acceptance
             }
         }
         
-        protected string[] Exec(string program, params string[] args)
-        {
-            return ExecIn(TestEnvironment.RepoFolder, program, args);
-        }
-
-        protected string[] ExecIn(string directory, string program, params string[] args)
-        {
-            var exitCode = ExternalProgram.Execute(
-                out var output,
-                nameOrFilePath: program,
-                args: args,
-                workingDirectory: directory,
-                validateExitCode: false);
-
-            if (exitCode != 0)
-            {
-                Console.WriteLine($"PROGRAM FAILED: {program} {string.Join(" ", args)}");
-                Console.WriteLine($"--- PROGRAM OUTPUT ---");
-                foreach (var line in output)
-                {
-                    Console.WriteLine(line);
-                }
-                Console.WriteLine($"--- END OF PROGRAM OUTPUT ---");
-                throw new Exception($"Program '{program}' failed with code {exitCode}.");
-            }
-
-            return output.ToArray();
-        }
-
         protected void ExecNuLinkIn(string directory, params string[] args)
         {
             string[] output;
             
             if (TestEnvironment.ShouldUseInstalledNuLinkBinary)
             {
-                output = ExecIn(directory, TestEnvironment.InstalledNuLinkBinaryPath, args);
+                output = ExternalProgram.ExecIn(directory, TestEnvironment.InstalledNuLinkBinaryPath, args);
             }
             else
             {
-                output = ExecIn(
+                output = ExternalProgram.ExecIn(
                     directory, 
                     "dotnet",
                     new[] { TestEnvironment.CompiledNuLinkBinaryPath }.Concat(args).ToArray());
@@ -85,8 +62,8 @@ namespace NuLink.Tests.Acceptance
         {
             NuLinkOutput = new List<string>();
             
-            ExecIn(TestEnvironment.DemoFolder, "git", "clean", "-dfx");
-            ExecIn(TestEnvironment.DemoFolder, "git", "checkout", ".");
+            ExternalProgram.ExecIn(TestEnvironment.DemoFolder, "git", "clean", "-dfx");
+            ExternalProgram.ExecIn(TestEnvironment.DemoFolder, "git", "checkout", ".");
 
             foreach (var package in testCase.Given.Packages)
             {
@@ -97,7 +74,7 @@ namespace NuLink.Tests.Acceptance
                 }
             }
             
-            ExecIn(testCase.Target.ConsumerSolutionFolder, "dotnet", "restore");
+            ExternalProgram.ExecIn(testCase.Target.ConsumerSolutionFolder, "dotnet", "restore");
         }
         
         private void SetupGiven(AcceptanceTestCase testCase)
@@ -116,12 +93,12 @@ namespace NuLink.Tests.Acceptance
 
                 if (package.State.HasFlag(PackageStates.Patched))
                 {
-                    ExecIn(packageSourceFolder, "git", "apply", "--ignore-whitespace", patchFilePath);
+                    ExternalProgram.ExecIn(packageSourceFolder, "git", "apply", "--ignore-whitespace", patchFilePath);
                 }
 
                 if (package.State.HasFlag(PackageStates.Built))
                 {
-                    ExecIn(packageSourceFolder, "dotnet", "build", "-c", "Debug");
+                    testCase.Target.BuildPackageProjectIn(packageSourceFolder);
                 }
 
                 if (package.State.HasFlag(PackageStates.Linked))
@@ -166,7 +143,7 @@ namespace NuLink.Tests.Acceptance
                         Environment.SetEnvironmentVariable($"TEST_{expected.Key}", expected.Value);
                     }
 
-                    Exec("dotnet", "test", Path.Combine(
+                    testCase.Target.RunTestProjectIn(Path.Combine(
                         testCase.Target.ConsumerSolutionFolder, 
                         "NuLink.TestCase.ConsumerLib.Tests"
                     ));

@@ -2,12 +2,42 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 
 namespace NuLink.Tests
 {
     public class ExternalProgram
     {
-        public static int Execute(
+        public static string[] Exec(string program, params string[] args)
+        {
+            return ExecIn(TestEnvironment.RepoFolder, program, args);
+        }
+
+        public static string[] ExecIn(string directory, string program, params string[] args)
+        {
+            var exitCode = Execute(
+                out var output,
+                nameOrFilePath: program,
+                args: args,
+                workingDirectory: directory,
+                validateExitCode: false);
+
+            if (exitCode != 0)
+            {
+                Console.WriteLine($"PROGRAM FAILED: {program} {string.Join(" ", args)}");
+                Console.WriteLine($"--- PROGRAM OUTPUT ---");
+                foreach (var line in output)
+                {
+                    Console.WriteLine(line);
+                }
+                Console.WriteLine($"--- END OF PROGRAM OUTPUT ---");
+                throw new Exception($"Program '{program}' failed with code {exitCode}.");
+            }
+
+            return output.ToArray();
+        }
+        
+        private static int Execute(
             string nameOrFilePath,
             string[] args = null,
             string workingDirectory = null,
@@ -22,7 +52,7 @@ namespace NuLink.Tests
                 shouldInterceptOutput: false);
         }
 
-        public static int Execute(
+        private static int Execute(
             out IEnumerable<string> output,
             string nameOrFilePath,
             string[] args = null,
@@ -38,7 +68,7 @@ namespace NuLink.Tests
                 shouldInterceptOutput: true);
         }
         
-        public static int Execute(
+        private static int Execute(
             out IEnumerable<string> output,
             string nameOrFilePath,
             string[] args,

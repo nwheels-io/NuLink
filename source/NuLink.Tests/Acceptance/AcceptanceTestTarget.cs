@@ -12,7 +12,10 @@ namespace NuLink.Tests.Acceptance
         public abstract string PackagesRootFolder { get; }
         public abstract string PackageNugetFolder(string packageId);
         public abstract string PackageNugetLibFolder(string packageId, string version);
-        
+        public abstract void BuildPackageProjectIn(string projectFolder); 
+        public abstract void RunTestProjectIn(string testProjectFolder); 
+        public abstract void RestoreSolutionPackagesIn(string solutionFolder);
+
         public static readonly AcceptanceTestTarget NetCore = new NetCoreTestTarget(); 
         //public static readonly AcceptanceTestTarget NetFx = new NetFxTestTarget();
 
@@ -51,5 +54,21 @@ namespace NuLink.Tests.Acceptance
             PackageNugetFolder(packageId),
             version,
             "lib");
+        public override void BuildPackageProjectIn(string projectFolder)
+        {
+            ExternalProgram.ExecIn(projectFolder, "dotnet", "build", "-c", "Debug");
+        }
+        public override void RunTestProjectIn(string testProjectFolder)
+        {
+            ExternalProgram.Exec("dotnet", "test", testProjectFolder);
+        }
+        public override void RestoreSolutionPackagesIn(string solutionFolder)
+        {
+            ExternalProgram.ExecIn(
+                solutionFolder, 
+                "dotnet", 
+                "restore",
+                "--force");
+        }
     }
 }

@@ -173,11 +173,7 @@ namespace NuLink.Tests.Acceptance
                     }
                 },
                 When = () => {
-                    ExecIn(
-                        target.ConsumerSolutionFolder, 
-                        "dotnet", 
-                        "restore",
-                        "--force");
+                    target.RestoreSolutionPackagesIn(target.ConsumerSolutionFolder);
                 },
                 Then = {
                     Packages = {
