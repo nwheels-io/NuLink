@@ -2,14 +2,14 @@
 
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
-        <Version>0.2.0-beta2</Version>
+        <Version>0.2.0</Version>
         <GeneratePackageOnBuild Condition="'$(Configuration)' == 'Release'">true</GeneratePackageOnBuild>
         <RepositoryType>git</RepositoryType>
         <RepositoryUrl>https://github.com/felix-b/NuLink</RepositoryUrl>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="NuLink.TestCase.FirstPackage" Version="0.1.0-beta1" />
+        <PackageReference Include="NuLink.TestCase.FirstPackage" Version="0.1.0" />
     </ItemGroup>
     
 </Project>

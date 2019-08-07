@@ -46,13 +46,13 @@ for:
 
           dotnet build -c Release
 
-          appveyor PushArtifact bin/Release/NuLink.TestCase.FirstPackage.0.1.0-beta1.nupkg
+          appveyor PushArtifact bin/Release/NuLink.TestCase.FirstPackage.0.1.0.nupkg
 
           cd $APPVEYOR_BUILD_FOLDER/demos/NuLink.TestCase.SecondPackage/NuLink.TestCase.SecondPackage
 
           dotnet build -c Release
 
-          appveyor PushArtifact bin/Release/NuLink.TestCase.SecondPackage.0.2.0-beta2.nupkg
+          appveyor PushArtifact bin/Release/NuLink.TestCase.SecondPackage.0.2.0.nupkg
 
           dotnet tool install -g NuLink --version $APPVEYOR_BUILD_VERSION --add-source https://ci.appveyor.com/nuget/nulink-3672eibylf8q 
 
@@ -97,14 +97,14 @@ for:
 
           dotnet build -c Release
 
-          appveyor PushArtifact bin\Release\NuLink.TestCase.FirstPackage.0.1.0-beta1.nupkg
+          appveyor PushArtifact bin\Release\NuLink.TestCase.FirstPackage.0.1.0.nupkg
 
           
           cd %APPVEYOR_BUILD_FOLDER%\demos\NuLink.TestCase.SecondPackage\NuLink.TestCase.SecondPackage
 
           dotnet build -c Release
 
-          appveyor PushArtifact bin\Release\NuLink.TestCase.SecondPackage.0.2.0-beta2.nupkg
+          appveyor PushArtifact bin\Release\NuLink.TestCase.SecondPackage.0.2.0.nupkg
 
           
           cd %APPVEYOR_BUILD_FOLDER%\demos\NetFx\NuLink.TestCase.FirstPackage\NuLink.TestCase.FirstPackage

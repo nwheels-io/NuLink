@@ -13,8 +13,8 @@ namespace NuLink.Tests.Acceptance
             ExecuteTestCase(new AcceptanceTestCase(target) {
                 Given = {
                     Packages = {
-                        ["NuLink.TestCase.FirstPackage"] = new PackageEntry("0.1.0-beta1", PackageStates.Original),
-                        ["NuLink.TestCase.SecondPackage"] = new PackageEntry("0.2.0-beta2", PackageStates.Original)
+                        ["NuLink.TestCase.FirstPackage"] = new PackageEntry("0.1.0", PackageStates.Original),
+                        ["NuLink.TestCase.SecondPackage"] = new PackageEntry("0.2.0", PackageStates.Original)
                     }
                 },
                 When = () => {
@@ -25,8 +25,8 @@ namespace NuLink.Tests.Acceptance
                 },
                 Then = {
                     ExpectedNuLinkOutput = new[] {
-                        "NuLink.TestCase.FirstPackage 0.1.0-beta1 ok",
-                        "NuLink.TestCase.SecondPackage 0.2.0-beta2 ok"
+                        "NuLink.TestCase.FirstPackage 0.1.0 ok",
+                        "NuLink.TestCase.SecondPackage 0.2.0 ok"
                     }
                 }
             });
@@ -41,8 +41,8 @@ namespace NuLink.Tests.Acceptance
             ExecuteTestCase(new AcceptanceTestCase(target) {
                 Given = {
                     Packages = {
-                        ["NuLink.TestCase.FirstPackage"] = new PackageEntry("0.1.0-beta1", PackageStates.Original),
-                        ["NuLink.TestCase.SecondPackage"] = new PackageEntry("0.2.0-beta2", PackageStates.PatchedBuiltAndLinked)
+                        ["NuLink.TestCase.FirstPackage"] = new PackageEntry("0.1.0", PackageStates.Original),
+                        ["NuLink.TestCase.SecondPackage"] = new PackageEntry("0.2.0", PackageStates.PatchedBuiltAndLinked)
                     }
                 },
                 When = () => {
@@ -53,8 +53,8 @@ namespace NuLink.Tests.Acceptance
                 },
                 Then = {
                     ExpectedNuLinkOutput = new[] {
-                        $"NuLink.TestCase.FirstPackage 0.1.0-beta1 ok",
-                        $"NuLink.TestCase.SecondPackage 0.2.0-beta2 ok -> {secondPackageTargetPath}"
+                        $"NuLink.TestCase.FirstPackage 0.1.0 ok",
+                        $"NuLink.TestCase.SecondPackage 0.2.0 ok -> {secondPackageTargetPath}"
                     }
                 }
             });
