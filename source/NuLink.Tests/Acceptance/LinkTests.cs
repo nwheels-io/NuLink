@@ -8,7 +8,9 @@ namespace NuLink.Tests.Acceptance
         [Test]
         public void DoNotPatch_DoNotLink_PatchesNotReflected()
         {
-            ExecuteTestCase(new AcceptanceTestCase {
+            var target = AcceptanceTestTarget.NetCore;
+            
+            ExecuteTestCase(new AcceptanceTestCase(target) {
                 Given = {
                     Packages = {
                         ["NuLink.TestCase.FirstPackage"] = new PackageEntry("0.1.0-beta1", PackageStates.Original),
@@ -31,7 +33,9 @@ namespace NuLink.Tests.Acceptance
         [Test]
         public void PatchAll_DoNotLink_PatchesNotReflected()
         {
-            ExecuteTestCase(new AcceptanceTestCase {
+            var target = AcceptanceTestTarget.NetCore;
+
+            ExecuteTestCase(new AcceptanceTestCase(target) {
                 Given = {
                     Packages = {
                         ["NuLink.TestCase.FirstPackage"] = new PackageEntry("0.1.0-beta1", PackageStates.PatchedAndBuilt),
@@ -54,7 +58,9 @@ namespace NuLink.Tests.Acceptance
         [Test]
         public void PatchAll_LinkLeaf_OnlyPatchOfLeafReflected()
         {
-            ExecuteTestCase(new AcceptanceTestCase {
+            var target = AcceptanceTestTarget.NetCore;
+
+            ExecuteTestCase(new AcceptanceTestCase(target) {
                 Given = {
                     Packages = {
                         ["NuLink.TestCase.FirstPackage"] = new PackageEntry("0.1.0-beta1", PackageStates.PatchedAndBuilt),
@@ -63,12 +69,12 @@ namespace NuLink.Tests.Acceptance
                 },
                 When = () => {
                     ExecNuLinkIn(
-                        ConsumerSolutionFolder,
+                        target.ConsumerSolutionFolder,
                         "link",
                         "-p",
                         "NuLink.TestCase.SecondPackage",
                         "-l",
-                        PackageProjectFile("NuLink.TestCase.SecondPackage"));
+                        target.PackageProjectFile("NuLink.TestCase.SecondPackage"));
                 },
                 Then = {
                     Packages = {
@@ -86,7 +92,9 @@ namespace NuLink.Tests.Acceptance
         [Test]
         public void PatchAll_LinkNonLeaf_OnlyPatchOfNonLeafReflected()
         {
-            ExecuteTestCase(new AcceptanceTestCase {
+            var target = AcceptanceTestTarget.NetCore;
+
+            ExecuteTestCase(new AcceptanceTestCase(target) {
                 Given = {
                     Packages = {
                         ["NuLink.TestCase.FirstPackage"] = new PackageEntry("0.1.0-beta1", PackageStates.PatchedAndBuilt),
@@ -95,12 +103,12 @@ namespace NuLink.Tests.Acceptance
                 },
                 When = () => {
                     ExecNuLinkIn(
-                        ConsumerSolutionFolder,
+                        target.ConsumerSolutionFolder,
                         "link",
                         "-p",
                         "NuLink.TestCase.FirstPackage",
                         "-l",
-                        PackageProjectFile("NuLink.TestCase.FirstPackage"));
+                        target.PackageProjectFile("NuLink.TestCase.FirstPackage"));
                 },
                 Then = {
                     Packages = {
@@ -118,7 +126,9 @@ namespace NuLink.Tests.Acceptance
         [Test]
         public void PatchAll_LinkAll_AllPatchesReflected()
         {
-            ExecuteTestCase(new AcceptanceTestCase {
+            var target = AcceptanceTestTarget.NetCore;
+
+            ExecuteTestCase(new AcceptanceTestCase(target) {
                 Given = {
                     Packages = {
                         ["NuLink.TestCase.FirstPackage"] = new PackageEntry("0.1.0-beta1", PackageStates.PatchedAndBuilt),
@@ -127,15 +137,15 @@ namespace NuLink.Tests.Acceptance
                 },
                 When = () => {
                     ExecNuLinkIn(
-                        ConsumerSolutionFolder, 
+                        target.ConsumerSolutionFolder, 
                         "link", 
                         "-p", "NuLink.TestCase.FirstPackage",
-                        "-l", PackageProjectFile("NuLink.TestCase.FirstPackage"));
+                        "-l", target.PackageProjectFile("NuLink.TestCase.FirstPackage"));
                     ExecNuLinkIn(
-                        ConsumerSolutionFolder, 
+                        target.ConsumerSolutionFolder, 
                         "link", 
                         "-p", "NuLink.TestCase.SecondPackage",
-                        "-l", PackageProjectFile("NuLink.TestCase.SecondPackage"));
+                        "-l", target.PackageProjectFile("NuLink.TestCase.SecondPackage"));
                 },
                 Then = {
                     Packages = {
@@ -153,7 +163,9 @@ namespace NuLink.Tests.Acceptance
         [Test]
         public void PatchAndLinkAll_DotNetRestore_AllLinksSurvived()
         {
-            ExecuteTestCase(new AcceptanceTestCase {
+            var target = AcceptanceTestTarget.NetCore;
+
+            ExecuteTestCase(new AcceptanceTestCase(target) {
                 Given = {
                     Packages = {
                         ["NuLink.TestCase.FirstPackage"] = new PackageEntry("0.1.0-beta1", PackageStates.PatchedBuiltAndLinked),
@@ -162,7 +174,7 @@ namespace NuLink.Tests.Acceptance
                 },
                 When = () => {
                     ExecIn(
-                        ConsumerSolutionFolder, 
+                        target.ConsumerSolutionFolder, 
                         "dotnet", 
                         "restore",
                         "--force");

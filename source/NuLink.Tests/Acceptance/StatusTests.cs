@@ -8,7 +8,9 @@ namespace NuLink.Tests.Acceptance
         [Test]
         public void NotLinked_PrintOK()
         {
-            ExecuteTestCase(new AcceptanceTestCase {
+            var target = AcceptanceTestTarget.NetCore;
+
+            ExecuteTestCase(new AcceptanceTestCase(target) {
                 Given = {
                     Packages = {
                         ["NuLink.TestCase.FirstPackage"] = new PackageEntry("0.1.0-beta1", PackageStates.Original),
@@ -17,7 +19,7 @@ namespace NuLink.Tests.Acceptance
                 },
                 When = () => {
                     ExecNuLinkIn(
-                        Path.Combine(ConsumerSolutionFolder, "NuLink.TestCase.ConsumerLib"),
+                        Path.Combine(target.ConsumerSolutionFolder, "NuLink.TestCase.ConsumerLib"),
                         "status",
                         "-q");
                 },
@@ -33,9 +35,10 @@ namespace NuLink.Tests.Acceptance
         [Test]
         public void Linked_PrintLinkTargetPath()
         {
-            var secondPackageTargetPath = Path.Combine(PackageProjectFolder("NuLink.TestCase.SecondPackage"), "bin", "Debug");
+            var target = AcceptanceTestTarget.NetCore;
+            var secondPackageTargetPath = Path.Combine(target.PackageProjectFolder("NuLink.TestCase.SecondPackage"), "bin", "Debug");
             
-            ExecuteTestCase(new AcceptanceTestCase {
+            ExecuteTestCase(new AcceptanceTestCase(target) {
                 Given = {
                     Packages = {
                         ["NuLink.TestCase.FirstPackage"] = new PackageEntry("0.1.0-beta1", PackageStates.Original),
@@ -44,7 +47,7 @@ namespace NuLink.Tests.Acceptance
                 },
                 When = () => {
                     ExecNuLinkIn(
-                        Path.Combine(ConsumerSolutionFolder, "NuLink.TestCase.ConsumerLib"),
+                        Path.Combine(target.ConsumerSolutionFolder, "NuLink.TestCase.ConsumerLib"),
                         "status",
                         "-q");
                 },

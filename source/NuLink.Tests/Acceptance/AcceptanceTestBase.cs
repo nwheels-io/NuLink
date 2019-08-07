@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
 using Murphy.SymbolicLink;
 using NUnit.Framework;
 using Shouldly;
@@ -80,26 +81,6 @@ namespace NuLink.Tests.Acceptance
             NuLinkOutput.AddRange(output);
         }
         
-        protected string ConsumerSolutionFolder => Path.Combine(TestEnvironment.DemoFolder, "NuLink.TestCase.Consumer");
-        protected string ConsumerSolutionFile => Path.Combine(ConsumerSolutionFolder, "NuLink.TestCase.Consumer.sln");
-        protected string PackageProjectFolder(string packageId) => Path.Combine(
-            TestEnvironment.DemoFolder, 
-            packageId,
-            packageId);
-        protected string PackageProjectFile(string packageId) =>
-            Path.Combine(PackageProjectFolder(packageId), $"{packageId}.csproj");
-        protected string PackagesRootFolder => Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-            ".nuget",
-            "packages");
-        protected string PackageNugetFolder(string packageId) => Path.Combine(
-            PackagesRootFolder,
-            packageId.ToLower());
-        protected string PackageNugetLibFolder(string packageId, string version) => Path.Combine(
-            PackageNugetFolder(packageId),
-            version,
-            "lib");
-
         private void Cleanup(AcceptanceTestCase testCase)
         {
             NuLinkOutput = new List<string>();
@@ -109,14 +90,14 @@ namespace NuLink.Tests.Acceptance
 
             foreach (var package in testCase.Given.Packages)
             {
-                var packageFolder = PackageNugetFolder(package.Key);
+                var packageFolder = testCase.Target.PackageNugetFolder(package.Key);
                 if (Directory.Exists(packageFolder))
                 {
                     Directory.Delete(packageFolder, recursive: true);
                 }
             }
             
-            ExecIn(ConsumerSolutionFolder, "dotnet", "restore");
+            ExecIn(testCase.Target.ConsumerSolutionFolder, "dotnet", "restore");
         }
         
         private void SetupGiven(AcceptanceTestCase testCase)
@@ -146,10 +127,10 @@ namespace NuLink.Tests.Acceptance
                 if (package.State.HasFlag(PackageStates.Linked))
                 {
                     ExecNuLinkIn(
-                        ConsumerSolutionFolder,
+                        testCase.Target.ConsumerSolutionFolder,
                         "link", 
                         "-p", packageId,
-                        "-l", PackageProjectFile(packageId));
+                        "-l", testCase.Target.PackageProjectFile(packageId));
                 }
             }
         }
@@ -185,14 +166,17 @@ namespace NuLink.Tests.Acceptance
                         Environment.SetEnvironmentVariable($"TEST_{expected.Key}", expected.Value);
                     }
 
-                    Exec("dotnet", "test", Path.Combine(ConsumerSolutionFolder, "NuLink.TestCase.ConsumerLib.Tests"));
+                    Exec("dotnet", "test", Path.Combine(
+                        testCase.Target.ConsumerSolutionFolder, 
+                        "NuLink.TestCase.ConsumerLib.Tests"
+                    ));
                 }
             }
 
             void VerifyThenPackageState(string packageId, PackageEntry package)
             {
-                var packageFolderPath = PackageNugetFolder(packageId);
-                var libFolderPath = PackageNugetLibFolder(packageId, package.Version);
+                var packageFolderPath = testCase.Target.PackageNugetFolder(packageId);
+                var libFolderPath = testCase.Target.PackageNugetLibFolder(packageId, package.Version);
                 var libFolderTargetPath = SymbolicLink.resolve(libFolderPath);
                 var isLinked = (libFolderTargetPath != null && libFolderTargetPath != libFolderPath);
                 var libBackupFolderExists = Directory.Exists(Path.Combine(packageFolderPath, package.Version, "nulink-backup.lib"));
