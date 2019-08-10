@@ -18,7 +18,7 @@ namespace NuLink.Tests.Acceptance
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
-            ExternalProgram.ExecIn(TestEnvironment.DemoFolder, "git", "clean", "-dfx");
+            ExternalProgram.ExecIn(TestEnvironment.DemoFolder, "git", "checkout", ".");
         }
         
         protected void ExecuteTestCase(AcceptanceTestCase testCase)
@@ -60,35 +60,52 @@ namespace NuLink.Tests.Acceptance
         
         private void Cleanup(AcceptanceTestCase testCase)
         {
+            var target = testCase.Target;
+
             NuLinkOutput = new List<string>();
             
             ExternalProgram.ExecIn(TestEnvironment.DemoFolder, "git", "clean", "-dfx");
             ExternalProgram.ExecIn(TestEnvironment.DemoFolder, "git", "checkout", ".");
 
-            foreach (var package in testCase.Given.Packages)
+            var allSolitionFolders = testCase.Given.Packages
+                .Select(p => target.PackageSolutionFolder(target.PackageId(p.Key)))
+                .Append(target.ConsumerSolutionFolder)
+                .ToArray();
+
+            foreach (var solutionFodler in allSolitionFolders)
             {
-                var packageFolder = testCase.Target.PackageNugetFolder(package.Key);
-                if (Directory.Exists(packageFolder))
+                foreach (var package in testCase.Given.Packages)
                 {
-                    Directory.Delete(packageFolder, recursive: true);
+                    var packageId = target.PackageId(package.Key);
+                    var packageFolder = target.PackageNugetFolder(
+                        target.PackageProjectFolder(solutionFodler),
+                        packageId);
+
+                    if (Directory.Exists(packageFolder))
+                    {
+                        Directory.Delete(packageFolder, recursive: true);
+                    }
                 }
             }
             
-            ExternalProgram.ExecIn(testCase.Target.ConsumerSolutionFolder, "dotnet", "restore");
+            target.RestoreSolutionPackagesIn(target.ConsumerSolutionFolder);
         }
         
         private void SetupGiven(AcceptanceTestCase testCase)
         {
+            var target = testCase.Target;
+            
             foreach (var package in testCase.Given.Packages)
             {
-                SetupGivenPackageState(package.Key, package.Value);
+                var packageId = target.PackageId(package.Key);
+                SetupGivenPackageState(packageId, package.Value);
             }
 
             Directory.SetCurrentDirectory(testCase.GivenCurrentDiectory ?? TestEnvironment.DemoFolder);
             
             void SetupGivenPackageState(string packageId, PackageEntry package)
             {
-                var packageSourceFolder = Path.Combine(TestEnvironment.DemoFolder, packageId);
+                var packageSourceFolder = target.PackageSolutionFolder(packageId);
                 var patchFilePath = Path.Combine(TestEnvironment.DemoFolder, "modify-test-case-packages.patch");
 
                 if (package.State.HasFlag(PackageStates.Patched))
@@ -98,7 +115,7 @@ namespace NuLink.Tests.Acceptance
 
                 if (package.State.HasFlag(PackageStates.Built))
                 {
-                    testCase.Target.BuildPackageProjectIn(packageSourceFolder);
+                    target.BuildPackageProjectIn(packageSourceFolder);
                 }
 
                 if (package.State.HasFlag(PackageStates.Linked))
@@ -114,6 +131,8 @@ namespace NuLink.Tests.Acceptance
 
         private void VerifyThen(AcceptanceTestCase testCase)
         {
+            var target = testCase.Target;
+            
             VerifyPackages();
             VerifyNuLinkOutput();
             RunConsumerTests();
@@ -122,7 +141,8 @@ namespace NuLink.Tests.Acceptance
             {
                 foreach (var package in testCase.Then.Packages)
                 {
-                    VerifyThenPackageState(package.Key, package.Value);
+                    var packageId = target.PackageId(package.Key);
+                    VerifyThenPackageState(packageId, package.Value);
                 }
             }
 
@@ -143,8 +163,8 @@ namespace NuLink.Tests.Acceptance
                         Environment.SetEnvironmentVariable($"TEST_{expected.Key}", expected.Value);
                     }
 
-                    testCase.Target.RunTestProjectIn(Path.Combine(
-                        testCase.Target.ConsumerSolutionFolder, 
+                    target.RunTestProjectIn(Path.Combine(
+                        target.ConsumerSolutionFolder, 
                         "NuLink.TestCase.ConsumerLib.Tests"
                     ));
                 }
@@ -152,8 +172,9 @@ namespace NuLink.Tests.Acceptance
 
             void VerifyThenPackageState(string packageId, PackageEntry package)
             {
-                var packageFolderPath = testCase.Target.PackageNugetFolder(packageId);
-                var libFolderPath = testCase.Target.PackageNugetLibFolder(packageId, package.Version);
+                var packageSolutionFolder = target.PackageSolutionFolder(packageId);
+                var packageFolderPath = testCase.Target.PackageNugetFolder(packageSolutionFolder, packageId);
+                var libFolderPath = testCase.Target.PackageNugetLibFolder(packageSolutionFolder, packageId, package.Version);
                 var libFolderTargetPath = SymbolicLink.resolve(libFolderPath);
                 var isLinked = (libFolderTargetPath != null && libFolderTargetPath != libFolderPath);
                 var libBackupFolderExists = Directory.Exists(Path.Combine(packageFolderPath, package.Version, "nulink-backup.lib"));

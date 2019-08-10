@@ -7,15 +7,22 @@ namespace NuLink.Tests.Acceptance
     {
         public abstract string ConsumerSolutionFolder { get; }
         public abstract string ConsumerSolutionFile { get; }
+        public abstract string PackageSolutionFolder(string packageId);
         public abstract string PackageProjectFolder(string packageId);
         public abstract string PackageProjectFile(string packageId);
-        public abstract string PackagesRootFolder { get; }
-        public abstract string PackageNugetFolder(string packageId);
-        public abstract string PackageNugetLibFolder(string packageId, string version);
+        public abstract string PackageIdSuffix { get; }
+        public abstract string PackagesRootFolder(string solutionFolder);
+        public abstract string PackageNugetFolder(string solutionFolder, string packageId);
+        public abstract string PackageNugetLibFolder(string solutionFolder, string packageId, string version);
         public abstract void BuildPackageProjectIn(string projectFolder); 
         public abstract void RunTestProjectIn(string testProjectFolder); 
         public abstract void RestoreSolutionPackagesIn(string solutionFolder);
 
+        public string PackageId(string packageName)
+        {
+            return packageName + PackageIdSuffix;
+        }
+        
         public static readonly AcceptanceTestTarget NetCore = new NetCoreTestTarget(); 
         //public static readonly AcceptanceTestTarget NetFx = new NetFxTestTarget();
 
@@ -37,21 +44,73 @@ namespace NuLink.Tests.Acceptance
             Path.Combine(TestEnvironment.DemoFolder, "NuLink.TestCase.Consumer");
         public override string ConsumerSolutionFile => 
             Path.Combine(ConsumerSolutionFolder, "NuLink.TestCase.Consumer.sln");
-        public override string PackageProjectFolder(string packageId) => Path.Combine(
+        public override string PackageSolutionFolder(string packageId) => Path.Combine(
             TestEnvironment.DemoFolder, 
-            packageId,
+            packageId);
+        public override string PackageProjectFolder(string packageId) => Path.Combine(
+            PackageSolutionFolder(packageId),
             packageId);
         public override string PackageProjectFile(string packageId) =>
             Path.Combine(PackageProjectFolder(packageId), $"{packageId}.csproj");
-        public override string PackagesRootFolder => Path.Combine(
+        public override string PackageIdSuffix => string.Empty;
+        public override string PackagesRootFolder(string solutionFolder) => Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
             ".nuget",
             "packages");
-        public override string PackageNugetFolder(string packageId) => Path.Combine(
-            PackagesRootFolder,
+        public override string PackageNugetFolder(string solutionFolder, string packageId) => Path.Combine(
+            PackagesRootFolder(solutionFolder),
             packageId.ToLower());
-        public override string PackageNugetLibFolder(string packageId, string version) => Path.Combine(
-            PackageNugetFolder(packageId),
+        public override string PackageNugetLibFolder(string solutionFolder, string packageId, string version) => Path.Combine(
+            PackageNugetFolder(solutionFolder, packageId),
+            version,
+            "lib");
+        public override void BuildPackageProjectIn(string projectFolder)
+        {
+            ExternalProgram.ExecIn(projectFolder, "dotnet", "build", "-c", "Debug");
+        }
+        public override void RunTestProjectIn(string testProjectFolder)
+        {
+            ExternalProgram.Exec("dotnet", "test", testProjectFolder);
+        }
+        public override void RestoreSolutionPackagesIn(string solutionFolder)
+        {
+            ExternalProgram.ExecIn(
+                solutionFolder, 
+                "dotnet", 
+                "restore",
+                "--force");
+        }
+    }
+
+    //D:\NuLink\demos\NetFx\NuLink.TestCase.Consumer\packages\NUnit.ConsoleRunner.3.10.0\tools
+    public class NetFxTestTarget : AcceptanceTestTarget
+    {
+        public override string ConsumerSolutionFolder => Path.Combine(
+            TestEnvironment.DemoFolder, 
+            "NetFx", 
+            "NuLink.TestCase.Consumer");
+        public override string ConsumerSolutionFile => Path.Combine(
+            ConsumerSolutionFolder, 
+            "NuLink.TestCase.Consumer.sln");
+        public override string PackageSolutionFolder(string packageId) => Path.Combine(
+            TestEnvironment.DemoFolder, 
+            "NetFx",
+            packageId);
+        public override string PackageProjectFolder(string packageId) => Path.Combine(
+            PackageSolutionFolder(packageId),
+            packageId);
+        public override string PackageProjectFile(string packageId) => Path.Combine(
+            PackageProjectFolder(packageId), 
+            $"{packageId}.csproj");
+        public override string PackageIdSuffix => ".NetFx";
+        public override string PackagesRootFolder(string solutionFolder) => Path.Combine(
+            solutionFolder,
+            "packages");
+        public override string PackageNugetFolder(string solutionFolder, string packageId) => Path.Combine(
+            PackagesRootFolder(solutionFolder),
+            packageId.ToLower());
+        public override string PackageNugetLibFolder(string solutionFolder, string packageId, string version) => Path.Combine(
+            PackageNugetFolder(solutionFolder, packageId),
             version,
             "lib");
         public override void BuildPackageProjectIn(string projectFolder)
