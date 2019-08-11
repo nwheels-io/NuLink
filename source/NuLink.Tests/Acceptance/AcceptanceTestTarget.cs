@@ -24,7 +24,7 @@ namespace NuLink.Tests.Acceptance
         }
         
         public static readonly AcceptanceTestTarget NetCore = new NetCoreTestTarget(); 
-        //public static readonly AcceptanceTestTarget NetFx = new NetFxTestTarget();
+        public static readonly AcceptanceTestTarget NetFx = new NetFxTestTarget();
 
         public static AcceptanceTestTarget Get(TargetProjectKind projectKind)
         {
@@ -35,6 +35,11 @@ namespace NuLink.Tests.Acceptance
             }
             
             throw new NotSupportedException(projectKind.ToString());
+        }
+
+        public void LogName()
+        {
+            Console.WriteLine($"--- acceptance test target: {ToString()} ---");
         }
     }
 
@@ -79,6 +84,10 @@ namespace NuLink.Tests.Acceptance
                 "dotnet", 
                 "restore",
                 "--force");
+        }
+        public override string ToString()
+        {
+            return "NetCore";
         }
     }
 
@@ -128,6 +137,10 @@ namespace NuLink.Tests.Acceptance
                 "dotnet", 
                 "restore",
                 "--force");
+        }
+        public override string ToString()
+        {
+            return "NetFx";
         }
     }
 }

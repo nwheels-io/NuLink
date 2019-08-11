@@ -15,12 +15,14 @@ namespace NuLink.Tests.Acceptance
         [ThreadStatic]
         private static List<string> NuLinkOutput;
 
+        public static readonly IReadOnlyList<AcceptanceTestTarget> AllTargets; 
+
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
             ExternalProgram.ExecIn(TestEnvironment.DemoFolder, "git", "checkout", ".");
         }
-        
+
         protected void ExecuteTestCase(AcceptanceTestCase testCase)
         {
             try
@@ -181,6 +183,16 @@ namespace NuLink.Tests.Acceptance
 
                 isLinked.ShouldBe(package.State.HasFlag(PackageStates.Linked));
                 libBackupFolderExists.ShouldBe(package.State.HasFlag(PackageStates.Linked));
+            }
+        }
+        
+        public static IEnumerable<AcceptanceTestTarget> GetSupportedTargets()
+        {
+            yield return AcceptanceTestTarget.NetCore;
+            
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                yield return AcceptanceTestTarget.NetFx;
             }
         }
     }

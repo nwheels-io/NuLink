@@ -5,10 +5,10 @@ namespace NuLink.Tests.Acceptance
 {
     public class StatusTests : AcceptanceTestBase
     {
-        [Test]
-        public void NotLinked_PrintOK()
+        [TestCaseSource(nameof(GetSupportedTargets))]
+        public void NotLinked_PrintOK(AcceptanceTestTarget target)
         {
-            var target = AcceptanceTestTarget.NetCore;
+            target.LogName();
 
             ExecuteTestCase(new AcceptanceTestCase(target) {
                 Given = {
@@ -32,10 +32,11 @@ namespace NuLink.Tests.Acceptance
             });
         }
 
-        [Test]
-        public void Linked_PrintLinkTargetPath()
+        [TestCaseSource(nameof(GetSupportedTargets))]
+        public void Linked_PrintLinkTargetPath(AcceptanceTestTarget target)
         {
-            var target = AcceptanceTestTarget.NetCore;
+            target.LogName();
+
             var secondPackageTargetPath = Path.Combine(target.PackageProjectFolder("NuLink.TestCase.SecondPackage"), "bin", "Debug");
             
             ExecuteTestCase(new AcceptanceTestCase(target) {

@@ -4,10 +4,10 @@ namespace NuLink.Tests.Acceptance
 {
     public class UnlinkTests : AcceptanceTestBase
     {
-        [Test]
-        public void AllPatchedAndLinked_DoNotUnLink_AllPatchesReflected()
+        [TestCaseSource(nameof(GetSupportedTargets))]
+        public void AllPatchedAndLinked_DoNotUnLink_AllPatchesReflected(AcceptanceTestTarget target)
         {
-            var target = AcceptanceTestTarget.NetCore;
+            target.LogName();
 
             ExecuteTestCase(new AcceptanceTestCase(target) {
                 Given = {
@@ -29,10 +29,10 @@ namespace NuLink.Tests.Acceptance
             });
         }
 
-        [Test]
-        public void AllPatchedAndLinked_UnLinkLeaf_UnlinkedPatchesNotReflected()
+        [TestCaseSource(nameof(GetSupportedTargets))]
+        public void AllPatchedAndLinked_UnLinkLeaf_UnlinkedPatchesNotReflected(AcceptanceTestTarget target)
         {
-            var target = AcceptanceTestTarget.NetCore;
+            target.LogName();
 
             ExecuteTestCase(new AcceptanceTestCase(target) {
                 Given = {
@@ -60,10 +60,10 @@ namespace NuLink.Tests.Acceptance
             });
         }
 
-        [Test]
-        public void AllPatchedAndLinked_UnLinkNonLeaf_UnlinkedPatchesNotReflected()
+        [TestCaseSource(nameof(GetSupportedTargets))]
+        public void AllPatchedAndLinked_UnLinkNonLeaf_UnlinkedPatchesNotReflected(AcceptanceTestTarget target)
         {
-            var target = AcceptanceTestTarget.NetCore;
+            target.LogName();
 
             ExecuteTestCase(new AcceptanceTestCase(target) {
                 Given = {
@@ -91,10 +91,10 @@ namespace NuLink.Tests.Acceptance
             });
         }
 
-        [Test]
-        public void AllPatchedAndLinked_UnLinkAll_PatchesNotReflected()
+        [TestCaseSource(nameof(GetSupportedTargets))]
+        public void AllPatchedAndLinked_UnLinkAll_PatchesNotReflected(AcceptanceTestTarget target)
         {
-            var target = AcceptanceTestTarget.NetCore;
+            target.LogName();
 
             ExecuteTestCase(new AcceptanceTestCase(target) {
                 Given = {

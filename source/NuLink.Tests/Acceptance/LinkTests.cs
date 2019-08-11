@@ -5,10 +5,10 @@ namespace NuLink.Tests.Acceptance
 {
     public class LinkTests : AcceptanceTestBase
     {
-        [Test]
-        public void DoNotPatch_DoNotLink_PatchesNotReflected()
+        [TestCaseSource(nameof(GetSupportedTargets))]
+        public void DoNotPatch_DoNotLink_PatchesNotReflected(AcceptanceTestTarget target)
         {
-            var target = AcceptanceTestTarget.NetCore;
+            target.LogName();
             
             ExecuteTestCase(new AcceptanceTestCase(target) {
                 Given = {
@@ -30,10 +30,10 @@ namespace NuLink.Tests.Acceptance
             });
         }
 
-        [Test]
-        public void PatchAll_DoNotLink_PatchesNotReflected()
+        [TestCaseSource(nameof(GetSupportedTargets))]
+        public void PatchAll_DoNotLink_PatchesNotReflected(AcceptanceTestTarget target)
         {
-            var target = AcceptanceTestTarget.NetCore;
+            target.LogName();
 
             ExecuteTestCase(new AcceptanceTestCase(target) {
                 Given = {
@@ -55,10 +55,10 @@ namespace NuLink.Tests.Acceptance
             });
         }
 
-        [Test]
-        public void PatchAll_LinkLeaf_OnlyPatchOfLeafReflected()
+        [TestCaseSource(nameof(GetSupportedTargets))]
+        public void PatchAll_LinkLeaf_OnlyPatchOfLeafReflected(AcceptanceTestTarget target)
         {
-            var target = AcceptanceTestTarget.NetCore;
+            target.LogName();
 
             ExecuteTestCase(new AcceptanceTestCase(target) {
                 Given = {
@@ -89,10 +89,10 @@ namespace NuLink.Tests.Acceptance
             });
         }
 
-        [Test]
-        public void PatchAll_LinkNonLeaf_OnlyPatchOfNonLeafReflected()
+        [TestCaseSource(nameof(GetSupportedTargets))]
+        public void PatchAll_LinkNonLeaf_OnlyPatchOfNonLeafReflected(AcceptanceTestTarget target)
         {
-            var target = AcceptanceTestTarget.NetCore;
+            target.LogName();
 
             ExecuteTestCase(new AcceptanceTestCase(target) {
                 Given = {
@@ -123,10 +123,10 @@ namespace NuLink.Tests.Acceptance
             });
         }
         
-        [Test]
-        public void PatchAll_LinkAll_AllPatchesReflected()
+        [TestCaseSource(nameof(GetSupportedTargets))]
+        public void PatchAll_LinkAll_AllPatchesReflected(AcceptanceTestTarget target)
         {
-            var target = AcceptanceTestTarget.NetCore;
+            target.LogName();
 
             ExecuteTestCase(new AcceptanceTestCase(target) {
                 Given = {
@@ -160,10 +160,10 @@ namespace NuLink.Tests.Acceptance
             });
         }
 
-        [Test]
-        public void PatchAndLinkAll_DotNetRestore_AllLinksSurvived()
+        [TestCaseSource(nameof(GetSupportedTargets))]
+        public void PatchAndLinkAll_DotNetRestore_AllLinksSurvived(AcceptanceTestTarget target)
         {
-            var target = AcceptanceTestTarget.NetCore;
+            target.LogName();
 
             ExecuteTestCase(new AcceptanceTestCase(target) {
                 Given = {
