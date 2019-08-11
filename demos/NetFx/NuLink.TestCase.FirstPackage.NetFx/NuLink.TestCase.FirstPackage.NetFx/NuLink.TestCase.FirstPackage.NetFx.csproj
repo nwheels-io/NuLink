@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>NuLink.TestCase.FirstPackage</RootNamespace>
-    <AssemblyName>NuLink.TestCase.FirstPackage</AssemblyName>
+    <AssemblyName>NuLink.TestCase.FirstPackage.NetFx</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>

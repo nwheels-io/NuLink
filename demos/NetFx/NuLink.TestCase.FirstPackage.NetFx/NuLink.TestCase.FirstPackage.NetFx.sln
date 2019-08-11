@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.705
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuLink.TestCase.FirstPackage", "NuLink.TestCase.FirstPackage\NuLink.TestCase.FirstPackage.csproj", "{9A041630-47D5-4E95-8F76-320C8D3EA59F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuLink.TestCase.FirstPackage.NetFx", "NuLink.TestCase.FirstPackage.NetFx\NuLink.TestCase.FirstPackage.NetFx.csproj", "{9A041630-47D5-4E95-8F76-320C8D3EA59F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

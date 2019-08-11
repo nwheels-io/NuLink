@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>NuLink.TestCase.SecondPackage</RootNamespace>
-    <AssemblyName>NuLink.TestCase.SecondPackage</AssemblyName>
+    <AssemblyName>NuLink.TestCase.SecondPackage.NetFx</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -32,7 +32,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="NuLink.TestCase.FirstPackage, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\NuLink.TestCase.FirstPackage.NetFx.0.1.0\lib\net45\NuLink.TestCase.FirstPackage.dll</HintPath>
+      <HintPath>..\packages\NuLink.TestCase.FirstPackage.NetFx.0.1.0\lib\net45\NuLink.TestCase.FirstPackage.NetFx.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

@@ -31,11 +31,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="NuLink.TestCase.FirstPackage, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\NuLink.TestCase.FirstPackage.NetFx.0.1.0\lib\net45\NuLink.TestCase.FirstPackage.dll</HintPath>
+    <Reference Include="NuLink.TestCase.FirstPackage.NetFx, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NuLink.TestCase.FirstPackage.NetFx.0.1.0\lib\net45\NuLink.TestCase.FirstPackage.NetFx.dll</HintPath>
     </Reference>
-    <Reference Include="NuLink.TestCase.SecondPackage, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\NuLink.TestCase.SecondPackage.NetFx.0.1.0\lib\net45\NuLink.TestCase.SecondPackage.dll</HintPath>
+    <Reference Include="NuLink.TestCase.SecondPackage.NetFx, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NuLink.TestCase.SecondPackage.NetFx.0.2.0\lib\net45\NuLink.TestCase.SecondPackage.NetFx.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

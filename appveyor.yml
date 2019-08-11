@@ -107,20 +107,20 @@ for:
           appveyor PushArtifact bin\Release\NuLink.TestCase.SecondPackage.0.2.0.nupkg
 
           
-          cd %APPVEYOR_BUILD_FOLDER%\demos\NetFx\NuLink.TestCase.FirstPackage\NuLink.TestCase.FirstPackage
+          cd %APPVEYOR_BUILD_FOLDER%\demos\NetFx\NuLink.TestCase.FirstPackage.NetFx\NuLink.TestCase.FirstPackage.NetFx
 
-          msbuild ..\NuLink.TestCase.FirstPackage.sln /p:Configuration=Release
+          msbuild ..\NuLink.TestCase.FirstPackage.NetFx.sln /p:Configuration=Release
 
           nuget pack NuLink.TestCase.FirstPackage.NetFx.nuspec
 
           appveyor PushArtifact NuLink.TestCase.FirstPackage.NetFx.0.1.0.nupkg
           
           
-          cd %APPVEYOR_BUILD_FOLDER%\demos\NetFx\NuLink.TestCase.SecondPackage\NuLink.TestCase.SecondPackage
+          cd %APPVEYOR_BUILD_FOLDER%\demos\NetFx\NuLink.TestCase.SecondPackage.NetFx\NuLink.TestCase.SecondPackage.NetFx
 
           nuget restore -SolutionDirectory ..
 
-          msbuild ..\NuLink.TestCase.SecondPackage.sln /p:Configuration=Release
+          msbuild ..\NuLink.TestCase.SecondPackage.NetFx.sln /p:Configuration=Release
 
           nuget pack NuLink.TestCase.SecondPackage.NetFx.nuspec
 
