@@ -124,7 +124,7 @@ for:
 
           nuget pack NuLink.TestCase.SecondPackage.NetFx.nuspec
 
-          appveyor PushArtifact NuLink.TestCase.SecondPackage.NetFx.0.1.0.nupkg
+          appveyor PushArtifact NuLink.TestCase.SecondPackage.NetFx.0.2.0.nupkg
 
           
           dotnet tool install -g NuLink --version %APPVEYOR_BUILD_VERSION% --add-source https://ci.appveyor.com/nuget/nulink-3672eibylf8q 
