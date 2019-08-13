@@ -125,11 +125,9 @@ namespace NuLink.Tests.Acceptance
             "lib");
         public override void BuildPackageProjectIn(string projectFolder)
         {
-            var projectName = Path.GetFileName(projectFolder);
             ExternalProgram.ExecIn(
                 projectFolder, 
                 "msbuild",
-                $"..\\{projectName}.sln",
                 "/p:Configuration=Debug");
         }
         public override void RunTestProjectIn(string testProjectFolder)
