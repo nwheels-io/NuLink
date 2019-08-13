@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 
 namespace NuLink.Tests.Acceptance
 {
@@ -124,19 +125,40 @@ namespace NuLink.Tests.Acceptance
             "lib");
         public override void BuildPackageProjectIn(string projectFolder)
         {
-            ExternalProgram.ExecIn(projectFolder, "dotnet", "build", "-c", "Debug");
+            var projectName = Path.GetFileName(projectFolder);
+            ExternalProgram.ExecIn(
+                projectFolder, 
+                "msbuild",
+                $"..\\{projectName}.sln",
+                "/p:Configuration=Debug");
         }
         public override void RunTestProjectIn(string testProjectFolder)
         {
-            ExternalProgram.Exec("dotnet", "test", testProjectFolder);
+            var testProjectName = Path.GetFileName(testProjectFolder);
+            var solutionFolder = Path.GetDirectoryName(testProjectFolder);
+            ExternalProgram.ExecIn(
+                solutionFolder, 
+                "msbuild",
+                "/p:Configuration=Debug");
+            ExternalProgram.Exec("nunit3-console", Path.Combine(
+                testProjectFolder,
+                "bin",
+                "Debug",
+                $"{testProjectName}.dll"));
         }
         public override void RestoreSolutionPackagesIn(string solutionFolder)
         {
-            ExternalProgram.ExecIn(
-                solutionFolder, 
-                "dotnet", 
-                "restore",
-                "--force");
+            var allProjectFiles = Directory.GetFiles(solutionFolder, "*.csproj", SearchOption.AllDirectories);
+            foreach (var projectFilePath in allProjectFiles)
+            {
+                var projectFolder = Path.GetDirectoryName(projectFilePath);
+                ExternalProgram.ExecIn(
+                    projectFolder, 
+                    "nuget", 
+                    "restore",
+                    "-SolutionDirectory",
+                    solutionFolder);
+            }
         }
         public override string ToString()
         {
