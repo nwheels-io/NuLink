@@ -72,9 +72,9 @@ namespace NuLink.Tests.Acceptance
                         target.ConsumerSolutionFolder,
                         "link",
                         "-p",
-                        "NuLink.TestCase.SecondPackage",
+                        target.PackageId("NuLink.TestCase.SecondPackage"),
                         "-l",
-                        target.PackageProjectFile("NuLink.TestCase.SecondPackage"));
+                        target.PackageProjectFile(target.PackageId("NuLink.TestCase.SecondPackage")));
                 },
                 Then = {
                     Packages = {
@@ -106,9 +106,9 @@ namespace NuLink.Tests.Acceptance
                         target.ConsumerSolutionFolder,
                         "link",
                         "-p",
-                        "NuLink.TestCase.FirstPackage",
+                        target.PackageId("NuLink.TestCase.FirstPackage"),
                         "-l",
-                        target.PackageProjectFile("NuLink.TestCase.FirstPackage"));
+                        target.PackageProjectFile(target.PackageId("NuLink.TestCase.FirstPackage")));
                 },
                 Then = {
                     Packages = {
@@ -139,13 +139,13 @@ namespace NuLink.Tests.Acceptance
                     ExecNuLinkIn(
                         target.ConsumerSolutionFolder, 
                         "link", 
-                        "-p", "NuLink.TestCase.FirstPackage",
-                        "-l", target.PackageProjectFile("NuLink.TestCase.FirstPackage"));
+                        "-p", target.PackageId("NuLink.TestCase.FirstPackage"),
+                        "-l", target.PackageProjectFile(target.PackageId("NuLink.TestCase.FirstPackage")));
                     ExecNuLinkIn(
                         target.ConsumerSolutionFolder, 
                         "link", 
-                        "-p", "NuLink.TestCase.SecondPackage",
-                        "-l", target.PackageProjectFile("NuLink.TestCase.SecondPackage"));
+                        "-p", target.PackageId("NuLink.TestCase.SecondPackage"),
+                        "-l", target.PackageProjectFile(target.PackageId("NuLink.TestCase.SecondPackage")));
                 },
                 Then = {
                     Packages = {

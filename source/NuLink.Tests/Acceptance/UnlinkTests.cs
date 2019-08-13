@@ -45,7 +45,7 @@ namespace NuLink.Tests.Acceptance
                     ExecNuLinkIn(
                         target.ConsumerSolutionFolder,
                         "unlink",
-                        "-p", "NuLink.TestCase.SecondPackage");
+                        "-p", target.PackageId("NuLink.TestCase.SecondPackage"));
                 },
                 Then = {
                     Packages = {
@@ -76,7 +76,7 @@ namespace NuLink.Tests.Acceptance
                     ExecNuLinkIn(
                         target.ConsumerSolutionFolder,
                         "unlink",
-                        "-p", "NuLink.TestCase.FirstPackage");
+                        "-p", target.PackageId("NuLink.TestCase.FirstPackage"));
                 },
                 Then = {
                     Packages = {
@@ -107,11 +107,11 @@ namespace NuLink.Tests.Acceptance
                     ExecNuLinkIn(
                         target.ConsumerSolutionFolder,
                         "unlink",
-                        "-p", "NuLink.TestCase.FirstPackage");
+                        "-p", target.PackageId("NuLink.TestCase.FirstPackage"));
                     ExecNuLinkIn(
                         target.ConsumerSolutionFolder,
                         "unlink",
-                        "-p", "NuLink.TestCase.SecondPackage");
+                        "-p", target.PackageId("NuLink.TestCase.SecondPackage"));
                 },
                 Then = {
                     Packages = {

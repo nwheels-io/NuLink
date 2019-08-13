@@ -25,8 +25,8 @@ namespace NuLink.Tests.Acceptance
                 },
                 Then = {
                     ExpectedNuLinkOutput = new[] {
-                        "NuLink.TestCase.FirstPackage 0.1.0 ok",
-                        "NuLink.TestCase.SecondPackage 0.2.0 ok"
+                        $"{target.PackageId("NuLink.TestCase.FirstPackage")} 0.1.0 ok",
+                        $"{target.PackageId("NuLink.TestCase.SecondPackage")} 0.2.0 ok"
                     }
                 }
             });
@@ -37,7 +37,10 @@ namespace NuLink.Tests.Acceptance
         {
             target.LogName();
 
-            var secondPackageTargetPath = Path.Combine(target.PackageProjectFolder("NuLink.TestCase.SecondPackage"), "bin", "Debug");
+            var secondPackageTargetPath = Path.Combine(
+                target.PackageProjectFolder(target.PackageId("NuLink.TestCase.SecondPackage")), 
+                "bin", 
+                "Debug");
             
             ExecuteTestCase(new AcceptanceTestCase(target) {
                 Given = {
@@ -54,8 +57,8 @@ namespace NuLink.Tests.Acceptance
                 },
                 Then = {
                     ExpectedNuLinkOutput = new[] {
-                        $"NuLink.TestCase.FirstPackage 0.1.0 ok",
-                        $"NuLink.TestCase.SecondPackage 0.2.0 ok -> {secondPackageTargetPath}"
+                        $"{target.PackageId("NuLink.TestCase.FirstPackage")} 0.1.0 ok",
+                        $"{target.PackageId("NuLink.TestCase.SecondPackage")} 0.2.0 ok -> {secondPackageTargetPath}"
                     }
                 }
             });
