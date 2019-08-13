@@ -117,6 +117,7 @@ namespace NuLink.Tests.Acceptance
 
                 if (package.State.HasFlag(PackageStates.Built))
                 {
+                    target.RestoreSolutionPackagesIn(packageSourceFolder);
                     target.BuildPackageProjectIn(packageSourceFolder);
                 }
 

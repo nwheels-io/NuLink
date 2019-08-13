@@ -147,15 +147,25 @@ namespace NuLink.Tests.Acceptance
         public override void RestoreSolutionPackagesIn(string solutionFolder)
         {
             var allProjectFiles = Directory.GetFiles(solutionFolder, "*.csproj", SearchOption.AllDirectories);
+            
             foreach (var projectFilePath in allProjectFiles)
             {
                 var projectFolder = Path.GetDirectoryName(projectFilePath);
-                ExternalProgram.ExecIn(
-                    projectFolder, 
-                    "nuget", 
-                    "restore",
-                    "-SolutionDirectory",
-                    solutionFolder);
+                var hasPackagesConfig = File.Exists(Path.Combine(projectFolder, "packages.config"));
+                
+                if (hasPackagesConfig)
+                {
+                    ExternalProgram.ExecIn(
+                        projectFolder,
+                        "nuget",
+                        "restore",
+                        "-SolutionDirectory",
+                        solutionFolder);
+                }
+                else
+                {
+                    Console.WriteLine($"Restore skipped (packages.config not found): {projectFolder}");                    
+                }
             }
         }
         public override string ToString()
