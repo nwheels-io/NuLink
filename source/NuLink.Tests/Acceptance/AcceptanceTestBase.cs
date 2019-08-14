@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
 using Murphy.SymbolicLink;
+using NuLink.Cli;
 using NUnit.Framework;
 using Shouldly;
 
@@ -178,7 +179,7 @@ namespace NuLink.Tests.Acceptance
                 var packageSolutionFolder = target.PackageSolutionFolder(packageId);
                 var packageFolderPath = testCase.Target.PackageNugetFolder(packageSolutionFolder, packageId);
                 var libFolderPath = testCase.Target.PackageNugetLibFolder(packageSolutionFolder, packageId, package.Version);
-                var libFolderTargetPath = SymbolicLink.resolve(libFolderPath);
+                var libFolderTargetPath = SymbolicLinkWithDiagnostics.Resolve(libFolderPath);
                 var isLinked = (libFolderTargetPath != null && libFolderTargetPath != libFolderPath);
                 var libBackupFolderExists = Directory.Exists(Path.Combine(packageFolderPath, package.Version, "nulink-backup.lib"));
 

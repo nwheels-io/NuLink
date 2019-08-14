@@ -76,7 +76,7 @@ namespace NuLink.Cli
 
         private string TryGetTargetPath(string linkPath)
         {
-            var targetPath = SymbolicLink.resolve(linkPath);
+            var targetPath = SymbolicLinkWithDiagnostics.Resolve(linkPath);
             return (targetPath != linkPath ? targetPath : null);
         }
     }

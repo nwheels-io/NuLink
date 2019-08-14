@@ -102,7 +102,7 @@ namespace NuLink.Cli
 
         private void CreateSymbolicLink(string linkPath, string targetPath)
         {
-            SymbolicLink.create(targetPath, linkPath);
+            SymbolicLinkWithDiagnostics.Create(fromPath: linkPath, toPath: targetPath);
         }
     }
 }
