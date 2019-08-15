@@ -126,7 +126,6 @@ for:
 
           appveyor PushArtifact NuLink.TestCase.SecondPackage.NetFx.0.2.0.nupkg
 
-          
           dotnet tool install -g NuLink --version %APPVEYOR_BUILD_VERSION% --add-source https://ci.appveyor.com/nuget/nulink-3672eibylf8q 
 
           nulink --version
@@ -139,5 +138,5 @@ for:
 
           dotnet test -c Release --logger:Appveyor 
     
-    on_finish:
-      - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+#    on_finish:
+#      - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
