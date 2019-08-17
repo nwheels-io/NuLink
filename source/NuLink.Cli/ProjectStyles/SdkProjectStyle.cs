@@ -56,7 +56,7 @@ namespace NuLink.Cli.ProjectStyles
         private string GetPackagesRootFolder()
         {
             var ns = new XmlNamespaceManager(new NameTable());
-            ns.AddNamespace("msb", "http://schemas.microsoft.com/developer/msbuild/2003");
+            ns.AddNamespace("msb", MsbuildNamespaceUri);
     
             var nugetPropsXml = XElement.Load(GetNuGetPropsFilePath());
             var result = 

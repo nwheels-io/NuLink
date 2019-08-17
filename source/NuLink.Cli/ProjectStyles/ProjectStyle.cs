@@ -7,6 +7,8 @@ namespace NuLink.Cli.ProjectStyles
 {
     public abstract class ProjectStyle
     {
+        public const string MsbuildNamespaceUri = "http://schemas.microsoft.com/developer/msbuild/2003";
+        
         protected ProjectStyle(IUserInterface ui, ProjectAnalyzer project, XElement projectXml)
         {
             this.UI = ui;
