@@ -1,6 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using Buildalyzer;
 using Murphy.SymbolicLink;
+using NuLink.Cli.ProjectStyles;
 
 namespace NuLink.Cli
 {
