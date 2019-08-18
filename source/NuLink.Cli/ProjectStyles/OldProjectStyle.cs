@@ -35,15 +35,20 @@ namespace NuLink.Cli.ProjectStyles
 
                 if (hintPath != null)
                 {
-                    var relativePathWithoutDll = Path.Combine(hintPath.Parts.SkipLast(1).ToArray());
-                    var absolutePath = Path.GetFullPath(
-                        relativePathWithoutDll,
+                    var libSubFolder = Path.Combine(hintPath.Parts.TakeLast(2).Take(1).ToArray());
+                    var relativePackageFolder = Path.Combine(hintPath.Parts.SkipLast(2).ToArray());
+                    var absolutePackageFolder = Path.GetFullPath(
+                        relativePackageFolder,
                         basePath: projectDirectory);
                     
-                    UI.ReportHigh(() => $"OLD-STYLE-PKG-REF: {package.PackageId + "@" + package.Version} -> {absolutePath}");
+                    UI.ReportHigh(() => 
+                        $"OLD-STYLE-PKG-REF: {package.PackageId + "@" + package.Version} -> {absolutePackageFolder} [{libSubFolder}]");
                     
                     return new PackageReferenceInfo(
-                        package.PackageId, package.Version, rootFolderPath: absolutePath);
+                        package.PackageId, 
+                        package.Version, 
+                        rootFolderPath: absolutePackageFolder,
+                        libSubfolderPath: libSubFolder);
                 }
                 
                 return null;
@@ -87,7 +92,7 @@ namespace NuLink.Cli.ProjectStyles
                         "Error in packages.config: 'package' element has no 'id' or 'version' attribute");
                 }
 
-                return new PackageReferenceInfo(id, version, rootFolderPath: string.Empty);
+                return new PackageReferenceInfo(id, version, rootFolderPath: string.Empty, libSubfolderPath: string.Empty);
             }
         }
 

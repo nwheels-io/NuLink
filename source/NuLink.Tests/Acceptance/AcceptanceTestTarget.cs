@@ -122,7 +122,8 @@ namespace NuLink.Tests.Acceptance
         public override string PackageNugetLibFolder(string solutionFolder, string packageId, string version) => Path.Combine(
             PackageNugetFolder(solutionFolder, packageId),
             version,
-            "lib");
+            "lib",
+            "net45");
         public override void BuildPackageProjectIn(string projectFolder)
         {
             ExternalProgram.ExecIn(

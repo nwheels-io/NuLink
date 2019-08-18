@@ -35,7 +35,11 @@ namespace NuLink.Cli.ProjectStyles
                     if (!String.IsNullOrWhiteSpace(packageId) && !String.IsNullOrWhiteSpace(version))
                     {
                         var folder = GetPackageFolder(packageId, version);
-                        return new PackageReferenceInfo(packageId, version, folder);
+                        return new PackageReferenceInfo(
+                            packageId, 
+                            version, 
+                            rootFolderPath: folder,
+                            libSubfolderPath: "lib");
                     }
     
                     return null;
