@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -182,11 +183,26 @@ namespace NuLink.Tests.Acceptance
                 var libFolderTargetPath = Directory.Exists(libFolderPath)
                     ? SymbolicLinkWithDiagnostics.Resolve(libFolderPath)
                     : null;
+                var libBackupFolderPath = Path.Combine(packageFolderPath, package.Version, "nulink-backup.lib");
                 var isLinked = (libFolderTargetPath != null && libFolderTargetPath != libFolderPath);
-                var libBackupFolderExists = Directory.Exists(Path.Combine(packageFolderPath, package.Version, "nulink-backup.lib"));
+                var libBackupFolderExists = Directory.Exists(libBackupFolderPath);
+
+                Console.WriteLine($"VERIFY: {packageId}@{package.Version}");
+                Console.WriteLine($"- packageSolutionFolder = {packageSolutionFolder} [{DirectoryExists(packageSolutionFolder)}]");
+                Console.WriteLine($"- packageFolderPath     = {packageFolderPath} [{DirectoryExists(packageFolderPath)}]");
+                Console.WriteLine($"- libFolderPath         = {libFolderPath} [{DirectoryExists(libFolderPath)}]");
+                Console.WriteLine($"- libFolderTargetPath   = {libFolderTargetPath} [{DirectoryExists(libFolderTargetPath)}]");
+                Console.WriteLine($"- libBackupFolderPath   = {libBackupFolderPath} [{DirectoryExists(libBackupFolderPath)}]");
+                Console.WriteLine($"- isLinked              = {isLinked} [SHOULD BE: {package.State.HasFlag(PackageStates.Linked)}]");
+                Console.WriteLine($"- libBackupFolderExists = {libBackupFolderExists} [SHOULD BE: {package.State.HasFlag(PackageStates.Linked)}]");
 
                 isLinked.ShouldBe(package.State.HasFlag(PackageStates.Linked));
                 libBackupFolderExists.ShouldBe(package.State.HasFlag(PackageStates.Linked));
+                
+                string DirectoryExists(string path)
+                {
+                    return Directory.Exists(path) ? "EXISTS" : "DOESN'T EXIST";
+                }
             }
         }
         
