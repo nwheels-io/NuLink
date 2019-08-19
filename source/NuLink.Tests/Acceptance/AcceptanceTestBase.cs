@@ -29,6 +29,11 @@ namespace NuLink.Tests.Acceptance
         {
             try
             {
+                if (TestEnvironment.ShouldIncludeDiagnostics)
+                {
+                    Console.WriteLine($"--- TEST CASE {TestContext.CurrentContext.Test.FullName} ---");
+                }
+                
                 Cleanup(testCase);
                 SetupGiven(testCase);
                 NuLinkOutput = new List<string>();
@@ -39,7 +44,20 @@ namespace NuLink.Tests.Acceptance
             }
             finally
             {
+                if (TestEnvironment.ShouldIncludeDiagnostics)
+                {
+                    PrintNuLinkOutput();
+                    Console.WriteLine($"--- ENF OF TEST CASE {TestContext.CurrentContext.Test.FullName} ---");
+                }
+                
                 NuLinkOutput = null;
+            }
+
+            void PrintNuLinkOutput()
+            {
+                Console.WriteLine($"--- NULINK OUTPUT ---");
+                NuLinkOutput.ForEach(Console.WriteLine);
+                Console.WriteLine($"--- END OF NULINK OUTPUT ---");
             }
         }
         
@@ -187,19 +205,27 @@ namespace NuLink.Tests.Acceptance
                 var isLinked = (libFolderTargetPath != null && libFolderTargetPath != libFolderPath);
                 var libBackupFolderExists = Directory.Exists(libBackupFolderPath);
 
-                Console.WriteLine($"VERIFY: {packageId}@{package.Version}");
-                Console.WriteLine($"- packageSolutionFolder = {packageSolutionFolder} [{DirectoryExists(packageSolutionFolder)}]");
-                Console.WriteLine($"- packageFolderPath     = {packageFolderPath} [{DirectoryExists(packageFolderPath)}]");
-                Console.WriteLine($"- libFolderPath         = {libFolderPath} [{DirectoryExists(libFolderPath)}]");
-                Console.WriteLine($"- libFolderTargetPath   = {libFolderTargetPath} [{DirectoryExists(libFolderTargetPath)}]");
-                Console.WriteLine($"- libBackupFolderPath   = {libBackupFolderPath} [{DirectoryExists(libBackupFolderPath)}]");
-                Console.WriteLine($"- isLinked              = {isLinked} [SHOULD BE: {package.State.HasFlag(PackageStates.Linked)}]");
-                Console.WriteLine($"- libBackupFolderExists = {libBackupFolderExists} [SHOULD BE: {package.State.HasFlag(PackageStates.Linked)}]");
+                if (TestEnvironment.ShouldIncludeDiagnostics)
+                {
+                    PrintDiagnostics();
+                }
 
                 isLinked.ShouldBe(package.State.HasFlag(PackageStates.Linked));
                 libBackupFolderExists.ShouldBe(package.State.HasFlag(PackageStates.Linked));
+
+                void PrintDiagnostics()
+                {
+                    Console.WriteLine($"VERIFY: {packageId}@{package.Version}");
+                    Console.WriteLine($"- packageSolutionFolder = {packageSolutionFolder} [{DirectoryStatus(packageSolutionFolder)}]");
+                    Console.WriteLine($"- packageFolderPath     = {packageFolderPath} [{DirectoryStatus(packageFolderPath)}]");
+                    Console.WriteLine($"- libFolderPath         = {libFolderPath} [{DirectoryStatus(libFolderPath)}]");
+                    Console.WriteLine($"- libFolderTargetPath   = {libFolderTargetPath} [{DirectoryStatus(libFolderTargetPath)}]");
+                    Console.WriteLine($"- libBackupFolderPath   = {libBackupFolderPath} [{DirectoryStatus(libBackupFolderPath)}]");
+                    Console.WriteLine($"- isLinked              = {isLinked} [SHOULD BE: {package.State.HasFlag(PackageStates.Linked)}]");
+                    Console.WriteLine($"- libBackupFolderExists = {libBackupFolderExists} [SHOULD BE: {package.State.HasFlag(PackageStates.Linked)}]");
+                }
                 
-                string DirectoryExists(string path)
+                string DirectoryStatus(string path)
                 {
                     return Directory.Exists(path) ? "EXISTS" : "DOESN'T EXIST";
                 }

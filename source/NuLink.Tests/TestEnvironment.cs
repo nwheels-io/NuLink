@@ -35,5 +35,7 @@ namespace NuLink.Tests
             "nulink" + ExecutableFileExtension);
         public static bool ShouldUseInstalledNuLinkBinary =>
             Environment.GetEnvironmentVariable("NULINK_TEST_USE_INSTALLED") == "YES";
+        public static bool ShouldIncludeDiagnostics =>
+            Environment.GetEnvironmentVariable("NULINK_TEST_INCLUDE_DIAGNOSTICS") == "YES";
     }
 }

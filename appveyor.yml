@@ -132,6 +132,8 @@ for:
 
           set NULINK_TEST_USE_INSTALLED=YES
 
+          set NULINK_TEST_INCLUDE_DIAGNOSTICS=YES
+
     test_script:
       - cmd: >-
           cd %APPVEYOR_BUILD_FOLDER%\source\NuLink.Tests
