@@ -101,7 +101,8 @@ namespace NuLink.Tests.Acceptance
                     var packageId = target.PackageId(package.Key);
                     var packageFolder = target.PackageNugetFolder(
                         target.PackageProjectFolder(solutionFodler),
-                        packageId);
+                        packageId, 
+                        package.Value.Version);
 
                     if (Directory.Exists(packageFolder))
                     {
@@ -196,7 +197,7 @@ namespace NuLink.Tests.Acceptance
             void VerifyThenPackageState(string packageId, PackageEntry package)
             {
                 var packageSolutionFolder = target.PackageSolutionFolder(packageId);
-                var packageFolderPath = testCase.Target.PackageNugetFolder(packageSolutionFolder, packageId);
+                var packageFolderPath = testCase.Target.PackageNugetFolder(packageSolutionFolder, packageId, package.Version);
                 var libFolderPath = testCase.Target.PackageNugetLibFolder(packageSolutionFolder, packageId, package.Version);
                 var libFolderTargetPath = Directory.Exists(libFolderPath)
                     ? SymbolicLinkWithDiagnostics.Resolve(libFolderPath)
@@ -225,10 +226,7 @@ namespace NuLink.Tests.Acceptance
                     Console.WriteLine($"- libBackupFolderExists = {libBackupFolderExists} [SHOULD BE: {package.State.HasFlag(PackageStates.Linked)}]");
                 }
                 
-                string DirectoryStatus(string path)
-                {
-                    return Directory.Exists(path) ? "EXISTS" : "DOESN'T EXIST";
-                }
+                string DirectoryStatus(string path) => Directory.Exists(path) ? "EXISTS" : "DOESN'T EXIST";
             }
         }
         

@@ -13,7 +13,7 @@ namespace NuLink.Tests.Acceptance
         public abstract string PackageProjectFile(string packageId);
         public abstract string PackageIdSuffix { get; }
         public abstract string PackagesRootFolder(string solutionFolder);
-        public abstract string PackageNugetFolder(string solutionFolder, string packageId);
+        public abstract string PackageNugetFolder(string solutionFolder, string packageId, string version);
         public abstract string PackageNugetLibFolder(string solutionFolder, string packageId, string version);
         public abstract void BuildPackageProjectIn(string projectFolder); 
         public abstract void RunTestProjectIn(string testProjectFolder); 
@@ -63,11 +63,11 @@ namespace NuLink.Tests.Acceptance
             Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
             ".nuget",
             "packages");
-        public override string PackageNugetFolder(string solutionFolder, string packageId) => Path.Combine(
+        public override string PackageNugetFolder(string solutionFolder, string packageId, string version) => Path.Combine(
             PackagesRootFolder(solutionFolder),
             packageId.ToLower());
         public override string PackageNugetLibFolder(string solutionFolder, string packageId, string version) => Path.Combine(
-            PackageNugetFolder(solutionFolder, packageId),
+            PackageNugetFolder(solutionFolder, packageId, version),
             version,
             "lib");
         public override void BuildPackageProjectIn(string projectFolder)
@@ -116,12 +116,11 @@ namespace NuLink.Tests.Acceptance
         public override string PackagesRootFolder(string solutionFolder) => Path.Combine(
             solutionFolder,
             "packages");
-        public override string PackageNugetFolder(string solutionFolder, string packageId) => Path.Combine(
+        public override string PackageNugetFolder(string solutionFolder, string packageId, string version) => Path.Combine(
             PackagesRootFolder(solutionFolder),
-            packageId.ToLower());
+            $"{packageId}.{version}");
         public override string PackageNugetLibFolder(string solutionFolder, string packageId, string version) => Path.Combine(
-            PackageNugetFolder(solutionFolder, packageId),
-            version,
+            PackageNugetFolder(solutionFolder, packageId, version),
             "lib",
             "net45");
         public override void BuildPackageProjectIn(string projectFolder)
