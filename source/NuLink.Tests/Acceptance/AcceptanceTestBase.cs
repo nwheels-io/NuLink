@@ -196,7 +196,7 @@ namespace NuLink.Tests.Acceptance
 
             void VerifyThenPackageState(string packageId, PackageEntry package)
             {
-                var packageSolutionFolder = target.PackageSolutionFolder(packageId);
+                var packageSolutionFolder = target.ConsumerSolutionFolder;
                 var packageFolderPath = testCase.Target.PackageNugetFolder(packageSolutionFolder, packageId, package.Version);
                 var libFolderPath = testCase.Target.PackageNugetLibFolder(packageSolutionFolder, packageId, package.Version);
                 var libFolderTargetPath = Directory.Exists(libFolderPath)
