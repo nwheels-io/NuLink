@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>NuLink.TestCase.SecondPackage.NetFx</id>
+    <version>0.2.0</version>
+    <title></title>
+    <authors>NuLink.TestCase.SecondPackage.NetFx</authors>
+    <owners>NuLink.TestCase.SecondPackage.NetFx</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Package description</description>
+    <dependencies>
+      <group targetFramework=".NETFramework4.5">
+        <dependency id="NuLink.TestCase.FirstPackage.NetFx" version="0.1.0" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="bin\Release\NuLink.TestCase.SecondPackage.NetFx.dll" target="lib\net45\NuLink.TestCase.SecondPackage.NetFx.dll" />
+    <file src="bin\Release\NuLink.TestCase.SecondPackage.NetFx.pdb" target="lib\net45\NuLink.TestCase.SecondPackage.NetFx.pdb" />
+  </files>
+</package>

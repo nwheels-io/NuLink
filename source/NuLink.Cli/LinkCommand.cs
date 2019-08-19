@@ -71,7 +71,9 @@ namespace NuLink.Cli
 
                 try
                 {
-                    CreateSymbolicLink(linkPath: requestedPackage.LibFolderPath, targetPath: linkTargetPath);
+                    SymbolicLinkWithDiagnostics.Create(
+                        fromPath: requestedPackage.LibFolderPath, 
+                        toPath: linkTargetPath);
                 }
                 catch
                 {
@@ -98,11 +100,6 @@ namespace NuLink.Cli
                     _ui.ReportError(() => "--- END OF RECOVERY INSTRUCTIONS ---");
                 }
             }
-        }
-
-        private void CreateSymbolicLink(string linkPath, string targetPath)
-        {
-            SymbolicLink.create(targetPath, linkPath);
         }
     }
 }

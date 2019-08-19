@@ -1,9 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client;
 using Murphy.SymbolicLink;
+using NuLink.Cli;
 using NUnit.Framework;
 using Shouldly;
 
@@ -13,11 +16,24 @@ namespace NuLink.Tests.Acceptance
     {
         [ThreadStatic]
         private static List<string> NuLinkOutput;
-        
+
+        public static readonly IReadOnlyList<AcceptanceTestTarget> AllTargets; 
+
+        [OneTimeTearDown]
+        public void OneTimeTearDown()
+        {
+            ExternalProgram.ExecIn(TestEnvironment.DemoFolder, "git", "checkout", ".");
+        }
+
         protected void ExecuteTestCase(AcceptanceTestCase testCase)
         {
             try
             {
+                if (TestEnvironment.ShouldIncludeDiagnostics)
+                {
+                    Console.WriteLine($"--- TEST CASE {TestContext.CurrentContext.Test.FullName} ---");
+                }
+                
                 Cleanup(testCase);
                 SetupGiven(testCase);
                 NuLinkOutput = new List<string>();
@@ -28,50 +44,34 @@ namespace NuLink.Tests.Acceptance
             }
             finally
             {
+                if (TestEnvironment.ShouldIncludeDiagnostics)
+                {
+                    PrintNuLinkOutput();
+                    Console.WriteLine($"--- ENF OF TEST CASE {TestContext.CurrentContext.Test.FullName} ---");
+                }
+                
                 NuLinkOutput = null;
+            }
+
+            void PrintNuLinkOutput()
+            {
+                Console.WriteLine($"--- NULINK OUTPUT ---");
+                NuLinkOutput.ForEach(Console.WriteLine);
+                Console.WriteLine($"--- END OF NULINK OUTPUT ---");
             }
         }
         
-        protected string[] Exec(string program, params string[] args)
-        {
-            return ExecIn(TestEnvironment.RepoFolder, program, args);
-        }
-
-        protected string[] ExecIn(string directory, string program, params string[] args)
-        {
-            var exitCode = ExternalProgram.Execute(
-                out var output,
-                nameOrFilePath: program,
-                args: args,
-                workingDirectory: directory,
-                validateExitCode: false);
-
-            if (exitCode != 0)
-            {
-                Console.WriteLine($"PROGRAM FAILED: {program} {string.Join(" ", args)}");
-                Console.WriteLine($"--- PROGRAM OUTPUT ---");
-                foreach (var line in output)
-                {
-                    Console.WriteLine(line);
-                }
-                Console.WriteLine($"--- END OF PROGRAM OUTPUT ---");
-                throw new Exception($"Program '{program}' failed with code {exitCode}.");
-            }
-
-            return output.ToArray();
-        }
-
         protected void ExecNuLinkIn(string directory, params string[] args)
         {
             string[] output;
             
             if (TestEnvironment.ShouldUseInstalledNuLinkBinary)
             {
-                output = ExecIn(directory, TestEnvironment.InstalledNuLinkBinaryPath, args);
+                output = ExternalProgram.ExecIn(directory, TestEnvironment.InstalledNuLinkBinaryPath, args);
             }
             else
             {
-                output = ExecIn(
+                output = ExternalProgram.ExecIn(
                     directory, 
                     "dotnet",
                     new[] { TestEnvironment.CompiledNuLinkBinaryPath }.Concat(args).ToArray());
@@ -80,82 +80,83 @@ namespace NuLink.Tests.Acceptance
             NuLinkOutput.AddRange(output);
         }
         
-        protected string ConsumerSolutionFolder => Path.Combine(TestEnvironment.DemoFolder, "NuLink.TestCase.Consumer");
-        protected string ConsumerSolutionFile => Path.Combine(ConsumerSolutionFolder, "NuLink.TestCase.Consumer.sln");
-        protected string PackageProjectFolder(string packageId) => Path.Combine(
-            TestEnvironment.DemoFolder, 
-            packageId,
-            packageId);
-        protected string PackageProjectFile(string packageId) =>
-            Path.Combine(PackageProjectFolder(packageId), $"{packageId}.csproj");
-        protected string PackagesRootFolder => Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-            ".nuget",
-            "packages");
-        protected string PackageNugetFolder(string packageId) => Path.Combine(
-            PackagesRootFolder,
-            packageId.ToLower());
-        protected string PackageNugetLibFolder(string packageId, string version) => Path.Combine(
-            PackageNugetFolder(packageId),
-            version,
-            "lib");
-
         private void Cleanup(AcceptanceTestCase testCase)
         {
+            var target = testCase.Target;
+
             NuLinkOutput = new List<string>();
             
-            ExecIn(TestEnvironment.DemoFolder, "git", "clean", "-dfx");
-            ExecIn(TestEnvironment.DemoFolder, "git", "checkout", ".");
+            ExternalProgram.ExecIn(TestEnvironment.DemoFolder, "git", "clean", "-dfx");
+            ExternalProgram.ExecIn(TestEnvironment.DemoFolder, "git", "checkout", ".");
 
-            foreach (var package in testCase.Given.Packages)
+            var allSolitionFolders = testCase.Given.Packages
+                .Select(p => target.PackageSolutionFolder(target.PackageId(p.Key)))
+                .Append(target.ConsumerSolutionFolder)
+                .ToArray();
+
+            foreach (var solutionFodler in allSolitionFolders)
             {
-                var packageFolder = PackageNugetFolder(package.Key);
-                if (Directory.Exists(packageFolder))
+                foreach (var package in testCase.Given.Packages)
                 {
-                    Directory.Delete(packageFolder, recursive: true);
+                    var packageId = target.PackageId(package.Key);
+                    var packageFolder = target.PackageNugetFolder(
+                        target.PackageProjectFolder(solutionFodler),
+                        packageId, 
+                        package.Value.Version);
+
+                    if (Directory.Exists(packageFolder))
+                    {
+                        Directory.Delete(packageFolder, recursive: true);
+                    }
                 }
             }
             
-            ExecIn(ConsumerSolutionFolder, "dotnet", "restore");
+            target.RestoreSolutionPackagesIn(target.ConsumerSolutionFolder);
         }
         
         private void SetupGiven(AcceptanceTestCase testCase)
         {
+            var target = testCase.Target;
+            
             foreach (var package in testCase.Given.Packages)
             {
-                SetupGivenPackageState(package.Key, package.Value);
+                var packageId = target.PackageId(package.Key);
+                SetupGivenPackageState(packageId, package.Value);
             }
 
             Directory.SetCurrentDirectory(testCase.GivenCurrentDiectory ?? TestEnvironment.DemoFolder);
             
             void SetupGivenPackageState(string packageId, PackageEntry package)
             {
-                var packageSourceFolder = Path.Combine(TestEnvironment.DemoFolder, packageId);
+                var packageSourceFolder = target.PackageSolutionFolder(packageId);
                 var patchFilePath = Path.Combine(TestEnvironment.DemoFolder, "modify-test-case-packages.patch");
 
                 if (package.State.HasFlag(PackageStates.Patched))
                 {
-                    ExecIn(packageSourceFolder, "git", "apply", patchFilePath);
+                    ExternalProgram.ExecIn(packageSourceFolder, "git", "apply", "--ignore-whitespace", patchFilePath);
                 }
 
                 if (package.State.HasFlag(PackageStates.Built))
                 {
-                    ExecIn(packageSourceFolder, "dotnet", "build", "-c", "Debug");
+                    target.RestoreSolutionPackagesIn(packageSourceFolder);
+                    target.BuildPackageProjectIn(packageSourceFolder);
                 }
 
                 if (package.State.HasFlag(PackageStates.Linked))
                 {
                     ExecNuLinkIn(
-                        ConsumerSolutionFolder,
+                        testCase.Target.ConsumerSolutionFolder,
                         "link", 
                         "-p", packageId,
-                        "-l", PackageProjectFile(packageId));
+                        "-l", testCase.Target.PackageProjectFile(packageId));
                 }
             }
         }
 
         private void VerifyThen(AcceptanceTestCase testCase)
         {
+            var target = testCase.Target;
+            
             VerifyPackages();
             VerifyNuLinkOutput();
             RunConsumerTests();
@@ -164,7 +165,8 @@ namespace NuLink.Tests.Acceptance
             {
                 foreach (var package in testCase.Then.Packages)
                 {
-                    VerifyThenPackageState(package.Key, package.Value);
+                    var packageId = target.PackageId(package.Key);
+                    VerifyThenPackageState(packageId, package.Value);
                 }
             }
 
@@ -185,20 +187,56 @@ namespace NuLink.Tests.Acceptance
                         Environment.SetEnvironmentVariable($"TEST_{expected.Key}", expected.Value);
                     }
 
-                    Exec("dotnet", "test", Path.Combine(ConsumerSolutionFolder, "NuLink.TestCase.ConsumerLib.Tests"));
+                    target.RunTestProjectIn(Path.Combine(
+                        target.ConsumerSolutionFolder, 
+                        "NuLink.TestCase.ConsumerLib.Tests"
+                    ));
                 }
             }
 
             void VerifyThenPackageState(string packageId, PackageEntry package)
             {
-                var packageFolderPath = PackageNugetFolder(packageId);
-                var libFolderPath = PackageNugetLibFolder(packageId, package.Version);
-                var libFolderTargetPath = SymbolicLink.resolve(libFolderPath);
+                var packageSolutionFolder = target.ConsumerSolutionFolder;
+                var packageFolderPath = testCase.Target.PackageNugetFolder(packageSolutionFolder, packageId, package.Version);
+                var libFolderPath = testCase.Target.PackageNugetLibFolder(packageSolutionFolder, packageId, package.Version);
+                var libFolderTargetPath = Directory.Exists(libFolderPath)
+                    ? SymbolicLinkWithDiagnostics.Resolve(libFolderPath)
+                    : null;
+                var libBackupFolderPath = Path.Combine(Path.GetDirectoryName(libFolderPath), "nulink-backup.lib");
                 var isLinked = (libFolderTargetPath != null && libFolderTargetPath != libFolderPath);
-                var libBackupFolderExists = Directory.Exists(Path.Combine(packageFolderPath, package.Version, "nulink-backup.lib"));
+                var libBackupFolderExists = Directory.Exists(libBackupFolderPath);
+
+                if (TestEnvironment.ShouldIncludeDiagnostics)
+                {
+                    PrintDiagnostics();
+                }
 
                 isLinked.ShouldBe(package.State.HasFlag(PackageStates.Linked));
                 libBackupFolderExists.ShouldBe(package.State.HasFlag(PackageStates.Linked));
+
+                void PrintDiagnostics()
+                {
+                    Console.WriteLine($"VERIFY: {packageId}@{package.Version}");
+                    Console.WriteLine($"- packageSolutionFolder = {packageSolutionFolder} [{DirectoryStatus(packageSolutionFolder)}]");
+                    Console.WriteLine($"- packageFolderPath     = {packageFolderPath} [{DirectoryStatus(packageFolderPath)}]");
+                    Console.WriteLine($"- libFolderPath         = {libFolderPath} [{DirectoryStatus(libFolderPath)}]");
+                    Console.WriteLine($"- libFolderTargetPath   = {libFolderTargetPath} [{DirectoryStatus(libFolderTargetPath)}]");
+                    Console.WriteLine($"- libBackupFolderPath   = {libBackupFolderPath} [{DirectoryStatus(libBackupFolderPath)}]");
+                    Console.WriteLine($"- isLinked              = {isLinked} [SHOULD BE: {package.State.HasFlag(PackageStates.Linked)}]");
+                    Console.WriteLine($"- libBackupFolderExists = {libBackupFolderExists} [SHOULD BE: {package.State.HasFlag(PackageStates.Linked)}]");
+                }
+                
+                string DirectoryStatus(string path) => Directory.Exists(path) ? "EXISTS" : "DOESN'T EXIST";
+            }
+        }
+        
+        public static IEnumerable<AcceptanceTestTarget> GetSupportedTargets()
+        {
+            yield return AcceptanceTestTarget.NetCore;
+            
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                yield return AcceptanceTestTarget.NetFx;
             }
         }
     }

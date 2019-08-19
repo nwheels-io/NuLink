@@ -5,53 +5,60 @@ namespace NuLink.Tests.Acceptance
 {
     public class StatusTests : AcceptanceTestBase
     {
-        [Test]
-        public void NotLinked_PrintOK()
+        [TestCaseSource(nameof(GetSupportedTargets))]
+        public void NotLinked_PrintOK(AcceptanceTestTarget target)
         {
-            ExecuteTestCase(new AcceptanceTestCase {
+            target.LogName();
+
+            ExecuteTestCase(new AcceptanceTestCase(target) {
                 Given = {
                     Packages = {
-                        ["NuLink.TestCase.FirstPackage"] = new PackageEntry("0.1.0-beta1", PackageStates.Original),
-                        ["NuLink.TestCase.SecondPackage"] = new PackageEntry("0.2.0-beta2", PackageStates.Original)
+                        ["NuLink.TestCase.FirstPackage"] = new PackageEntry("0.1.0", PackageStates.Original),
+                        ["NuLink.TestCase.SecondPackage"] = new PackageEntry("0.2.0", PackageStates.Original)
                     }
                 },
                 When = () => {
                     ExecNuLinkIn(
-                        Path.Combine(ConsumerSolutionFolder, "NuLink.TestCase.ConsumerLib"),
+                        Path.Combine(target.ConsumerSolutionFolder, "NuLink.TestCase.ConsumerLib"),
                         "status",
                         "-q");
                 },
                 Then = {
                     ExpectedNuLinkOutput = new[] {
-                        "NuLink.TestCase.FirstPackage 0.1.0-beta1 ok",
-                        "NuLink.TestCase.SecondPackage 0.2.0-beta2 ok"
+                        $"{target.PackageId("NuLink.TestCase.FirstPackage")} 0.1.0 ok",
+                        $"{target.PackageId("NuLink.TestCase.SecondPackage")} 0.2.0 ok"
                     }
                 }
             });
         }
 
-        [Test]
-        public void Linked_PrintLinkTargetPath()
+        [TestCaseSource(nameof(GetSupportedTargets))]
+        public void Linked_PrintLinkTargetPath(AcceptanceTestTarget target)
         {
-            var secondPackageTargetPath = Path.Combine(PackageProjectFolder("NuLink.TestCase.SecondPackage"), "bin", "Debug");
+            target.LogName();
+
+            var secondPackageTargetPath = Path.Combine(
+                target.PackageProjectFolder(target.PackageId("NuLink.TestCase.SecondPackage")), 
+                "bin", 
+                "Debug");
             
-            ExecuteTestCase(new AcceptanceTestCase {
+            ExecuteTestCase(new AcceptanceTestCase(target) {
                 Given = {
                     Packages = {
-                        ["NuLink.TestCase.FirstPackage"] = new PackageEntry("0.1.0-beta1", PackageStates.Original),
-                        ["NuLink.TestCase.SecondPackage"] = new PackageEntry("0.2.0-beta2", PackageStates.PatchedBuiltAndLinked)
+                        ["NuLink.TestCase.FirstPackage"] = new PackageEntry("0.1.0", PackageStates.Original),
+                        ["NuLink.TestCase.SecondPackage"] = new PackageEntry("0.2.0", PackageStates.PatchedBuiltAndLinked)
                     }
                 },
                 When = () => {
                     ExecNuLinkIn(
-                        Path.Combine(ConsumerSolutionFolder, "NuLink.TestCase.ConsumerLib"),
+                        Path.Combine(target.ConsumerSolutionFolder, "NuLink.TestCase.ConsumerLib"),
                         "status",
                         "-q");
                 },
                 Then = {
                     ExpectedNuLinkOutput = new[] {
-                        $"NuLink.TestCase.FirstPackage 0.1.0-beta1 ok",
-                        $"NuLink.TestCase.SecondPackage 0.2.0-beta2 ok -> {secondPackageTargetPath}"
+                        $"{target.PackageId("NuLink.TestCase.FirstPackage")} 0.1.0 ok",
+                        $"{target.PackageId("NuLink.TestCase.SecondPackage")} 0.2.0 ok -> {secondPackageTargetPath}"
                     }
                 }
             });

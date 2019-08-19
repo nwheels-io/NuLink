@@ -6,6 +6,12 @@ namespace NuLink.Tests.Acceptance
 {
     public class AcceptanceTestCase
     {
+        public AcceptanceTestCase(AcceptanceTestTarget target)
+        {
+            Target = target;
+        }
+
+        public readonly AcceptanceTestTarget Target;
         public string GivenCurrentDiectory = TestEnvironment.DemoFolder;
         public readonly DemoSolutionState Given = new DemoSolutionState();
         public Action When;
@@ -42,5 +48,11 @@ namespace NuLink.Tests.Acceptance
         PatchedAndLinked = Patched | Linked,
         BuiltAndLinked = Built | Linked,
         PatchedBuiltAndLinked = Patched | Built | Linked
+    }
+
+    public enum TargetProjectKind
+    {
+        NetCore,
+        NetFx
     }
 }

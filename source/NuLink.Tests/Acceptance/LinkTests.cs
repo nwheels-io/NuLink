@@ -5,20 +5,22 @@ namespace NuLink.Tests.Acceptance
 {
     public class LinkTests : AcceptanceTestBase
     {
-        [Test]
-        public void DoNotPatch_DoNotLink_PatchesNotReflected()
+        [TestCaseSource(nameof(GetSupportedTargets))]
+        public void DoNotPatch_DoNotLink_PatchesNotReflected(AcceptanceTestTarget target)
         {
-            ExecuteTestCase(new AcceptanceTestCase {
+            target.LogName();
+            
+            ExecuteTestCase(new AcceptanceTestCase(target) {
                 Given = {
                     Packages = {
-                        ["NuLink.TestCase.FirstPackage"] = new PackageEntry("0.1.0-beta1", PackageStates.Original),
-                        ["NuLink.TestCase.SecondPackage"] = new PackageEntry("0.2.0-beta2", PackageStates.Original)
+                        ["NuLink.TestCase.FirstPackage"] = new PackageEntry("0.1.0", PackageStates.Original),
+                        ["NuLink.TestCase.SecondPackage"] = new PackageEntry("0.2.0", PackageStates.Original)
                     }
                 },
                 Then = {
                     Packages = {
-                        ["NuLink.TestCase.FirstPackage"] = new PackageEntry("0.1.0-beta1", PackageStates.Original),
-                        ["NuLink.TestCase.SecondPackage"] = new PackageEntry("0.2.0-beta2", PackageStates.Original)
+                        ["NuLink.TestCase.FirstPackage"] = new PackageEntry("0.1.0", PackageStates.Original),
+                        ["NuLink.TestCase.SecondPackage"] = new PackageEntry("0.2.0", PackageStates.Original)
                     },
                     ExpectedValues = {
                         ["ClassOneShouldUseLocallyLinkedPackage"] = "FIRST-CLASS-ORIGINAL",
@@ -28,20 +30,22 @@ namespace NuLink.Tests.Acceptance
             });
         }
 
-        [Test]
-        public void PatchAll_DoNotLink_PatchesNotReflected()
+        [TestCaseSource(nameof(GetSupportedTargets))]
+        public void PatchAll_DoNotLink_PatchesNotReflected(AcceptanceTestTarget target)
         {
-            ExecuteTestCase(new AcceptanceTestCase {
+            target.LogName();
+
+            ExecuteTestCase(new AcceptanceTestCase(target) {
                 Given = {
                     Packages = {
-                        ["NuLink.TestCase.FirstPackage"] = new PackageEntry("0.1.0-beta1", PackageStates.PatchedAndBuilt),
-                        ["NuLink.TestCase.SecondPackage"] = new PackageEntry("0.2.0-beta2", PackageStates.PatchedAndBuilt)
+                        ["NuLink.TestCase.FirstPackage"] = new PackageEntry("0.1.0", PackageStates.PatchedAndBuilt),
+                        ["NuLink.TestCase.SecondPackage"] = new PackageEntry("0.2.0", PackageStates.PatchedAndBuilt)
                     }
                 },
                 Then = {
                     Packages = {
-                        ["NuLink.TestCase.FirstPackage"] = new PackageEntry("0.1.0-beta1", PackageStates.Original),
-                        ["NuLink.TestCase.SecondPackage"] = new PackageEntry("0.2.0-beta2", PackageStates.Original)
+                        ["NuLink.TestCase.FirstPackage"] = new PackageEntry("0.1.0", PackageStates.Original),
+                        ["NuLink.TestCase.SecondPackage"] = new PackageEntry("0.2.0", PackageStates.Original)
                     },
                     ExpectedValues = {
                         ["ClassOneShouldUseLocallyLinkedPackage"] = "FIRST-CLASS-ORIGINAL",
@@ -51,29 +55,31 @@ namespace NuLink.Tests.Acceptance
             });
         }
 
-        [Test]
-        public void PatchAll_LinkLeaf_OnlyPatchOfLeafReflected()
+        [TestCaseSource(nameof(GetSupportedTargets))]
+        public void PatchAll_LinkLeaf_OnlyPatchOfLeafReflected(AcceptanceTestTarget target)
         {
-            ExecuteTestCase(new AcceptanceTestCase {
+            target.LogName();
+
+            ExecuteTestCase(new AcceptanceTestCase(target) {
                 Given = {
                     Packages = {
-                        ["NuLink.TestCase.FirstPackage"] = new PackageEntry("0.1.0-beta1", PackageStates.PatchedAndBuilt),
-                        ["NuLink.TestCase.SecondPackage"] = new PackageEntry("0.2.0-beta2", PackageStates.PatchedAndBuilt)
+                        ["NuLink.TestCase.FirstPackage"] = new PackageEntry("0.1.0", PackageStates.PatchedAndBuilt),
+                        ["NuLink.TestCase.SecondPackage"] = new PackageEntry("0.2.0", PackageStates.PatchedAndBuilt)
                     }
                 },
                 When = () => {
                     ExecNuLinkIn(
-                        ConsumerSolutionFolder,
+                        target.ConsumerSolutionFolder,
                         "link",
                         "-p",
-                        "NuLink.TestCase.SecondPackage",
+                        target.PackageId("NuLink.TestCase.SecondPackage"),
                         "-l",
-                        PackageProjectFile("NuLink.TestCase.SecondPackage"));
+                        target.PackageProjectFile(target.PackageId("NuLink.TestCase.SecondPackage")));
                 },
                 Then = {
                     Packages = {
-                        ["NuLink.TestCase.FirstPackage"] = new PackageEntry("0.1.0-beta1", PackageStates.Original),
-                        ["NuLink.TestCase.SecondPackage"] = new PackageEntry("0.2.0-beta2", PackageStates.Linked)
+                        ["NuLink.TestCase.FirstPackage"] = new PackageEntry("0.1.0", PackageStates.Original),
+                        ["NuLink.TestCase.SecondPackage"] = new PackageEntry("0.2.0", PackageStates.Linked)
                     },
                     ExpectedValues = {
                         ["ClassOneShouldUseLocallyLinkedPackage"] = "FIRST-CLASS-ORIGINAL",
@@ -83,29 +89,31 @@ namespace NuLink.Tests.Acceptance
             });
         }
 
-        [Test]
-        public void PatchAll_LinkNonLeaf_OnlyPatchOfNonLeafReflected()
+        [TestCaseSource(nameof(GetSupportedTargets))]
+        public void PatchAll_LinkNonLeaf_OnlyPatchOfNonLeafReflected(AcceptanceTestTarget target)
         {
-            ExecuteTestCase(new AcceptanceTestCase {
+            target.LogName();
+
+            ExecuteTestCase(new AcceptanceTestCase(target) {
                 Given = {
                     Packages = {
-                        ["NuLink.TestCase.FirstPackage"] = new PackageEntry("0.1.0-beta1", PackageStates.PatchedAndBuilt),
-                        ["NuLink.TestCase.SecondPackage"] = new PackageEntry("0.2.0-beta2", PackageStates.PatchedAndBuilt)
+                        ["NuLink.TestCase.FirstPackage"] = new PackageEntry("0.1.0", PackageStates.PatchedAndBuilt),
+                        ["NuLink.TestCase.SecondPackage"] = new PackageEntry("0.2.0", PackageStates.PatchedAndBuilt)
                     }
                 },
                 When = () => {
                     ExecNuLinkIn(
-                        ConsumerSolutionFolder,
+                        target.ConsumerSolutionFolder,
                         "link",
                         "-p",
-                        "NuLink.TestCase.FirstPackage",
+                        target.PackageId("NuLink.TestCase.FirstPackage"),
                         "-l",
-                        PackageProjectFile("NuLink.TestCase.FirstPackage"));
+                        target.PackageProjectFile(target.PackageId("NuLink.TestCase.FirstPackage")));
                 },
                 Then = {
                     Packages = {
-                        ["NuLink.TestCase.FirstPackage"] = new PackageEntry("0.1.0-beta1", PackageStates.Linked),
-                        ["NuLink.TestCase.SecondPackage"] = new PackageEntry("0.2.0-beta2", PackageStates.Original)
+                        ["NuLink.TestCase.FirstPackage"] = new PackageEntry("0.1.0", PackageStates.Linked),
+                        ["NuLink.TestCase.SecondPackage"] = new PackageEntry("0.2.0", PackageStates.Original)
                     },
                     ExpectedValues = {
                         ["ClassOneShouldUseLocallyLinkedPackage"] = "FIRST-CLASS-SYMLINKED",
@@ -115,32 +123,34 @@ namespace NuLink.Tests.Acceptance
             });
         }
         
-        [Test]
-        public void PatchAll_LinkAll_AllPatchesReflected()
+        [TestCaseSource(nameof(GetSupportedTargets))]
+        public void PatchAll_LinkAll_AllPatchesReflected(AcceptanceTestTarget target)
         {
-            ExecuteTestCase(new AcceptanceTestCase {
+            target.LogName();
+
+            ExecuteTestCase(new AcceptanceTestCase(target) {
                 Given = {
                     Packages = {
-                        ["NuLink.TestCase.FirstPackage"] = new PackageEntry("0.1.0-beta1", PackageStates.PatchedAndBuilt),
-                        ["NuLink.TestCase.SecondPackage"] = new PackageEntry("0.2.0-beta2", PackageStates.PatchedAndBuilt)
+                        ["NuLink.TestCase.FirstPackage"] = new PackageEntry("0.1.0", PackageStates.PatchedAndBuilt),
+                        ["NuLink.TestCase.SecondPackage"] = new PackageEntry("0.2.0", PackageStates.PatchedAndBuilt)
                     }
                 },
                 When = () => {
                     ExecNuLinkIn(
-                        ConsumerSolutionFolder, 
+                        target.ConsumerSolutionFolder, 
                         "link", 
-                        "-p", "NuLink.TestCase.FirstPackage",
-                        "-l", PackageProjectFile("NuLink.TestCase.FirstPackage"));
+                        "-p", target.PackageId("NuLink.TestCase.FirstPackage"),
+                        "-l", target.PackageProjectFile(target.PackageId("NuLink.TestCase.FirstPackage")));
                     ExecNuLinkIn(
-                        ConsumerSolutionFolder, 
+                        target.ConsumerSolutionFolder, 
                         "link", 
-                        "-p", "NuLink.TestCase.SecondPackage",
-                        "-l", PackageProjectFile("NuLink.TestCase.SecondPackage"));
+                        "-p", target.PackageId("NuLink.TestCase.SecondPackage"),
+                        "-l", target.PackageProjectFile(target.PackageId("NuLink.TestCase.SecondPackage")));
                 },
                 Then = {
                     Packages = {
-                        ["NuLink.TestCase.FirstPackage"] = new PackageEntry("0.1.0-beta1", PackageStates.Linked),
-                        ["NuLink.TestCase.SecondPackage"] = new PackageEntry("0.2.0-beta2", PackageStates.Linked)
+                        ["NuLink.TestCase.FirstPackage"] = new PackageEntry("0.1.0", PackageStates.Linked),
+                        ["NuLink.TestCase.SecondPackage"] = new PackageEntry("0.2.0", PackageStates.Linked)
                     },
                     ExpectedValues = {
                         ["ClassOneShouldUseLocallyLinkedPackage"] = "FIRST-CLASS-SYMLINKED",
@@ -150,27 +160,25 @@ namespace NuLink.Tests.Acceptance
             });
         }
 
-        [Test]
-        public void PatchAndLinkAll_DotNetRestore_AllLinksSurvived()
+        [TestCaseSource(nameof(GetSupportedTargets))]
+        public void PatchAndLinkAll_DotNetRestore_AllLinksSurvived(AcceptanceTestTarget target)
         {
-            ExecuteTestCase(new AcceptanceTestCase {
+            target.LogName();
+
+            ExecuteTestCase(new AcceptanceTestCase(target) {
                 Given = {
                     Packages = {
-                        ["NuLink.TestCase.FirstPackage"] = new PackageEntry("0.1.0-beta1", PackageStates.PatchedBuiltAndLinked),
-                        ["NuLink.TestCase.SecondPackage"] = new PackageEntry("0.2.0-beta2", PackageStates.PatchedBuiltAndLinked)
+                        ["NuLink.TestCase.FirstPackage"] = new PackageEntry("0.1.0", PackageStates.PatchedBuiltAndLinked),
+                        ["NuLink.TestCase.SecondPackage"] = new PackageEntry("0.2.0", PackageStates.PatchedBuiltAndLinked)
                     }
                 },
                 When = () => {
-                    ExecIn(
-                        ConsumerSolutionFolder, 
-                        "dotnet", 
-                        "restore",
-                        "--force");
+                    target.RestoreSolutionPackagesIn(target.ConsumerSolutionFolder);
                 },
                 Then = {
                     Packages = {
-                        ["NuLink.TestCase.FirstPackage"] = new PackageEntry("0.1.0-beta1", PackageStates.Linked),
-                        ["NuLink.TestCase.SecondPackage"] = new PackageEntry("0.2.0-beta2", PackageStates.Linked)
+                        ["NuLink.TestCase.FirstPackage"] = new PackageEntry("0.1.0", PackageStates.Linked),
+                        ["NuLink.TestCase.SecondPackage"] = new PackageEntry("0.2.0", PackageStates.Linked)
                     },
                     ExpectedValues = {
                         ["ClassOneShouldUseLocallyLinkedPackage"] = "FIRST-CLASS-SYMLINKED",

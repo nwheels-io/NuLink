@@ -1,19 +1,22 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using Buildalyzer;
 using Murphy.SymbolicLink;
+using NuLink.Cli.ProjectStyles;
 
 namespace NuLink.Cli
 {
     public class PackageReferenceInfo : IEquatable<PackageReferenceInfo>
     {
-        public PackageReferenceInfo(string packageId, string version, string rootFolderPath)
+        public PackageReferenceInfo(string packageId, string version, string rootFolderPath, string libSubfolderPath)
         {
             PackageId = packageId;
             Version = version;
             RootFolderPath = rootFolderPath;
 
             //StatusFilePath = Path.Combine(rootFolderPath, "nulink-status.txt"); 
-            LibFolderPath = Path.Combine(rootFolderPath, "lib");
+            LibFolderPath = Path.Combine(rootFolderPath, libSubfolderPath);
             LibBackupFolderPath = Path.Combine(rootFolderPath, "nulink-backup.lib");
         }
 
@@ -76,7 +79,7 @@ namespace NuLink.Cli
 
         private string TryGetTargetPath(string linkPath)
         {
-            var targetPath = SymbolicLink.resolve(linkPath);
+            var targetPath = SymbolicLinkWithDiagnostics.Resolve(linkPath);
             return (targetPath != linkPath ? targetPath : null);
         }
     }

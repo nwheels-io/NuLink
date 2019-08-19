@@ -46,13 +46,13 @@ for:
 
           dotnet build -c Release
 
-          appveyor PushArtifact bin/Release/NuLink.TestCase.FirstPackage.0.1.0-beta1.nupkg
+          appveyor PushArtifact bin/Release/NuLink.TestCase.FirstPackage.0.1.0.nupkg
 
           cd $APPVEYOR_BUILD_FOLDER/demos/NuLink.TestCase.SecondPackage/NuLink.TestCase.SecondPackage
 
           dotnet build -c Release
 
-          appveyor PushArtifact bin/Release/NuLink.TestCase.SecondPackage.0.2.0-beta2.nupkg
+          appveyor PushArtifact bin/Release/NuLink.TestCase.SecondPackage.0.2.0.nupkg
 
           dotnet tool install -g NuLink --version $APPVEYOR_BUILD_VERSION --add-source https://ci.appveyor.com/nuget/nulink-3672eibylf8q 
 
@@ -92,17 +92,39 @@ for:
 
           dotnet --info
 
+          
           cd %APPVEYOR_BUILD_FOLDER%\demos\NuLink.TestCase.FirstPackage\NuLink.TestCase.FirstPackage
 
           dotnet build -c Release
 
-          appveyor PushArtifact bin\Release\NuLink.TestCase.FirstPackage.0.1.0-beta1.nupkg
+          appveyor PushArtifact bin\Release\NuLink.TestCase.FirstPackage.0.1.0.nupkg
 
+          
           cd %APPVEYOR_BUILD_FOLDER%\demos\NuLink.TestCase.SecondPackage\NuLink.TestCase.SecondPackage
 
           dotnet build -c Release
 
-          appveyor PushArtifact bin\Release\NuLink.TestCase.SecondPackage.0.2.0-beta2.nupkg
+          appveyor PushArtifact bin\Release\NuLink.TestCase.SecondPackage.0.2.0.nupkg
+
+          
+          cd %APPVEYOR_BUILD_FOLDER%\demos\NetFx\NuLink.TestCase.FirstPackage.NetFx\NuLink.TestCase.FirstPackage.NetFx
+
+          msbuild ..\NuLink.TestCase.FirstPackage.NetFx.sln /p:Configuration=Release
+
+          nuget pack NuLink.TestCase.FirstPackage.NetFx.nuspec
+
+          appveyor PushArtifact NuLink.TestCase.FirstPackage.NetFx.0.1.0.nupkg
+          
+          
+          cd %APPVEYOR_BUILD_FOLDER%\demos\NetFx\NuLink.TestCase.SecondPackage.NetFx\NuLink.TestCase.SecondPackage.NetFx
+
+          nuget restore -SolutionDirectory ..
+
+          msbuild ..\NuLink.TestCase.SecondPackage.NetFx.sln /p:Configuration=Release
+
+          nuget pack NuLink.TestCase.SecondPackage.NetFx.nuspec
+
+          appveyor PushArtifact NuLink.TestCase.SecondPackage.NetFx.0.2.0.nupkg
 
           dotnet tool install -g NuLink --version %APPVEYOR_BUILD_VERSION% --add-source https://ci.appveyor.com/nuget/nulink-3672eibylf8q 
 
@@ -110,9 +132,13 @@ for:
 
           set NULINK_TEST_USE_INSTALLED=YES
 
+          set NULINK_TEST_INCLUDE_DIAGNOSTICS=YES
+
     test_script:
       - cmd: >-
           cd %APPVEYOR_BUILD_FOLDER%\source\NuLink.Tests
 
           dotnet test -c Release --logger:Appveyor 
-
+    
+#    on_finish:
+#      - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))

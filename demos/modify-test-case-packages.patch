@@ -24,3 +24,29 @@ index f14893818bde1a464c4c87fab6d004167f3fc62f..e32c20ee80d28bea5753bdeedfdcf219
          }
      }
  }
+diff --git a/demos/NetFx/NuLink.TestCase.FirstPackage.NetFx/NuLink.TestCase.FirstPackage.NetFx/FirstClass.cs b/demos/NetFx/NuLink.TestCase.FirstPackage.NetFx/NuLink.TestCase.FirstPackage.NetFx/FirstClass.cs
+index f148938..e32c20e 100644
+--- a/demos/NetFx/NuLink.TestCase.FirstPackage.NetFx/NuLink.TestCase.FirstPackage.NetFx/FirstClass.cs
++++ b/demos/NetFx/NuLink.TestCase.FirstPackage.NetFx/NuLink.TestCase.FirstPackage.NetFx/FirstClass.cs
+@@ -6,7 +6,7 @@ namespace NuLink.TestCase.FirstPackage
+     {
+         public string GetString()
+         {
+-            return "FIRST-CLASS-ORIGINAL";
++            return "FIRST-CLASS-SYMLINKED";
+         }
+     }
+ }
+diff --git a/demos/NetFx/NuLink.TestCase.SecondPackage.NetFx/NuLink.TestCase.SecondPackage.NetFx/SecondClass.cs b/demos/NetFx/NuLink.TestCase.SecondPackage.NetFx/NuLink.TestCase.SecondPackage.NetFx/SecondClass.cs
+index 11d27aa..0c5a8fb 100644
+--- a/demos/NetFx/NuLink.TestCase.SecondPackage.NetFx/NuLink.TestCase.SecondPackage.NetFx/SecondClass.cs
++++ b/demos/NetFx/NuLink.TestCase.SecondPackage.NetFx/NuLink.TestCase.SecondPackage.NetFx/SecondClass.cs
+@@ -7,7 +7,7 @@ namespace NuLink.TestCase.SecondPackage
+         public string GetSecondString()
+         {
+             var first = new FirstClass();
+-            return $"SECOND-CLASS-ORIGINAL({first.GetString()})";
++            return $"SECOND-CLASS-SYMLINKED({first.GetString()})";
+         }
+     }
+ }
