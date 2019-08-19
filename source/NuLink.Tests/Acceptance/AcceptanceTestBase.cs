@@ -202,7 +202,7 @@ namespace NuLink.Tests.Acceptance
                 var libFolderTargetPath = Directory.Exists(libFolderPath)
                     ? SymbolicLinkWithDiagnostics.Resolve(libFolderPath)
                     : null;
-                var libBackupFolderPath = Path.Combine(packageFolderPath, package.Version, "nulink-backup.lib");
+                var libBackupFolderPath = Path.Combine(Path.GetDirectoryName(libFolderPath), "nulink-backup.lib");
                 var isLinked = (libFolderTargetPath != null && libFolderTargetPath != libFolderPath);
                 var libBackupFolderExists = Directory.Exists(libBackupFolderPath);
 
