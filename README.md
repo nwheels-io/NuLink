@@ -8,7 +8,7 @@ See also: [Usage instructions](#usage-instructions) | [Limitations & roadmap](#l
 
 ## Current status
 
-The project is currently in beta. It already works for .NET Core and NETStandard packages and projects. Other combinations (OS/SDK/project system) weren't yet tested. See [Limitations & roadmap](#limitations-and-roadmap) for details.
+The project is currently in beta. It already works for both .NET Core/NETStandard and .NET Framework packages and projects. Some combinations (OS, consumer style, package style) weren't yet tested. See [Limitations & roadmap](#limitations-and-roadmap) for details.
 
 Please report bugs and suggestions in the repo [Issues](https://github.com/nwheels-io/NuLink/issues). If something goes wrong, see recovery steps in [Troubleshooting](#Troubleshooting).
 
@@ -119,7 +119,7 @@ Supporting the full variety of NuGet setups and workflows is hardly feasible. Nu
 
 Limitation|Roadmap
 ---|---
-**DONE! 0.1.0-beta2:** NuLink now supports both SDK/PackageReference-style projects (.NET Core/NETStandard) and Old/packasges.config-style projects (.NET Framework)|[#2 Add support for .NET Framework projects](https://github.com/nwheels-io/NuLink/issues/2)
+**RESOLVED! 0.1.0-beta2:** NuLink now supports both SDK/PackageReference-style projects (.NET Core/NETStandard) and Old/packasges.config-style projects (.NET Framework)|[#2 Add support for .NET Framework projects](https://github.com/nwheels-io/NuLink/issues/2)
 Not tested on .NET Core 3.0|[#3 Test on .NET Core 3.0](https://github.com/nwheels-io/NuLink/issues/3)
 Consumer projects must be C# (.csproj)|[#4 Support projects in more languages](https://github.com/nwheels-io/NuLink/issues/4)
 The `--dry-run` option is not implemented|[#19 Implement dry run](https://github.com/nwheels-io/NuLink/issues/19)
