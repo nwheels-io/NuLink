@@ -16,17 +16,20 @@ Contributions are welcome :-) Read [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Getting started
 
+### Supported types of projects
+
+- .NET Core and NETStandard projects and packages (_"SDK/PackageReference-style"_)
+- **New in Beta 2**: .NET Framework projects and packages (_"packages.config-style"_)
+
 ### Prerequisites
 
 - Linux, macOS, or Windows
-- .NET Core SDK 2.1+ (not tested on 3.0)
-
-The tool runs on .NET Core, but it should support .NET Framework projects and packages as well (not yet tested).
+- .NET Core SDK 2.1+ (not tested on 3.0 yet)
 
 ### Installing
 
 ```
-$ dotnet tool install -g NuLink --version 0.1.0-beta1
+$ dotnet tool install -g NuLink --version 0.1.0-beta2
 ```
 
 ### Linking a package to local sources
@@ -50,10 +53,12 @@ See [Usage instructions](#Usage-instructions) for more info.
 
 ## How it works
 
-NuLink creates symbolic links to resolve binaries of selected packages directly from local file system:
+NuLink creates symbolic links to consume binaries of selected packages directly from their compilation directories in the local file system. 
+
+### For SDK/PackageReference-style projects (.NET Core or NETStandard)
 
 ```
-Original                      Redirect
+Original                      Linked
 --------------------          ----------------------
 ~ or %UserProfile%            working directory
 |                             |
@@ -61,7 +66,7 @@ Original                      Redirect
    |                             | 
    +- packages/                  +- Source/
       |                             |
-      +- My.Package/                +- My.Package.csproj     
+      +- my.package/                +- My.Package.csproj     
          |                          |  
          +- 1.0.5/                  +- bin/
             |                          |
@@ -70,7 +75,29 @@ Original                      Redirect
                +-X- netstandard2.0/       +-V- netstandard2.0/
 ```
 
-In this example, every time `My.Package.csproj` is compiled, the latest binaries from its `bin/Debug` are automatically used by all consumers. Since the binaries are mapped (through .pdb) to local sources, code navigation and debugging on consumer side work seamlessly with latest changes in package code.
+In this example, every time `My.Package.csproj` is compiled, the latest binaries from its `bin/Debug` are automatically used by all consumers. Since .pdb in `bin/Debug` maps the binaries to local sources, code navigation and debugging on consumer side work seamlessly with the latest changes in package code.
+
+### For packages.config-style projects (.NET Framework)
+
+```
+Original                        Linked
+--------------------            ----------------------
+consumer working directory    
+| 
++- Source\                      package working directory    
+   |                            | 
+   +- consumer-solution.sln     +- My.Package
+   |                               |
+   +- packages\                    +- Source\
+      |                               |
+      +- My.Package.1.0.5\            +- My.Package.csproj     
+         |                            |  
+         +- lib\                      +- bin\
+            |                            |
+            +- net45 >---> SYMLINK >---> +- Debug\
+```
+
+This example works mostly like the previous one, except that the link only affects a specific consumer solution. This is because in .NET Framework projects, packages are copied under a solution-level `packages` folder, whereas in the new SDK-style projects, .NET looks for packages in the user-level cache.
 
 [Back to top](#NuLink)
 
@@ -92,7 +119,7 @@ Supporting the full variety of NuGet setups and workflows is hardly feasible. Nu
 
 Limitation|Roadmap
 ---|---
-Consumer projects (.csproj) must be SDK-style (`<PackageReference>`). The .NET Framework projects (`packages.config`) aren't  yet supported|[#2 Add support for .NET Framework projects](https://github.com/nwheels-io/NuLink/issues/2)
+**DONE! 0.1.0-beta2:** NuLink now supports both SDK/PackageReference-style projects (.NET Core/NETStandard) and Old/packasges.config-style projects (.NET Framework)|[#2 Add support for .NET Framework projects](https://github.com/nwheels-io/NuLink/issues/2)
 Not tested on .NET Core 3.0|[#3 Test on .NET Core 3.0](https://github.com/nwheels-io/NuLink/issues/3)
 Consumer projects must be C# (.csproj)|[#4 Support projects in more languages](https://github.com/nwheels-io/NuLink/issues/4)
 The `--dry-run` option is not implemented|[#19 Implement dry run](https://github.com/nwheels-io/NuLink/issues/19)
@@ -110,7 +137,7 @@ For SDK-style consumer projects, the effect of symbolic link is machine-wide. It
 
 Install:
 ```
-$ dotnet tool install -g NuLink --version 0.1.0-beta1
+$ dotnet tool install -g NuLink --version 0.1.0-beta2
 ```
 
 After the installation, the tool can be run from terminal with `nulink` command.
