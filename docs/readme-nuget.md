@@ -4,17 +4,20 @@ NuLink allows consuming NuGet packages from source code on local machine. This c
 
 ## Getting started
 
+### Supported types of projects
+
+- .NET Core and NETStandard projects and packages (_"SDK/PackageReference-style"_)
+- **New in Beta 2**: .NET Framework projects and packages (_"packages.config-style"_)
+
 ### Prerequisites
 
 - Linux, macOS, or Windows
-- .NET Core SDK 2.1+ (not tested on 3.0)
-
-Currently NuLink supports SDK-style projects that consume packages through `PackageReference`. Support of .NET Framework-style projects that use `packages.config` is expected in upcoming versions.
+- .NET Core SDK 2.1+ (not tested on 3.0 yet)
 
 ### Installing
 
 ```
-$ dotnet tool install -g NuLink --version 0.1.0-beta1
+$ dotnet tool install -g NuLink --version 0.1.0-beta2
 ```
 
 ### Linking a package to local sources
@@ -37,10 +40,12 @@ See [Usage instructions](https://github.com/nwheels-io/NuLink/blob/master/README
 
 ## How it works
 
-NuLink creates symbolic links to resolve binaries of selected packages directly from local file system:
+NuLink creates symbolic links to consume binaries of selected packages directly from their compilation directories in the local file system. 
+
+### For SDK/PackageReference-style projects (.NET Core or NETStandard)
 
 ```
-Original                      Redirect
+Original                      Linked
 --------------------          ----------------------
 ~ or %UserProfile%            working directory
 |                             |
@@ -48,7 +53,7 @@ Original                      Redirect
    |                             | 
    +- packages/                  +- Source/
       |                             |
-      +- My.Package/                +- My.Package.csproj     
+      +- my.package/                +- My.Package.csproj     
          |                          |  
          +- 1.0.5/                  +- bin/
             |                          |
@@ -57,4 +62,27 @@ Original                      Redirect
                +-X- netstandard2.0/       +-V- netstandard2.0/
 ```
 
-In this example, every time `My.Package.csproj` is compiled, the latest binaries from its `bin/Debug` are automatically used by all consumers. Since the binaries are mapped (through .pdb) to local sources, code navigation and debugging on consumer side work seamlessly with latest changes in package code.
+In this example, every time `My.Package.csproj` is compiled, the latest binaries from its `bin/Debug` are automatically used by all consumers. Since .pdb in `bin/Debug` maps the binaries to local sources, code navigation and debugging on consumer side work seamlessly with the latest changes in package code.
+
+### For packages.config-style projects (.NET Framework)
+
+```
+Original                        Linked
+--------------------            ----------------------
+consumer working directory    
+| 
++- Source\                      package working directory    
+   |                            | 
+   +- consumer-solution.sln     +- My.Package
+   |                               |
+   +- packages\                    +- Source\
+      |                               |
+      +- My.Package.1.0.5\            +- My.Package.csproj     
+         |                            |  
+         +- lib\                      +- bin\
+            |                            |
+            +- net45 >---> SYMLINK >---> +- Debug\
+```
+
+This example works mostly like the previous one, except that the link only affects a specific consumer solution. This is because in .NET Framework projects, packages are copied under a solution-level `packages` folder, whereas in the new SDK-style projects, .NET looks for packages in the user-level cache.
+
