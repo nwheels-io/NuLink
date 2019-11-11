@@ -6,9 +6,9 @@ namespace NuLink.Cli
     {
         public enum LinkMode
         {
-            Single,
-            PackageToAll,
-            All
+            SingleToSingle,
+            SingleToAll,
+            AllToAll
         }
 
         public NuLinkCommandOptions(
@@ -26,7 +26,7 @@ namespace NuLink.Cli
             BareUI = bareUI;
             LocalProjectPath = localProjectPath;
             ProjectIsSolution = ConsumerProjectPath.EndsWith(".sln", StringComparison.OrdinalIgnoreCase);
-            Mode = rootDirectory != null ? packageId == null ? LinkMode.All : LinkMode.PackageToAll : LinkMode.Single;
+            Mode = rootDirectory != null ? packageId == null ? LinkMode.AllToAll : LinkMode.SingleToAll : LinkMode.SingleToSingle;
         }
 
         public string ConsumerProjectPath { get; }

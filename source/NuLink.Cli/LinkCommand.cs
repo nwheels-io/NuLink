@@ -24,11 +24,11 @@ namespace NuLink.Cli
             var allPackages = GetAllPackages(options);
             var localProjectPath = options.LocalProjectPath;
 
-            if (options.Mode == NuLinkCommandOptions.LinkMode.Single)
+            if (options.Mode != NuLinkCommandOptions.LinkMode.AllToAll)
             {
                 var requestedPackage = GetPackage(allPackages, options.PackageId);
 
-                if (options.Mode == NuLinkCommandOptions.LinkMode.PackageToAll)
+                if (options.Mode == NuLinkCommandOptions.LinkMode.SingleToAll)
                 {
                     localProjectPath = GetAllProjects(options.RootDirectory).
                         FirstOrDefault(p => p.Contains(requestedPackage.PackageId));
@@ -36,7 +36,7 @@ namespace NuLink.Cli
                 
                 LinkPackage(requestedPackage, localProjectPath);
             }
-            else if (options.Mode == NuLinkCommandOptions.LinkMode.All)
+            else
             {
                 var allProjectsInRoot = GetAllProjects(options.RootDirectory).ToList();
 

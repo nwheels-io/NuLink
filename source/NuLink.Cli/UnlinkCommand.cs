@@ -22,7 +22,7 @@ namespace NuLink.Cli
             var referenceLoader = new PackageReferenceLoader(_ui);
             var allPackages = referenceLoader.LoadPackageReferences(allProjects);
 
-            if (options.Mode == NuLinkCommandOptions.LinkMode.All)
+            if (options.Mode == NuLinkCommandOptions.LinkMode.AllToAll)
             {
                 foreach (var package in allPackages)
                 {
