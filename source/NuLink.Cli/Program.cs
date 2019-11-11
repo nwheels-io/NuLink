@@ -56,7 +56,6 @@ namespace NuLink.Cli
                 },
                 new Command("unlink", HelpText.UnlinkCommand, handler: HandleUnlink()) {
                     consumerOption,
-                    rootDirOption,
                     packageOption,
                     dryRunOption
                 }
@@ -92,17 +91,15 @@ namespace NuLink.Cli
             });
 
         private static ICommandHandler HandleUnlink() => 
-            CommandHandler.Create<string, string, string, bool>((consumer, rootDir, package, dryRun) => {
+            CommandHandler.Create<string, string, bool>((consumer, package, dryRun) => {
                 var options = new NuLinkCommandOptions(
                     ValidateConsumerProject(consumer), 
-                    rootDir,
-                    package,
+                    packageId: package,
                     dryRun: dryRun);
                 return ExecuteCommand(
                     "unlink", 
                     options, 
-                    options.ConsumerProjectPath != null &&
-                    (ValidateRootDirectory(rootDir) || options.PackageId != null));
+                    options.ConsumerProjectPath != null);
             });
         
         private static int ExecuteCommand(
