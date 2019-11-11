@@ -16,75 +16,64 @@ namespace NuLink.Cli
             _ui = ui;
         }
 
-        public int Execute(NuLinkCommandOptions options)
+        public void Execute(NuLinkCommandOptions options)
         {
             _ui.ReportMedium(() =>
                 $"Checking package references in {(options.ProjectIsSolution ? "solution" : "project")}: {options.ConsumerProjectPath}");
 
             var allPackages = GetAllPackages(options);
+            var localProjectPath = options.LocalProjectPath;
 
-            IEnumerable<string> allProjectsInRoot;
-            PackageReferenceInfo requestedPackage = null;
-            PackageStatusInfo status = null;
-            string localProjectPath = options.LocalProjectPath;
-
-            switch (options.Mode)
+            if (options.Mode == NuLinkCommandOptions.LinkMode.Single)
             {
-                case NuLinkCommandOptions.LinkMode.Single:
-                    requestedPackage = GetPackage(allPackages, options.PackageId);
-                    status = requestedPackage.CheckStatus();
-                    break;
+                var requestedPackage = GetPackage(allPackages, options.PackageId);
 
-                case NuLinkCommandOptions.LinkMode.PackageToAll:
-                    requestedPackage = GetPackage(allPackages, options.PackageId);
-                    status = requestedPackage.CheckStatus();
-                    allProjectsInRoot = GetAllProjects(options.RootDirectory);
-                    localProjectPath = allProjectsInRoot.FirstOrDefault(proj => proj.Contains(requestedPackage.PackageId));
-                    break;
-
-                case NuLinkCommandOptions.LinkMode.All:
-                    allProjectsInRoot = GetAllProjects(options.RootDirectory);
-
-                    foreach (var package in allPackages)
-                    {
-                        requestedPackage = package;
-                        status = requestedPackage.CheckStatus();
-                        localProjectPath = allProjectsInRoot.FirstOrDefault(proj => proj.Contains(requestedPackage.PackageId));
-                        ExecuteForPackage(requestedPackage, status, options, localProjectPath);
-                    }
-
-                    return 0;
+                if (options.Mode == NuLinkCommandOptions.LinkMode.PackageToAll)
+                {
+                    localProjectPath = GetAllProjects(options.RootDirectory).
+                        FirstOrDefault(p => p.Contains(requestedPackage.PackageId));
+                }
+                
+                LinkPackage(requestedPackage, localProjectPath);
             }
+            else if (options.Mode == NuLinkCommandOptions.LinkMode.All)
+            {
+                var allProjectsInRoot = GetAllProjects(options.RootDirectory).ToList();
 
-            return ExecuteForPackage(requestedPackage, status, options, localProjectPath);
+                foreach (var package in allPackages)
+                {
+                    localProjectPath = allProjectsInRoot.FirstOrDefault(proj => proj.Contains(package.PackageId));
+                    LinkPackage(package, localProjectPath);
+                }
+            }
         }
 
-        private int ExecuteForPackage(PackageReferenceInfo requestedPackage, PackageStatusInfo status, NuLinkCommandOptions options, string localProjectPath)
+        private void LinkPackage(PackageReferenceInfo requestedPackage, string localProjectPath)
         {
             if (localProjectPath == null)
             {
                 _ui.ReportError(() => $"Error: Cannot find corresponding project to package {requestedPackage.PackageId}");
-                return 1;
+                return;
             }
 
             var linkTargetPath = Path.Combine(Path.GetDirectoryName(localProjectPath), "bin", "Debug");
+            var status = requestedPackage.CheckStatus();
 
             if (!ValidateOperation())
             {
-                return 1;
+                return;
             }
 
             PerformOperation();
 
             _ui.ReportSuccess(() => $"Linked {requestedPackage.LibFolderPath}");
             _ui.ReportSuccess(() => $" -> {linkTargetPath}", ConsoleColor.Magenta);
-            return 0;
 
             bool ValidateOperation()
             {
                 if (!status.LibFolderExists)
                 {
-                    _ui.ReportError(() => $"Error: Cannot link package {options.PackageId}: 'lib' folder not found, expected {requestedPackage.LibFolderPath}");
+                    _ui.ReportError(() => $"Error: Cannot link package {requestedPackage.PackageId}: 'lib' folder not found, expected {requestedPackage.LibFolderPath}");
                     return false;
                 }
 

@@ -14,7 +14,7 @@ namespace NuLink.Cli
             _ui = ui;
         }
 
-        public int Execute(NuLinkCommandOptions options)
+        public void Execute(NuLinkCommandOptions options)
         {
             _ui.ReportMedium(() =>
                 $"Checking package references in {(options.ProjectIsSolution ? "solution" : "project")}: {options.ConsumerProjectPath}");
@@ -27,10 +27,10 @@ namespace NuLink.Cli
             {
                 foreach (var package in allPackages)
                 {
-                    ExecuteForPackage(package);
+                    UnlinkPackage(package);
                 }
 
-                return 0;
+                return;
             }
 
             var requestedPackage = allPackages.FirstOrDefault(p => p.PackageId == options.PackageId);
@@ -38,32 +38,32 @@ namespace NuLink.Cli
             if (requestedPackage == null)
             {
                 _ui.ReportError(() => $"Error: Package not referenced: {options.PackageId}");
-                return 1;
+                return;
             }
 
-            return ExecuteForPackage(requestedPackage);
+            UnlinkPackage(requestedPackage);
         }
 
-        private int ExecuteForPackage(PackageReferenceInfo requestedPackage)
+        private void UnlinkPackage(PackageReferenceInfo requestedPackage)
         {
             var status = requestedPackage.CheckStatus();
 
             if (!status.LibFolderExists)
             {
                 _ui.ReportError(() => $"Error: Cannot unlink package {requestedPackage.PackageId}: 'lib' folder not found, expected {requestedPackage.LibFolderPath}");
-                return 1;
+                return;
             }
 
             if (!status.IsLibFolderLinked)
             {
                 _ui.ReportError(() => $"Error: Package {requestedPackage.PackageId} is not linked.");
-                return 1;
+                return;
             }
 
             if (!status.LibBackupFolderExists)
             {
                 _ui.ReportError(() => $"Error: Cannot unlink package {requestedPackage.PackageId}: backup folder not found, expected {requestedPackage.LibBackupFolderPath}");
-                return 1;
+                return;
             }
 
             Directory.Delete(requestedPackage.LibFolderPath);
@@ -71,7 +71,6 @@ namespace NuLink.Cli
 
             _ui.ReportSuccess(() => $"Unlinked {requestedPackage.PackageId}");
             _ui.ReportSuccess(() => $" {"-X->"} {status.LibFolderLinkTargetPath}", ConsoleColor.Red, ConsoleColor.DarkYellow);
-            return 0;
         }
     }
 }

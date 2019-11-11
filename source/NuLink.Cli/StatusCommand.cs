@@ -12,7 +12,7 @@ namespace NuLink.Cli
             _ui = ui;
         }
 
-        public int Execute(NuLinkCommandOptions options)
+        public void Execute(NuLinkCommandOptions options)
         {
             _ui.ReportMedium(() =>
                 $"Checking status of packages in {(options.ProjectIsSolution ? "solution" : "project")}: {options.ConsumerProjectPath}");
@@ -33,8 +33,6 @@ namespace NuLink.Cli
                     PrintPackage(package, status);
                 }
             }
-
-            return 0;
 
             void PrintPackage(PackageReferenceInfo reference, PackageStatusInfo status)
             {
