@@ -12,15 +12,15 @@ namespace NuLink.Cli
         }
 
         public NuLinkCommandOptions(
-            string consumerProjectPath, 
-			string rootDirectory = null,
-            string packageId = null, 
-            bool dryRun = false, 
+            string consumerProjectPath,
+            string rootDirectory = null,
+            string packageId = null,
+            bool dryRun = false,
             bool bareUI = false,
             string localProjectPath = null)
         {
             ConsumerProjectPath = consumerProjectPath;
-			RootDirectory = rootDirectory;
+            RootDirectory = rootDirectory;
             PackageId = packageId;
             DryRun = dryRun;
             BareUI = bareUI;

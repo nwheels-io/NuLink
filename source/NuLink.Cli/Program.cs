@@ -49,14 +49,14 @@ namespace NuLink.Cli
                 },
                 new Command("link", HelpText.LinkCommand, handler: HandleLink()) {
                     consumerOption,
-					rootDirOption,
+                    rootDirOption,
                     packageOption,
                     localProjectOption,
                     dryRunOption
                 },
                 new Command("unlink", HelpText.UnlinkCommand, handler: HandleUnlink()) {
                     consumerOption,
-					rootDirOption,
+                    rootDirOption,
                     packageOption,
                     dryRunOption
                 }
@@ -79,7 +79,7 @@ namespace NuLink.Cli
             CommandHandler.Create<string, string, string, string, bool>((consumer, rootDir, package, local, dryRun) => {
                 var options = new NuLinkCommandOptions(
                     ValidateConsumerProject(consumer), 
-					rootDir,
+                    rootDir,
                     package,
                     localProjectPath: local,
                     dryRun: dryRun);
@@ -95,7 +95,7 @@ namespace NuLink.Cli
             CommandHandler.Create<string, string, string, bool>((consumer, rootDir, package, dryRun) => {
                 var options = new NuLinkCommandOptions(
                     ValidateConsumerProject(consumer), 
-					rootDir,
+                    rootDir,
                     package,
                     dryRun: dryRun);
                 return ExecuteCommand(
