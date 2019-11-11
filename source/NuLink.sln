@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26124.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29424.173
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NuLink.Cli", "NuLink.Cli\NuLink.Cli.csproj", "{DE89E25B-0FA5-4C12-A085-C419A0EE38CA}"
 EndProject
@@ -15,9 +15,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{DE89E25B-0FA5-4C12-A085-C419A0EE38CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -44,5 +41,11 @@ Global
 		{00A1F74F-07C0-443C-8B49-CB172E1D6DF5}.Release|x64.Build.0 = Release|Any CPU
 		{00A1F74F-07C0-443C-8B49-CB172E1D6DF5}.Release|x86.ActiveCfg = Release|Any CPU
 		{00A1F74F-07C0-443C-8B49-CB172E1D6DF5}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4C7EB84D-B529-447C-81C4-0996D7D3A09D}
 	EndGlobalSection
 EndGlobal

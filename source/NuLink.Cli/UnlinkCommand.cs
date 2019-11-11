@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -22,28 +23,47 @@ namespace NuLink.Cli
             var referenceLoader = new PackageReferenceLoader(_ui);
             var allPackages = referenceLoader.LoadPackageReferences(allProjects);
 
+            if (options.Mode == NuLinkCommandOptions.LinkMode.All)
+            {
+                foreach (var package in allPackages)
+                {
+                    ExecuteForPackage(package);
+                }
+
+                return 0;
+            }
+
             var requestedPackage = allPackages.FirstOrDefault(p => p.PackageId == options.PackageId);
 
             if (requestedPackage == null)
             {
-                throw new Exception($"Error: Package not referenced: {options.PackageId}");
+                _ui.ReportError(() => $"Error: Package not referenced: {options.PackageId}");
+                return 1;
             }
 
+            return ExecuteForPackage(requestedPackage);
+        }
+
+        private int ExecuteForPackage(PackageReferenceInfo requestedPackage)
+        {
             var status = requestedPackage.CheckStatus();
 
             if (!status.LibFolderExists)
             {
-                throw new Exception($"Error: Cannot unlink package {options.PackageId}: 'lib' folder not found, expected {requestedPackage.LibFolderPath}");
+                _ui.ReportError(() => $"Error: Cannot unlink package {requestedPackage.PackageId}: 'lib' folder not found, expected {requestedPackage.LibFolderPath}");
+                return 1;
             }
 
             if (!status.IsLibFolderLinked)
             {
-                throw new Exception($"Error: Package {requestedPackage.PackageId} is not linked.");
+                _ui.ReportError(() => $"Error: Package {requestedPackage.PackageId} is not linked.");
+                return 1;
             }
 
             if (!status.LibBackupFolderExists)
             {
-                throw new Exception($"Error: Cannot unlink package {options.PackageId}: backup folder not found, expected {requestedPackage.LibBackupFolderPath}");
+                _ui.ReportError(() => $"Error: Cannot unlink package {requestedPackage.PackageId}: backup folder not found, expected {requestedPackage.LibBackupFolderPath}");
+                return 1;
             }
 
             Directory.Delete(requestedPackage.LibFolderPath);

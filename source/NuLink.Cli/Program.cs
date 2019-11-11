@@ -36,6 +36,10 @@ namespace NuLink.Cli
                 Name = "on/off",
                 Arity = ArgumentArity.ZeroOrOne
             });
+            var rootDirOption = new Option(new[] { "--root-dir", "-r" }, HelpText.RootDirOption, new Argument<string>() {
+                Name = "root-directory",
+                Arity = ArgumentArity.ExactlyOne
+            });
 
             return new RootCommand() {
                 new Command("status", HelpText.StatusCommand, handler: HandleStatus()) {
@@ -45,12 +49,14 @@ namespace NuLink.Cli
                 },
                 new Command("link", HelpText.LinkCommand, handler: HandleLink()) {
                     consumerOption,
+					rootDirOption,
                     packageOption,
                     localProjectOption,
                     dryRunOption
                 },
                 new Command("unlink", HelpText.UnlinkCommand, handler: HandleUnlink()) {
                     consumerOption,
+					rootDirOption,
                     packageOption,
                     dryRunOption
                 }
@@ -70,28 +76,33 @@ namespace NuLink.Cli
             });
 
         private static ICommandHandler HandleLink() => 
-            CommandHandler.Create<string, string, string, bool>((consumer, package, local, dryRun) => {
+            CommandHandler.Create<string, string, string, string, bool>((consumer, rootDir, package, local, dryRun) => {
                 var options = new NuLinkCommandOptions(
                     ValidateConsumerProject(consumer), 
+					rootDir,
                     package,
-                    localProjectPath: ValidateTargetProject(local),
+                    localProjectPath: local,
                     dryRun: dryRun);
                 return ExecuteCommand(
                     "link", 
                     options, 
-                    options.ConsumerProjectPath != null && options.LocalProjectPath != null && options.PackageId != null);
+                    options.ConsumerProjectPath != null && !string.IsNullOrEmpty(rootDir)
+                        ? ValidateRootDirectory(rootDir)
+                        : ValidateTargetProject(options.LocalProjectPath) && options.PackageId != null);
             });
 
         private static ICommandHandler HandleUnlink() => 
-            CommandHandler.Create<string, string, bool>((consumer, package, dryRun) => {
+            CommandHandler.Create<string, string, string, bool>((consumer, rootDir, package, dryRun) => {
                 var options = new NuLinkCommandOptions(
                     ValidateConsumerProject(consumer), 
+					rootDir,
                     package,
                     dryRun: dryRun);
                 return ExecuteCommand(
                     "unlink", 
                     options, 
-                    options.ConsumerProjectPath != null && options.PackageId != null);
+                    options.ConsumerProjectPath != null &&
+                    (ValidateRootDirectory(rootDir) || options.PackageId != null));
             });
         
         private static int ExecuteCommand(
@@ -145,17 +156,28 @@ namespace NuLink.Cli
             return filePath;
         }
 
-        private static string ValidateTargetProject(string filePath)
+        private static bool ValidateTargetProject(string filePath)
         {
             if (File.Exists(filePath))
             {
-                return filePath;
+                return true;
             }
                 
             FullUI.FatalError(() => $"Error: File does not exist: {filePath}");
-            return null;
+            return false;
         }
-        
+
+        private static bool ValidateRootDirectory(string rootDir)
+        {
+            if (Directory.Exists(rootDir))
+            {
+                return true;
+            }
+
+            FullUI.FatalError(() => $"Error: Directory does not exist: {rootDir}");
+            return false;
+        }
+
         private static INuLinkCommand CreateCommand(string name, NuLinkCommandOptions options)
         {
             var ui = (options.BareUI ? new BareUI() : new FullUI() as IUserInterface);
@@ -191,6 +213,8 @@ namespace NuLink.Cli
                 "If specified, list intended actions without executing them";
             public const string QuietOption = 
                 "If specified, suppresses all output except data (useful for scripting)";
+            public const string RootDirOption = 
+                "If specified, executes command on all packages in project/solution";
         }
     }
 }

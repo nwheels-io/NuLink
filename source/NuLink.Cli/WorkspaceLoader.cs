@@ -20,5 +20,17 @@ namespace NuLink.Cli
                 return new[] { analyzerManager.GetProject(filePath) };
             }
         }
+
+        public IEnumerable<ProjectAnalyzer> LoadProjects(string[] solutionsFilePaths)
+        {
+            List<ProjectAnalyzer> projects = new List<ProjectAnalyzer>();
+
+            foreach (var path in solutionsFilePaths)
+            {
+                projects.AddRange(LoadProjects(path, true));
+            }
+
+            return projects;
+        }
     }
 }
