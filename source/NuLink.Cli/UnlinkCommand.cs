@@ -55,14 +55,10 @@ namespace NuLink.Cli
 
             if (!status.IsLibFolderLinked)
             {
-                if (allPackages)
-                {
-                    _ui.ReportLow(() => $"Info: Package {requestedPackage.PackageId} is not linked.");
-                }
-                else
-                {
-                    _ui.ReportError(() => $"Error: Package {requestedPackage.PackageId} is not linked.");
-                }
+                _ui.Report(allPackages ? VerbosityLevel.Low : VerbosityLevel.Error, () =>
+                    $"{(allPackages ? string.Empty : string.Concat(VerbosityLevel.Error.ToString(), ": "))}" +
+                    $"Package {requestedPackage.PackageId} is not linked.");
+
                 return;
             }
 

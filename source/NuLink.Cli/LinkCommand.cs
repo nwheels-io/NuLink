@@ -52,16 +52,9 @@ namespace NuLink.Cli
         {
             if (localProjectPath == null)
             {
-                if (singleMode)
-                {
-                    _ui.ReportError(() =>
-                        $"Error: Cannot find corresponding project to package {requestedPackage.PackageId}");
-                }
-                else
-                {
-                    _ui.ReportLow(() =>
-                        $"Info: Cannot find corresponding project to package {requestedPackage.PackageId}");
-                }
+                _ui.Report(singleMode ? VerbosityLevel.Error : VerbosityLevel.Low, () =>
+                    $"{(singleMode ? string.Concat(VerbosityLevel.Error.ToString(), ": ") : string.Empty)}" +
+                    $"Cannot find corresponding project to package {requestedPackage.PackageId}");
 
                 return;
             }
@@ -89,7 +82,10 @@ namespace NuLink.Cli
 
                 if (status.IsLibFolderLinked)
                 {
-                    _ui.ReportError(() => $"Error: Package {requestedPackage.PackageId} is already linked to {status.LibFolderLinkTargetPath}");
+                    _ui.Report(singleMode ? VerbosityLevel.Error : VerbosityLevel.Low, () =>
+                        $"{(singleMode ? string.Concat(VerbosityLevel.Error.ToString(), ": ") : string.Empty)}" +
+                        $"Package {requestedPackage.PackageId} is already linked to {status.LibFolderLinkTargetPath}");
+
                     return false;
                 }
 
