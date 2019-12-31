@@ -31,10 +31,10 @@ namespace NuLink.Cli
                 if (options.Mode == NuLinkCommandOptions.LinkMode.SingleToAll)
                 {
                     localProjectPath = GetAllProjects(options.RootDirectory).
-                        FirstOrDefault(p => p.Contains(requestedPackage.PackageId));
+                        FirstOrDefault(proj => proj.Contains(requestedPackage.PackageId + ".csproj"));
                 }
                 
-                LinkPackage(requestedPackage, localProjectPath);
+                LinkPackage(requestedPackage, localProjectPath, options.Mode == NuLinkCommandOptions.LinkMode.SingleToSingle);
             }
             else
             {
@@ -42,17 +42,27 @@ namespace NuLink.Cli
 
                 foreach (var package in allPackages)
                 {
-                    localProjectPath = allProjectsInRoot.FirstOrDefault(proj => proj.Contains(package.PackageId));
-                    LinkPackage(package, localProjectPath);
+                    localProjectPath = allProjectsInRoot.FirstOrDefault(proj => proj.Contains(package.PackageId + ".csproj"));
+                    LinkPackage(package, localProjectPath, false);
                 }
             }
         }
 
-        private void LinkPackage(PackageReferenceInfo requestedPackage, string localProjectPath)
+        private void LinkPackage(PackageReferenceInfo requestedPackage, string localProjectPath, bool singleMode)
         {
             if (localProjectPath == null)
             {
-                _ui.ReportError(() => $"Error: Cannot find corresponding project to package {requestedPackage.PackageId}");
+                if (singleMode)
+                {
+                    _ui.ReportError(() =>
+                        $"Error: Cannot find corresponding project to package {requestedPackage.PackageId}");
+                }
+                else
+                {
+                    _ui.ReportLow(() =>
+                        $"Info: Cannot find corresponding project to package {requestedPackage.PackageId}");
+                }
+
                 return;
             }
 

@@ -26,7 +26,7 @@ namespace NuLink.Cli
             {
                 foreach (var package in allPackages)
                 {
-                    UnlinkPackage(package);
+                    UnlinkPackage(package, true);
                 }
 
                 return;
@@ -40,10 +40,10 @@ namespace NuLink.Cli
                 return;
             }
 
-            UnlinkPackage(requestedPackage);
+            UnlinkPackage(requestedPackage, false);
         }
 
-        private void UnlinkPackage(PackageReferenceInfo requestedPackage)
+        private void UnlinkPackage(PackageReferenceInfo requestedPackage, bool allPackages)
         {
             var status = requestedPackage.CheckStatus();
 
@@ -55,7 +55,14 @@ namespace NuLink.Cli
 
             if (!status.IsLibFolderLinked)
             {
-                _ui.ReportError(() => $"Error: Package {requestedPackage.PackageId} is not linked.");
+                if (allPackages)
+                {
+                    _ui.ReportLow(() => $"Info: Package {requestedPackage.PackageId} is not linked.");
+                }
+                else
+                {
+                    _ui.ReportError(() => $"Error: Package {requestedPackage.PackageId} is not linked.");
+                }
                 return;
             }
 
