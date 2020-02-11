@@ -47,18 +47,18 @@ namespace NuLink.Cli
         {
             var status = requestedPackage.CheckStatus();
 
-            if (!status.LibFolderExists)
-            {
-                _ui.ReportError(() => $"Error: Cannot unlink package {requestedPackage.PackageId}: 'lib' folder not found, expected {requestedPackage.LibFolderPath}");
-                return;
-            }
-
             if (!status.IsLibFolderLinked)
             {
                 _ui.Report(allPackages ? VerbosityLevel.Low : VerbosityLevel.Error, () =>
                     $"{(allPackages ? string.Empty : string.Concat(VerbosityLevel.Error.ToString(), ": "))}" +
                     $"Package {requestedPackage.PackageId} is not linked.");
 
+                return;
+            }
+
+            if (!status.LibFolderExists)
+            {
+                _ui.ReportError(() => $"Error: Cannot unlink package {requestedPackage.PackageId}: 'lib' folder not found, expected {requestedPackage.LibFolderPath}");
                 return;
             }
 
