@@ -125,7 +125,7 @@ namespace NuLink.Cli.ProjectStyles
             public ParsedPath(string path)
             {
                 Parts = path.Split(
-                    new[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar },
+                    new[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar, '\\' },
                     StringSplitOptions.RemoveEmptyEntries);
             }
 

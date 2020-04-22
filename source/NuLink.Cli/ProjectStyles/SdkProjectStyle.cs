@@ -74,7 +74,7 @@ namespace NuLink.Cli.ProjectStyles
                 result = result.Replace("$(UserProfile)", userProfilePath, StringComparison.InvariantCultureIgnoreCase);
             }
                 
-            return result;
+            return result.TrimEnd('/', '\\');
         }
     
         private string GetNuGetPropsFilePath()
