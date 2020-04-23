@@ -29,7 +29,7 @@ Contributions are welcome :-) Read [CONTRIBUTING.md](CONTRIBUTING.md).
 ### Installing
 
 ```
-$ dotnet tool install -g NuLink --version 0.1.0-beta2
+$ dotnet tool install --global NuLink --version 0.1.0-beta2
 ```
 
 ### Linking a package to local sources
