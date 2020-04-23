@@ -13,7 +13,7 @@ namespace NuLink.Cli
             _ui = ui;
         }
 
-        public int Execute(NuLinkCommandOptions options)
+        public void Execute(NuLinkCommandOptions options)
         {
             _ui.ReportMedium(() =>
                 $"Checking package references in {(options.ProjectIsSolution ? "solution" : "project")}: {options.ConsumerProjectPath}");
@@ -22,28 +22,50 @@ namespace NuLink.Cli
             var referenceLoader = new PackageReferenceLoader(_ui);
             var allPackages = referenceLoader.LoadPackageReferences(allProjects);
 
+            if (options.PackageId == null)
+            {
+                foreach (var package in allPackages)
+                {
+                    UnlinkPackage(package, true);
+                }
+
+                return;
+            }
+
             var requestedPackage = allPackages.FirstOrDefault(p => p.PackageId == options.PackageId);
 
             if (requestedPackage == null)
             {
-                throw new Exception($"Error: Package not referenced: {options.PackageId}");
+                _ui.ReportError(() => $"Error: Package not referenced: {options.PackageId}");
+                return;
             }
 
+            UnlinkPackage(requestedPackage, false);
+        }
+
+        private void UnlinkPackage(PackageReferenceInfo requestedPackage, bool allPackages)
+        {
             var status = requestedPackage.CheckStatus();
-
-            if (!status.LibFolderExists)
-            {
-                throw new Exception($"Error: Cannot unlink package {options.PackageId}: 'lib' folder not found, expected {requestedPackage.LibFolderPath}");
-            }
 
             if (!status.IsLibFolderLinked)
             {
-                throw new Exception($"Error: Package {requestedPackage.PackageId} is not linked.");
+                _ui.Report(allPackages ? VerbosityLevel.Low : VerbosityLevel.Error, () =>
+                    $"{(allPackages ? string.Empty : string.Concat(VerbosityLevel.Error.ToString(), ": "))}" +
+                    $"Package {requestedPackage.PackageId} is not linked.");
+
+                return;
+            }
+
+            if (!status.LibFolderExists)
+            {
+                _ui.ReportError(() => $"Error: Cannot unlink package {requestedPackage.PackageId}: 'lib' folder not found, expected {requestedPackage.LibFolderPath}");
+                return;
             }
 
             if (!status.LibBackupFolderExists)
             {
-                throw new Exception($"Error: Cannot unlink package {options.PackageId}: backup folder not found, expected {requestedPackage.LibBackupFolderPath}");
+                _ui.ReportError(() => $"Error: Cannot unlink package {requestedPackage.PackageId}: backup folder not found, expected {requestedPackage.LibBackupFolderPath}");
+                return;
             }
 
             Directory.Delete(requestedPackage.LibFolderPath);
@@ -51,7 +73,6 @@ namespace NuLink.Cli
 
             _ui.ReportSuccess(() => $"Unlinked {requestedPackage.PackageId}");
             _ui.ReportSuccess(() => $" {"-X->"} {status.LibFolderLinkTargetPath}", ConsoleColor.Red, ConsoleColor.DarkYellow);
-            return 0;
         }
     }
 }

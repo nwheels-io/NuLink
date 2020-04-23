@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
@@ -15,47 +16,86 @@ namespace NuLink.Cli
             _ui = ui;
         }
 
-        public int Execute(NuLinkCommandOptions options)
+        public void Execute(NuLinkCommandOptions options)
         {
             _ui.ReportMedium(() =>
                 $"Checking package references in {(options.ProjectIsSolution ? "solution" : "project")}: {options.ConsumerProjectPath}");
 
-            var requestedPackage = GetPackageInfo();
-            var status = requestedPackage.CheckStatus();
-            var linkTargetPath = Path.Combine(Path.GetDirectoryName(options.LocalProjectPath), "bin", "Debug");
+            var allPackages = GetAllPackages(options);
+            var localProjectPath = options.LocalProjectPath;
 
-            ValidateOperation();
+            if (options.Mode != NuLinkCommandOptions.LinkMode.AllToAll)
+            {
+                var requestedPackage = GetPackage(allPackages, options.PackageId);
+
+                if (options.Mode == NuLinkCommandOptions.LinkMode.SingleToAll)
+                {
+                    localProjectPath = GetAllProjects(options.RootDirectory).
+                        FirstOrDefault(proj => proj.Contains(requestedPackage.PackageId + ".csproj"));
+                }
+                
+                LinkPackage(requestedPackage, localProjectPath, options.Mode == NuLinkCommandOptions.LinkMode.SingleToSingle);
+            }
+            else
+            {
+                var allProjectsInRoot = GetAllProjects(options.RootDirectory).ToList();
+
+                foreach (var package in allPackages)
+                {
+                    localProjectPath = allProjectsInRoot.FirstOrDefault(proj => proj.Contains(package.PackageId + ".csproj"));
+                    LinkPackage(package, localProjectPath, false);
+                }
+            }
+        }
+
+        private void LinkPackage(PackageReferenceInfo requestedPackage, string localProjectPath, bool singleMode)
+        {
+            if (localProjectPath == null)
+            {
+                _ui.Report(singleMode ? VerbosityLevel.Error : VerbosityLevel.Low, () =>
+                    $"{(singleMode ? string.Concat(VerbosityLevel.Error.ToString(), ": ") : string.Empty)}" +
+                    $"Cannot find corresponding project to package {requestedPackage.PackageId}");
+
+                return;
+            }
+
+            var linkTargetPath = Path.Combine(Path.GetDirectoryName(localProjectPath), "bin", "Debug");
+            var status = requestedPackage.CheckStatus();
+
+            if (!ValidateOperation())
+            {
+                return;
+            }
+
             PerformOperation();
-            
+
             _ui.ReportSuccess(() => $"Linked {requestedPackage.LibFolderPath}");
             _ui.ReportSuccess(() => $" -> {linkTargetPath}", ConsoleColor.Magenta);
-            return 0;
 
-            PackageReferenceInfo GetPackageInfo()
-            {
-                var allProjects = new WorkspaceLoader().LoadProjects(options.ConsumerProjectPath, options.ProjectIsSolution);
-                var referenceLoader = new PackageReferenceLoader(_ui);
-                var allPackages = referenceLoader.LoadPackageReferences(allProjects);
-                var package = allPackages.FirstOrDefault(p => p.PackageId == options.PackageId);
-                return package ?? throw new Exception($"Error: Package not referenced: {options.PackageId}");
-            }
-            
-            void ValidateOperation()
+            bool ValidateOperation()
             {
                 if (!status.LibFolderExists)
                 {
-                    throw new Exception($"Error: Cannot link package {options.PackageId}: 'lib' folder not found, expected {requestedPackage.LibFolderPath}");
+                    _ui.ReportError(() => $"Error: Cannot link package {requestedPackage.PackageId}: 'lib' folder not found, expected {requestedPackage.LibFolderPath}");
+                    return false;
                 }
 
                 if (status.IsLibFolderLinked)
                 {
-                    throw new Exception($"Error: Package {requestedPackage.PackageId} is already linked to {status.LibFolderLinkTargetPath}");
+                    _ui.Report(singleMode ? VerbosityLevel.Error : VerbosityLevel.Low, () =>
+                        $"{(singleMode ? string.Concat(VerbosityLevel.Error.ToString(), ": ") : string.Empty)}" +
+                        $"Package {requestedPackage.PackageId} is already linked to {status.LibFolderLinkTargetPath}");
+
+                    return false;
                 }
 
                 if (!Directory.Exists(linkTargetPath))
                 {
-                    throw new Exception($"Error: Target link directory doesn't exist: {linkTargetPath}");
+                    _ui.ReportError(() => $"Error: Target link directory doesn't exist: {linkTargetPath}");
+                    return false;
                 }
+
+                return true;
             }
 
             void PerformOperation()
@@ -66,13 +106,14 @@ namespace NuLink.Cli
                 }
                 else
                 {
-                    _ui.ReportWarning(() => $"Warning: backup folder was not expected to exist: {requestedPackage.LibBackupFolderPath}");
+                    _ui.ReportWarning(() =>
+                        $"Warning: backup folder was not expected to exist: {requestedPackage.LibBackupFolderPath}");
                 }
 
                 try
                 {
                     SymbolicLinkWithDiagnostics.Create(
-                        fromPath: requestedPackage.LibFolderPath, 
+                        fromPath: requestedPackage.LibFolderPath,
                         toPath: linkTargetPath);
                 }
                 catch
@@ -96,10 +137,31 @@ namespace NuLink.Cli
                     _ui.ReportError(() => "--- MANUAL RECOVERY INSTRUCTIONS ---");
                     _ui.ReportError(() => $"1. Go to {Path.GetDirectoryName(requestedPackage.LibFolderPath)}");
                     _ui.ReportError(() => $"2. Rename '{Path.GetFileName(requestedPackage.LibBackupFolderPath)}'" +
-                                      $" to '{Path.GetFileName(requestedPackage.LibFolderPath)}'");
+                                          $" to '{Path.GetFileName(requestedPackage.LibFolderPath)}'");
                     _ui.ReportError(() => "--- END OF RECOVERY INSTRUCTIONS ---");
                 }
             }
+        }
+
+        private PackageReferenceInfo GetPackage(HashSet<PackageReferenceInfo> allPackages, string packageId)
+        {
+            var package = allPackages.FirstOrDefault(p => p.PackageId == packageId);
+            return package ?? throw new Exception($"Error: Package not referenced: {packageId}");
+        }
+
+        private HashSet<PackageReferenceInfo> GetAllPackages(NuLinkCommandOptions options)
+        {
+            var allProjects = new WorkspaceLoader().LoadProjects(options.ConsumerProjectPath, options.ProjectIsSolution);
+            var referenceLoader = new PackageReferenceLoader(_ui);
+            var allPackages = referenceLoader.LoadPackageReferences(allProjects);
+            return allPackages;
+        }
+
+        private IEnumerable<string> GetAllProjects(string rootDir)
+        {
+            var slnPaths = Directory.GetFiles(rootDir, "*.sln", SearchOption.AllDirectories);
+            var allProjects = new WorkspaceLoader().LoadProjects(slnPaths).Select(proj => proj.ProjectFile.Path);
+            return allProjects;
         }
     }
 }
